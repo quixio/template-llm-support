@@ -14,6 +14,9 @@ deployments:
       cpu: 1000
       memory: 16000
       replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: llama2container-66f765f
     desiredStatus: Running
     variables: []
 
