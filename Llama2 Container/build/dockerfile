@@ -7,7 +7,7 @@ WORKDIR /app
 # Set environment variables
 ENV MODEL=/models/llama-2-7b-chat.Q4_K_M.gguf
 ENV HOST=0.0.0.0
-ENV PORT=8000
+ENV PORT=80
 
 # Install wget and include the entrypoint script directly
 RUN apt-get update && \
@@ -21,7 +21,7 @@ exec \"/bin/sh\" \"/app/docker/simple/run.sh\"" > /entrypoint.sh && \
     chmod +x /entrypoint.sh
 
 # Expose the relevant port
-EXPOSE 8000
+EXPOSE 80
 
 # Set the entry-point script as the default thing to run when the container starts
 ENTRYPOINT ["/entrypoint.sh"]
