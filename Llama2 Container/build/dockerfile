@@ -9,11 +9,14 @@ ENV MODEL=/models/llama-2-7b-chat.Q4_K_M.gguf
 ENV HOST=0.0.0.0
 ENV PORT=8000
 
-# Copy the entry-point script into the image
-COPY entrypoint.sh /entrypoint.sh
-
-# Ensure the script is executable
-RUN chmod +x /entrypoint.sh
+# Include the entrypoint script directly
+RUN echo "#!/bin/bash\n\
+set -e\n\
+echo \"Downloading model...\"\n\
+wget -P /models/ https://huggingface.co/TheBloke/Llama-2-7b-Chat-GGUF/resolve/main/llama-2-7b-chat.Q4_K_M.gguf\n\
+echo \"Starting application...\"\n\
+exec \"/bin/sh\" \"/app/docker/simple/run.sh\"" > /entrypoint.sh && \
+chmod +x /entrypoint.sh
 
 # Expose the relevant port
 EXPOSE 8000
