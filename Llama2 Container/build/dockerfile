@@ -9,14 +9,16 @@ ENV MODEL=/models/llama-2-7b-chat.Q4_K_M.gguf
 ENV HOST=0.0.0.0
 ENV PORT=8000
 
-# Include the entrypoint script directly
-RUN echo "#!/bin/bash\n\
+# Install wget and include the entrypoint script directly
+RUN apt-get update && \
+    apt-get install -y wget && \
+    echo "#!/bin/bash\n\
 set -e\n\
 echo \"Downloading model...\"\n\
 wget -P /models/ https://huggingface.co/TheBloke/Llama-2-7b-Chat-GGUF/resolve/main/llama-2-7b-chat.Q4_K_M.gguf\n\
 echo \"Starting application...\"\n\
 exec \"/bin/sh\" \"/app/docker/simple/run.sh\"" > /entrypoint.sh && \
-chmod +x /entrypoint.sh
+    chmod +x /entrypoint.sh
 
 # Expose the relevant port
 EXPOSE 8000
