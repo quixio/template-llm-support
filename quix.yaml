@@ -21,4 +21,11 @@ deployments:
     variables: []
 
 # This section describes the Topics of the data pipeline
-topics: []
+topics:
+  - name: ai-chat-messages
+    persisted: false
+    configuration:
+      partitions: 2
+      replicationFactor: 2
+      retentionInMinutes: 240
+      retentionInBytes: 52428800
