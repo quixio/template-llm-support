@@ -5,17 +5,7 @@ metadata:
   version: 1.0
 
 # This section describes the Deployments of the data pipeline
-deployments:
-  - name: Llama2 Container
-    application: Llama2 Container
-    deploymentType: Service
-    version: 943e8d542c1d8345262874985b5cf40a14e9e0de
-    resources:
-      cpu: 1000
-      memory: 16000
-      replicas: 1
-    desiredStatus: Running
-    variables: []
+deployments: []
 
 # This section describes the Topics of the data pipeline
 topics:
