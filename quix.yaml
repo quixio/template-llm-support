@@ -18,4 +18,11 @@ deployments:
     variables: []
 
 # This section describes the Topics of the data pipeline
-topics: []
+topics:
+  - name: output-topic
+    persisted: false
+    configuration:
+      partitions: 2
+      replicationFactor: 2
+      retentionInMinutes: -1
+      retentionInBytes: 1048576000
