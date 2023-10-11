@@ -10,7 +10,7 @@ ENV HOST=0.0.0.0
 ENV PORT=8000
 
 # Copy the entry-point script into the image
-COPY entrypoint.sh /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh
 
 # Ensure the script is executable
 RUN chmod +x /entrypoint.sh
