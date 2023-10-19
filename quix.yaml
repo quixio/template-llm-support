@@ -17,7 +17,7 @@ deployments:
     publicAccess:
       enabled: true
       urlPrefix: llama2container-66f765f
-    desiredStatus: Running
+    desiredStatus: Stopped
     variables: []
 
 # This section describes the Topics of the data pipeline
