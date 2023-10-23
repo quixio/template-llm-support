@@ -117,7 +117,7 @@ def on_dataframe_received_handler(stream_consumer: qx.StreamConsumer, df: pd.Dat
         print(f"\n------\nRESPONDING T0: {chatmessage} \n------\n")
         custreply = update_conversation({chatmessage}, "customer", stream_consumer.stream_id, convostore)
         publish_rp(custreply)
-        print(f"I have sent my reply to the agent.")
+        print("I have sent my reply to the agent.")
 def on_stream_received_handler(stream_consumer: qx.StreamConsumer):
     stream_consumer.timeseries.on_dataframe_received = on_dataframe_received_handler
 
