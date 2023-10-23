@@ -14,7 +14,7 @@ model = joblib.load(
     hf_hub_download(repo_id=REPO_ID, filename=FILENAME, local_dir="model")
 )
 
-llm = Llama(model_path="./llama_cpp/models/7B/llama2_7b_chat_uncensored.Q5_K_M.gguf")
+llm = Llama(model_path="./model/llama-2-7b-chat.Q4_K_M.gguf")
 topic = os.environ["output"]
 client = qx.QuixStreamingClient()
 
