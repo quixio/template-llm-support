@@ -6,6 +6,11 @@ variables:
     description: This is the output topic to write data to
     defaultValue: ai-chat-history
     required: true
+  - name: product
+    inputType: InputTopic
+    description: ''
+    defaultValue: printer
+    required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
