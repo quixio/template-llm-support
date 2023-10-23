@@ -1,4 +1,4 @@
-name: AI Customer Support Agent
+name: AI Support Agent
 language: python
 variables:
   - name: input
