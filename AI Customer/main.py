@@ -5,8 +5,6 @@ import quixstreams as qx
 import pandas as pd
 from datetime import datetime
 from huggingface_hub import hf_hub_download
-import joblib
-import requests
 
 REPO_ID = "TheBloke/Llama-2-7b-Chat-GGUF"
 FILENAME = "llama-2-7b-chat.Q4_K_M.gguf"
