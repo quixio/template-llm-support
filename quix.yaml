@@ -19,26 +19,6 @@ deployments:
       urlPrefix: llama2container-66f765f
     desiredStatus: Stopped
     variables: []
-  - name: AI Customer
-    application: AI Customer
-    deploymentType: Service
-    version: ec21757f735a3621853b10309cb427c930bb70df
-    resources:
-      cpu: 1000
-      memory: 8000
-      replicas: 1
-    desiredStatus: Running
-    variables:
-      - name: input
-        inputType: InputTopic
-        description: This is the input topic to read data from
-        required: true
-        value: ai-chat-history
-      - name: output
-        inputType: OutputTopic
-        description: This is the output topic to write data to
-        required: true
-        value: ai-chat-history
 
 # This section describes the Topics of the data pipeline
 topics:
