@@ -6,13 +6,12 @@ import pandas as pd
 from datetime import datetime
 from huggingface_hub import hf_hub_download
 import joblib
+import requests
 
 REPO_ID = "TheBloke/Llama-2-7b-Chat-GGUF"
 FILENAME = "llama-2-7b-chat.Q4_K_M.gguf"
 
-model = joblib.load(
-    hf_hub_download(repo_id=REPO_ID, filename=FILENAME, local_dir="model")
-)
+hf_hub_download(repo_id=REPO_ID, filename=FILENAME, local_dir="model")
 
 llm = Llama(model_path="./model/llama-2-7b-chat.Q4_K_M.gguf")
 topic = os.environ["output"]
