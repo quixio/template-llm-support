@@ -6,6 +6,9 @@ import pandas as pd
 from datetime import datetime
 from huggingface_hub import hf_hub_download
 
+storage = qx.LocalFileStorage()
+storage.set("KEY3", True)
+
 REPO_ID = "TheBloke/Llama-2-7b-Chat-GGUF"
 FILENAME = "llama-2-7b-chat.Q4_K_M.gguf"
 
