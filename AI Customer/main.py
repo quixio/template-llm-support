@@ -27,7 +27,7 @@ topic_producer = client.get_topic_producer(topic)
 topic_consumer = client.get_topic_consumer(topic)
 
 product = os.environ["product"]
-scenario = f"The following transcript represents a converstation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {product} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation, but only reply as CUSTOMER:"
+scenario = f"The following transcript represents a conversation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {product} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation, but only reply as CUSTOMER:"
 
 convostore = "conversation.json"
 
