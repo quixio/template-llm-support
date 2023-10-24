@@ -5,22 +5,7 @@ metadata:
   version: 1.0
 
 # This section describes the Deployments of the data pipeline
-deployments:
-  - name: AI Customer
-    application: AI Customer
-    deploymentType: Service
-    version: b6c441f64cbc72ca141cf7997f7fc78bdc6bcd6a
-    resources:
-      cpu: 1000
-      memory: 8000
-      replicas: 1
-    desiredStatus: Stopped
-    variables:
-      - name: output
-        inputType: OutputTopic
-        description: This is the output topic to write data to
-        required: true
-        value: ai-chat-history
+deployments: []
 
 # This section describes the Topics of the data pipeline
 topics:
