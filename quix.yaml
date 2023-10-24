@@ -29,6 +29,26 @@ deployments:
         description: ''
         required: true
         value: printer
+  - name: AI Support Agent
+    application: AI Customer Support Agent
+    deploymentType: Service
+    version: af0f93ae081e1bb8ca739e5e78b4c55e86e064a8
+    resources:
+      cpu: 1000
+      memory: 8000
+      replicas: 1
+    desiredStatus: Running
+    variables:
+      - name: output
+        inputType: OutputTopic
+        description: This is the output topic to write data to
+        required: true
+        value: ai-chat-history
+      - name: product
+        inputType: FreeText
+        description: ''
+        required: false
+        value: printer
 
 # This section describes the Topics of the data pipeline
 topics:
