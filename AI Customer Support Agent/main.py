@@ -31,12 +31,6 @@ scenario = f"The following transcript represents a converstation between you, a 
 
 convostore = "conversation.json"
 
-if os.path.exists(convostore):
-    os.remove(convostore)
-    print(f"The file {convostore} has been deleted.")
-else:
-    print(f"The file {convostore} does not exist yet.")
-
 def generate_response(prompt, max_tokens=250, temperature=0.7, top_p=0.95, repeat_penalty=1.2, top_k=150):
     response = llm(
         prompt=prompt,
