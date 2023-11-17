@@ -51,7 +51,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: false
-        value: printer
+        value: smart toilet
 
 # This section describes the Topics of the data pipeline
 topics:
