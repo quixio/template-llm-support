@@ -28,7 +28,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: true
-        value: printer
+        value: smart toilet
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
