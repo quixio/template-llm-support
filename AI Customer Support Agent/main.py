@@ -102,10 +102,10 @@ def update_conversation(text, role, conversation_id, counter, filename="conversa
 
 def publish_rp(response):
     print("Getting or creating stream...")
-    stream = topic_producer.get_or_create_stream("conversation_001")
-    stream.properties.name = "Chat conversation"
+    stream = topic_producer.get_or_create_stream("conversation_002")
+    stream.properties.name = "Chat conversation_002"
 
-    chatmessage = {"timestamp": [datetime.utcnow()], "role": ["agent"], "text": [response], "conversation_id": ["001"]}
+    chatmessage = {"timestamp": [datetime.utcnow()], "role": ["agent"], "text": [response], "conversation_id": ["002"]}
     df = pd.DataFrame(chatmessage)
 
     print("Publising stream...")
