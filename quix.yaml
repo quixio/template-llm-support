@@ -51,7 +51,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: false
-        value: smart toilet
+        value: roomba vacum cleaner
 
 # This section describes the Topics of the data pipeline
 topics:
