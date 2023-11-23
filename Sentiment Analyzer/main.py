@@ -1,42 +1,55 @@
 import quixstreams as qx
+from quix_function import QuixFunction
+from transformers import pipeline
 import os
-import pandas as pd
 
+classifier = pipeline('sentiment-analysis')
 
+buffer_delay = int(os.environ["buffer_delay"])
+
+# Quix injects credentials automatically to the client.
+# Alternatively, you can always pass an SDK token manually as an argument.
 client = qx.QuixStreamingClient()
 
-topic_consumer = client.get_topic_consumer(os.environ["input"], consumer_group = "empty-transformation")
-topic_producer = client.get_topic_producer(os.environ["output"])
+# Change consumer group to a different constant if you want to run model locally.
+print("Opening input and output topics")
+
+consumer_topic = client.get_topic_consumer(
+    os.environ["input"], 
+    "sentiment-analysis",
+    auto_offset_reset = qx.AutoOffsetReset.Earliest)
+producer_topic = client.get_topic_producer(os.environ["output"])
 
 
-def on_dataframe_received_handler(stream_consumer: qx.StreamConsumer, df: pd.DataFrame):
+# Callback called for each incoming stream
+def read_stream(consumer_stream: qx.StreamConsumer):
 
-    # Transform data frame here in this method. You can filter data or add new features.
-    # Pass modified data frame to output stream using stream producer.
-    # Set the output stream id to the same as the input stream or change it,
-    # if you grouped or merged data with different key.
-    stream_producer = topic_producer.get_or_create_stream(stream_id = stream_consumer.stream_id)
-    stream_producer.timeseries.buffer.publish(df)
+    # Create a new stream to output data
+    producer_stream = producer_topic.get_or_create_stream(consumer_stream.stream_id)
+    producer_stream.properties.parents.append(consumer_stream.stream_id)
+
+    # handle the data in a function to simplify the example
+    quix_function = QuixFunction(consumer_stream, producer_stream, classifier)
+
+    buffer = consumer_stream.timeseries.create_buffer()
+    buffer.time_span_in_milliseconds = buffer_delay
+    buffer.buffer_timeout = buffer_delay
+
+    # React to new data received from input topic.
+    buffer.on_dataframe_released = quix_function.on_dataframe_handler
+
+    # When input stream closes, we close output stream as well. 
+    def on_stream_close(stream_consumer: qx.StreamConsumer, end_type: qx.StreamEndType):
+        producer_stream.close()
+        print("Stream closed:" + producer_stream.stream_id)
+
+    consumer_stream.on_stream_closed = on_stream_close
 
 
-# Handle event data from samples that emit event data
-def on_event_data_received_handler(stream_consumer: qx.StreamConsumer, data: qx.EventData):
-    print(data)
-    # handle your event data here
-
-
-def on_stream_received_handler(stream_consumer: qx.StreamConsumer):
-    # subscribe to new DataFrames being received
-    # if you aren't familiar with DataFrames there are other callbacks available
-    # refer to the docs here: https://docs.quix.io/sdk/subscribe.html
-    stream_consumer.events.on_data_received = on_event_data_received_handler # register the event data callback
-    stream_consumer.timeseries.on_dataframe_received = on_dataframe_received_handler
-
-
-# subscribe to new streams being received
-topic_consumer.on_stream_received = on_stream_received_handler
+# Subscribe to events before initiating read to avoid losing out on any data
+consumer_topic.on_stream_received = read_stream
 
 print("Listening to streams. Press CTRL-C to exit.")
 
-# Handle termination signals and provide a graceful exit
+# Handle graceful exit of the model.
 qx.App.run()
