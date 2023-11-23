@@ -33,6 +33,7 @@ class QuixFunction:
                 df.loc[i, "average_sentiment"] = self.sum/self.count
 
             # Output data with new features
+            print(df)
             self.producer_stream.timeseries.publish(df)
 
         except Exception as e:
