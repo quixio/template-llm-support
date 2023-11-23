@@ -11,6 +11,11 @@ variables:
     description: Name of the output topic to write to.
     defaultValue: transform
     required: false
+  - name: buffer_delay
+    inputType: FreeText
+    description: Input buffer configuration (timeout and timespan in milliseconds).
+    defaultValue: 0
+    required: false
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
