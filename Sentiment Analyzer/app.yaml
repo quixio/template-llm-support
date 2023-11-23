@@ -9,8 +9,8 @@ variables:
   - name: output
     inputType: OutputTopic
     description: Name of the output topic to write to.
-    defaultValue: transform
-    required: false
+    defaultValue: ai-chat-history-with-sentiment
+    required: true
   - name: buffer_delay
     inputType: FreeText
     description: Input buffer configuration (timeout and timespan in milliseconds).
