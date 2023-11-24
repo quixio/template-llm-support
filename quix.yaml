@@ -11,7 +11,7 @@ deployments:
     deploymentType: Service
     version: b7a43c2588f1ae793511a778f0207b578e98632d
     resources:
-      cpu: 2000
+      cpu: 4000
       memory: 8000
       replicas: 1
     state:
@@ -34,7 +34,7 @@ deployments:
     deploymentType: Service
     version: b7e99b3e54c5c33979f261c34b429262446ce181
     resources:
-      cpu: 2000
+      cpu: 4000
       memory: 8000
       replicas: 1
     state:
@@ -52,6 +52,31 @@ deployments:
         description: ''
         required: false
         value: roomba vacum cleaner
+  - name: Sentiment Analyzer
+    application: Sentiment Analyzer
+    deploymentType: Service
+    version: 299bbf9fbc280aa902db6b8b56630ed3d3657674
+    resources:
+      cpu: 2000
+      memory: 4000
+      replicas: 1
+    desiredStatus: Running
+    variables:
+      - name: input
+        inputType: InputTopic
+        description: Name of the input topic to listen to.
+        required: false
+        value: ai-chat-history
+      - name: output
+        inputType: OutputTopic
+        description: Name of the output topic to write to.
+        required: true
+        value: ai-chat-history-with-sentiment
+      - name: buffer_delay
+        inputType: FreeText
+        description: Input buffer configuration (timeout and timespan in milliseconds).
+        required: false
+        value: 0
 
 # This section describes the Topics of the data pipeline
 topics:
@@ -68,4 +93,11 @@ topics:
       partitions: 2
       replicationFactor: 2
       retentionInMinutes: 60
+      retentionInBytes: 52428800
+  - name: ai-chat-history-with-sentiment
+    persisted: true
+    configuration:
+      partitions: 1
+      replicationFactor: 2
+      retentionInMinutes: 1440
       retentionInBytes: 52428800
