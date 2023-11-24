@@ -1,4 +1,4 @@
-import os
+import os, sys
 import quixstreams as qx
 import pandas as pd
 from pathlib import Path
@@ -7,6 +7,9 @@ from datetime import datetime
 from huggingface_hub import hf_hub_download
 
 role = os.environ["role"].lower()
+if role != "agent" and role != "customer":
+    print("Error: invalid role {}".format(role))
+    sys.exit(1)
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
