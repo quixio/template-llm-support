@@ -9,7 +9,7 @@ variables:
   - name: output
     inputType: OutputTopic
     description: Name of the output topic to write to.
-    defaultValue: ai-chat-history-with-sentiment
+    defaultValue: sentiment
     required: true
   - name: buffer_delay
     inputType: FreeText
