@@ -12,7 +12,7 @@ from quixstreams import Application, State, message_key
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
 from draft_producer import DraftProducer
 
-app = Application.Quix("transformation-v6", auto_offset_reset="earliest")
+app = Application.Quix("transformation-v7", auto_offset_reset="earliest")
 
 input_topic = app.topic(os.environ["output"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
@@ -152,7 +152,7 @@ sdf = sdf.apply(get_answer)
 
 sdf = sdf.update(lambda row: print(row))
 
-#sdf = sdf.to_topic(output_topic)
+sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
     app.run(sdf)
