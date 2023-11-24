@@ -16,7 +16,7 @@ class QuixFunction:
     def on_dataframe_handler(self, consumer_stream: qx.StreamConsumer, df_all_messages: pd.DataFrame):
         try:
             # Use the model to predict sentiment label and confidence score on received messages
-            model_response = self.classifier(list(df_all_messages["text"]))
+            model_response = self.classifier(list(df_all_messages["chat-message"]))
 
             # Add the model response ("label" and "score") to the pandas dataframe
             df = pd.concat([df_all_messages, pd.DataFrame(model_response)], axis = 1)
