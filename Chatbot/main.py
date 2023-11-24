@@ -57,6 +57,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
         if sender != role:
             msg = ts.parameters["text"].string_value
             print("{}: {}".format(sender, msg))
+            print("Generating response...")
             reply = chain.run(msg)
             print("{}: {}".format(role, reply))
             
