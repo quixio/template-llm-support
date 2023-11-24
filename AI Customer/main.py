@@ -65,7 +65,7 @@ def generate_response(row, prompt, max_tokens=250, temperature=0.7, top_p=0.95, 
         response += iteration_text
         row["chat-message"] = response
         row["draft"] = True
-        sdf._produce(output_topic.name, row, message_key())
+        draft_producer.produce(row, message_key())
         print(iteration, end='')
 
     return response
