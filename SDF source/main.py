@@ -2,9 +2,7 @@ from quixstreams.kafka import Producer
 from quixstreams.platforms.quix import QuixKafkaConfigsBuilder
 import os
 import random
-import timedelta
 import pandas as pd
-import datetime
 import json
 from datetime import datetime, timedelta
 
