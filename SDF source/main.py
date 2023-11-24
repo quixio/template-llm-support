@@ -6,7 +6,7 @@ import timedelta
 import pandas as pd
 import datetime
 import json
-import system
+import time
 from datetime import datetime, timedelta
 
 
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     
     print("Hi ", end="")
     print(", how are you?", end="")
-    system.sleel(10)
+    time.sleep(10)
     #main()
 
 
