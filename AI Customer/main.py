@@ -45,7 +45,7 @@ else:
 
 sdf = app.dataframe(input_topic)
 
-def generate_response(prompt, max_tokens=250, temperature=0.7, top_p=0.95, repeat_penalty=1.2, top_k=150):
+def generate_response(row, prompt, max_tokens=250, temperature=0.7, top_p=0.95, repeat_penalty=1.2, top_k=150):
     result = llm(
         prompt=prompt,
         max_tokens=max_tokens,
@@ -61,8 +61,8 @@ def generate_response(prompt, max_tokens=250, temperature=0.7, top_p=0.95, repea
 
     response = ""
     for iteration in result:
-        print(iteration)
-        response += iteration
+        iteration_text = iteration["choices"][0]["text"]
+        response += iteration_text
         row["chat-message"] = response
         row["draft"] = True
         sdf._produce(output_topic.name, row, message_key())
@@ -70,7 +70,7 @@ def generate_response(prompt, max_tokens=250, temperature=0.7, top_p=0.95, repea
 
     return response
     
-def update_conversation(text, role, conversation_id, filename="conversation.json"):
+def update_conversation(row, text, role, conversation_id, filename="conversation.json"):
     """
     Update the conversation history stored in a JSON file.
 
@@ -97,7 +97,7 @@ def update_conversation(text, role, conversation_id, filename="conversation.json
 
     # Generate the reply using the AI model
     print("Thinking about my response....")
-    reply = generate_response(prompt)  # This function should be defined elsewhere to handle the interaction with the AI model
+    reply = generate_response(row, prompt)  # This function should be defined elsewhere to handle the interaction with the AI model
     finalreply = reply.replace(prompt, ' ').replace('{', '').replace('}', '').replace('"', '').strip()
     print(f"My reply was '{finalreply}'")
     # Create a dictionary for the reply
@@ -122,7 +122,7 @@ counter = 0
 
 def get_answer(row: dict):
     print(f"\n------\nRESPONDING T0: {row['chat-message']} \n------\n")
-    custreply = update_conversation({row['chat-message']}, "customer", message_key() , convostore)
+    custreply = update_conversation(row, {row['chat-message']}, "customer", message_key() , convostore)
     print(custreply)
     #publish_rp(custreply)
     print("I have sent my reply to the agent.")
