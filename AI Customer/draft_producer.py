@@ -14,7 +14,7 @@ class DraftProducer:
     def __del__(self):
         self.producer.flush()
             
-    def produce(row: dict, key: str):
+    def produce(self, row: dict, key: str):
         self.producer.produce(
                     topic=self.topic,
                     key=str(key),
