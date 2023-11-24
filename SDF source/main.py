@@ -42,7 +42,7 @@ def main():
 
         for index, row in df.iterrows():
 
-            print(row)
+            print(row.to_dict())
  
             producer.produce(
                 topic=topic,
