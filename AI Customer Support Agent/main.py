@@ -67,7 +67,7 @@ def update_conversation(text, role, conversation_id, counter, filename="conversa
         conversation_history = []
 
     # Include the conversation history as part of the prompt
-    full_history = "\n".join([f"{msg['role'].upper()}: {msg['text']}" for msg in conversation_history])
+    full_history = "\n".join([f"{msg['TAG__name'].upper()}: {msg['chat-message']}" for msg in conversation_history])
     prompt = scenario + '\n\n' + full_history + f'\nCUSTOMER:{text}' + '\nAGENT:'
 
     if counter == 0:
