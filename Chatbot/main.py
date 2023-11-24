@@ -26,9 +26,9 @@ topic_consumer = client.get_topic_consumer(os.environ["topic"])
 product = os.environ["product"]
 scenario = """
             The following transcript represents a converstation between you, a 
-            customer support agent who works for a large electronics retailer called
-            'ACME electronics', and a customer who has bought a defective {product}
-            and wants to understand what their options are for resolving the issue. 
+            customer support agent who works for a large electronics retailer called 
+            'ACME electronics', and a customer who has bought a defective {} and 
+            wants to understand what their options are for resolving the issue. 
             Please continue the conversation, but only reply as AGENT:""".format(product)
 
 def on_stream_recv_handler(sc: qx.StreamConsumer):
