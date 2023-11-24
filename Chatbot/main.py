@@ -29,7 +29,15 @@ if not Path(model_path).exists():
 else:
     print("Loading model from state...")
 
-llm = LlamaCpp(model_path=model_path, streaming=False)
+llm = LlamaCpp(
+        model_path=model_path,
+        max_tokens=250,
+        top_p=0.95,
+        top_k=150,
+        temperature=0.7,
+        repeat_penalty=1.2,
+        streaming=False
+    )
 model = Llama2Chat(llm=llm)
 memory = ConversationTokenBufferMemory(llm=llm, max_token_limit=300, return_messages=True)
 chain = ConversationChain(llm=model, memory=memory)
