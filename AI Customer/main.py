@@ -43,6 +43,8 @@ if os.path.exists(convostore):
 else:
     print(f"The file {convostore} does not exist yet.")
 
+sdf = app.dataframe(input_topic)
+
 def generate_response(prompt, max_tokens=250, temperature=0.7, top_p=0.95, repeat_penalty=1.2, top_k=150):
     response = llm(
         prompt=prompt,
@@ -56,8 +58,17 @@ def generate_response(prompt, max_tokens=250, temperature=0.7, top_p=0.95, repea
         echo=True
     )
 
-    return response["choices"][0]["text"]
 
+    response = ""
+    for iteration in result:
+        response += iteration
+        row["chat-message"] = response
+        row["draft"] = True
+        sdf._produce(output_topic.name, row, message_key())
+        print(iteration, end='')
+
+    return response
+    
 def update_conversation(text, role, conversation_id, filename="conversation.json"):
     """
     Update the conversation history stored in a JSON file.
@@ -115,22 +126,14 @@ def get_answer(row: dict):
     #publish_rp(custreply)
     print("I have sent my reply to the agent.")
 
-sdf = app.dataframe(input_topic)
 def call_llm(row: dict, callback):
 
     result = llm(row["chat-message"])
 
 
-    response = ""
-    for iteration in result:
-        response += iteration
-        row["chat-message"] = response
-        row["draft"] = True
-        sdf._produce(output_topic.name, row, message_key())
-        print(iteration, end='')
     
 
-    return response
+    return result
 
 sdf = sdf[sdf["Tags"].contains("name")]
 # Here put transformation logic.
