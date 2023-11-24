@@ -14,6 +14,7 @@ from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseries
 
 app = Application.Quix("transformation-v1", auto_offset_reset="latest")
 
+input_topic = app.topic(os.environ["output"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
 
 
@@ -113,7 +114,7 @@ def get_answer(row: dict):
     #publish_rp(custreply)
     print("I have sent my reply to the agent.")
 
-sdf = app.dataframe(output_topic)
+sdf = app.dataframe(input_topic)
 def call_llm(row: dict, callback):
 
     result = llm(row["chat-message"])
