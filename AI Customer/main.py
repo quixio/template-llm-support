@@ -16,7 +16,7 @@ app = Application.Quix("transformation-v4", auto_offset_reset="earliest")
 
 input_topic = app.topic(os.environ["output"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
-draft_producer = DraftProducer(os.environ["output"])
+draft_producer = DraftProducer(os.environ["draft_topic"])
 
 
 file_path = Path('./state/llama-2-7b-chat.Q4_K_M.gguf')
