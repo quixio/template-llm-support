@@ -6,6 +6,11 @@ variables:
     description: Chat topic
     defaultValue: ''
     required: true
+  - name: role
+    inputType: FreeText
+    description: 'Chatbot role: AGENT, CUSTOMER'
+    defaultValue: ''
+    required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
