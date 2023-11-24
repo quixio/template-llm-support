@@ -60,7 +60,7 @@ def main():
 if __name__ == "__main__":
     
     print("Hi ", end="")
-    print(", how are you?", end="")
+    print(", how are you?", end="", flush=True)
     time.sleep(10)
     #main()
 
