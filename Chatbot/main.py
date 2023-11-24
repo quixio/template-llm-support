@@ -7,8 +7,11 @@ from huggingface_hub import hf_hub_download
 
 AGENT_ROLE = "agent"
 CUSTOMER_ROLE = "customer"
+CONVERSATION_ID = "002"
 
+conversation_id = CONVERSATION_ID
 role = os.environ["role"].lower()
+
 if role != AGENT_ROLE and role != CUSTOMER_ROLE:
     print("Error: invalid role {}".format(role))
     sys.exit(1)
@@ -52,7 +55,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             td.add_timestamp(datetime.utcnow()) \
               .add_value("role", role) \
               .add_value("text", reply) \
-              .add_value("conversation_id", "002")
+              .add_value("conversation_id", conversation_id)
 
             sp = topic_producer.get_or_create_stream(sc.stream_id)
             sp.timeseries.buffer.publish(td)
@@ -62,6 +65,17 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
     buf.on_data_released = on_data_recv_handler
 
 topic_consumer.on_stream_received = on_stream_recv_handler
+
+if role == AGENT_ROLE:
+    # start conversation
+    greeting = "Hello, welcome to ACME Electronics support, my name is Percy. How can I help you today?"
+    msg = qx.TimeseriesData()
+    msg.add_timestamp(datetime.utcnow()) \
+       .add_value("role", role) \
+       .add_value("text", greeting) \
+       .add_value("conversation_id", conversation_id)
+    sp = topic_producer.get_or_create_stream("conversation_{}".format(conversation_id))
+    sp.timeseries.buffer.publish(msg)
 
 print("Listening to streams. Press CTRL-C to exit.")
 qx.App.run()
