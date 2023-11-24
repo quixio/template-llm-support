@@ -134,6 +134,8 @@ def get_answer(row: dict):
     print(custreply)
     #publish_rp(custreply)
     print("I have sent my reply to the agent.")
+    
+    return row
 
 def call_llm(row: dict, callback):
 
