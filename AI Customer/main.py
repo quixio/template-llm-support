@@ -1,7 +1,6 @@
 from llama_cpp import Llama
 import os
 import json
-import quixstreams as qx
 import pandas as pd
 from datetime import datetime
 from huggingface_hub import hf_hub_download
@@ -9,7 +8,7 @@ from pathlib import Path
 
 
 import os
-from quixstreams import Application, State
+from quixstreams import Application, State, message_key
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
 
 
@@ -32,12 +31,6 @@ else:
     print('The model has been detected in state. Loading model from state...')
 
 llm = Llama(model_path="./state/llama-2-7b-chat.Q4_K_M.gguf")
-topic = os.environ["output"]
-client = qx.QuixStreamingClient()
-
-# Open a topic to publish data to
-topic_producer = client.get_topic_producer(topic)
-topic_consumer = client.get_topic_consumer(topic)
 
 product = os.environ["product"]
 scenario = f"The following transcript represents a conversation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {product} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation, but only reply as CUSTOMER:"
@@ -141,18 +134,23 @@ def on_dataframe_received_handler(stream_consumer: qx.StreamConsumer, df: pd.Dat
 def on_stream_received_handler(stream_consumer: qx.StreamConsumer):
     stream_consumer.timeseries.on_dataframe_received = on_dataframe_received_handler
 
-# subscribe to new streams being received
-topic_consumer.on_stream_received = on_stream_received_handler
-
-print("Listening to streams. Press CTRL-C to exit.")
+def get_answer(row: dict):
+    print(f"\n------\nRESPONDING T0: {row['chat-message']} \n------\n")
+    custreply = update_conversation({row['chat-message']}, "customer", message_key() , convostore)
+    print(custreply)
+    #publish_rp(custreply)
+    print("I have sent my reply to the agent.")
 
 sdf = app.dataframe(input_topic)
 
 # Here put transformation logic.
+sdf = sdf[sdf["Tags"]["name"] == "agent"]
+
+sdf = sdf.apply(get_answer)
 
 sdf = sdf.update(lambda row: print(row))
 
-sdf = sdf.to_topic(output_topic)
+#sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
     app.run(sdf)
