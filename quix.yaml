@@ -77,6 +77,49 @@ deployments:
         description: Input buffer configuration (timeout and timespan in milliseconds).
         required: false
         value: 0
+  - name: Sentiment Demo UI
+    application: Sentiment Demo UI
+    deploymentType: Service
+    version: 0e5fea27f587572dfd4a0d25c12d2dee1a874754
+    resources:
+      cpu: 1000
+      memory: 500
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: app
+    desiredStatus: Running
+    variables:
+      - name: sentiment
+        inputType: FreeText
+        description: The topic to read from
+        required: true
+        value: chat-with-sentiment
+      - name: messages
+        inputType: FreeText
+        description: The topic to read from
+        required: true
+        value: chat-messages
+      - name: drafts
+        inputType: FreeText
+        description: ''
+        required: true
+        value: drafts
+      - name: drafts_sentiment
+        inputType: FreeText
+        description: ''
+        required: false
+        value: drafts_sentiment
+      - name: twitch_messages
+        inputType: FreeText
+        description: ''
+        required: false
+        value: twitch_messages
+      - name: bearer_token
+        inputType: Secret
+        description: ''
+        required: true
+        secretKey: bearerToken
 
 # This section describes the Topics of the data pipeline
 topics:
