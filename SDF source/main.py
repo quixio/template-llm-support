@@ -49,7 +49,7 @@ def main():
  
             producer.produce(
                 topic=topic,
-                key=row["user_id"],
+                key=str(row["user_id"]),
                 value=json.dumps(row.to_dict()),
             )
 
