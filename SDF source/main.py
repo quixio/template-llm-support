@@ -42,6 +42,7 @@ def main():
 
         for row in df.iterrows():
 
+            print(dict(row))
  
             producer.produce(
                 topic=topic,
@@ -49,7 +50,6 @@ def main():
                 value=json.dumps(row),
             )
 
-            print(dict(row))
 
 
 
