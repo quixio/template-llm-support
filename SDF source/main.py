@@ -40,14 +40,14 @@ def main():
         # Displaying the first few rows of the DataFrame
         print(df)
 
-        for row in df.iterrows():
+        for index, row in df.iterrows():
 
             print(row)
  
             producer.produce(
                 topic=topic,
                 key=row["user_id"],
-                value=json.dumps(row),
+                value=json.dumps(row.to_dict()),
             )
 
 
