@@ -1,6 +1,8 @@
+from quixstreams.kafka import Producer
+from quixstreams.platforms.quix import QuixKafkaConfigsBuilder
+import json
 
-
-def class DraftProducer:
+class DraftProducer:
 
     def __init__(self):
          cfg_builder = QuixKafkaConfigsBuilder()
@@ -10,8 +12,7 @@ def class DraftProducer:
         self.producer = Producer(cfgs.pop("bootstrap.servers"), extra_config=cfgs)
 
     def __del__(self):
-        # Ensure the file is closed when the object is destroyed
-        self.producer.
+        self.producer.flush()
             
     def produce(row: dict):
         self.producer.produce(
