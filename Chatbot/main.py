@@ -6,7 +6,7 @@ from llama_cpp import Llama
 from datetime import datetime
 from huggingface_hub import hf_hub_download
 
-role = os.environ["role"].upper()
+role = os.environ["role"].lower()
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
@@ -44,7 +44,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             
             data = {
                 "timestamp": [datetime.utcnow()],
-                "role": ["agent"], 
+                "role": [role], 
                 "text": [reply], 
                 "conversation_id": ["002"]
             }
