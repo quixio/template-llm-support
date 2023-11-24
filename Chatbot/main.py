@@ -1,34 +1,59 @@
-import quixstreams as qx
-import time
-import datetime
-import math
 import os
+import quixstreams as qx
+import pandas as pd
+from pathlib import Path
+from llama_cpp import Llama
+from datetime import datetime
+from huggingface_hub import hf_hub_download
 
+role = os.environ["role"].upper()
 
-# Quix injects credentials automatically to the client. 
-# Alternatively, you can always pass an SDK token manually as an argument.
+model_name = "llama-2-7b-chat.Q4_K_M.gguf"
+model_path = "./state/{}".format(model_name)
+
+if not Path(model_path).exists():
+    print("The model path does not exist in state. Downloading model...")
+    hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
+else:
+    print("Loading model from state...")
+
+llm = Llama(model_path)
+
 client = qx.QuixStreamingClient()
+topic_producer = client.get_topic_producer(os.environ["topic"])
+topic_consumer = client.get_topic_consumer(os.environ["topic"])
 
-# Open the output topic where to write data out
-topic_producer = client.get_topic_producer(topic_id_or_name = os.environ["output"])
+product = os.environ["product"]
+scenario = """
+            The following transcript represents a converstation between you, a 
+            customer support agent who works for a large electronics retailer called
+            'ACME electronics', and a customer who has bought a defective {product}
+            and wants to understand what their options are for resolving the issue. 
+            Please continue the conversation, but only reply as AGENT:""".format(product)
 
-# Set stream ID or leave parameters empty to get stream ID generated.
-stream = topic_producer.create_stream()
-stream.properties.name = "Hello World Python stream"
+def on_stream_recv_handler(sc: qx.StreamConsumer):
+    print("Received stream {}".format(sc.stream_id))
 
-# Add metadata about time series data you are about to send. 
-stream.timeseries.add_definition("ParameterA").set_range(-1.2, 1.2)
-stream.timeseries.buffer.time_span_in_milliseconds = 100
+    def on_data_recv_handler(_: qx.StreamConsumer, df: pd.DataFrame):
+        sender = df["role"][0].upper()
+        if sender != role:
+            msg = df["text"][0]
+            print("{}: {}".format(sender, msg))
+            reply = ""
+            print("{}: {}".format(role, reply))
+            
+            data = {
+                "timestamp": [datetime.utcnow()],
+                "role": ["agent"], 
+                "text": [reply], 
+                "conversation_id": ["002"]
+            }
+            sp = topic_producer.get_or_create_stream(sc.stream_id)
+            sp.timeseries.buffer.publish(pd.DataFrame(data))
 
-print("Sending values for 30 seconds.")
+    sc.timeseries.on_dataframe_received = on_data_recv_handler
 
-for index in range(0, 3000):
-    stream.timeseries \
-        .buffer \
-        .add_timestamp(datetime.datetime.utcnow()) \
-        .add_value("ParameterA", math.sin(index / 200.0) + math.sin(index) / 5.0) \
-        .publish()
-    time.sleep(0.01)
+topic_consumer.on_stream_received = on_stream_recv_handler
 
-print("Closing stream")
-stream.close()
+print("Listening to streams. Press CTRL-C to exit.")
+qx.App.run()

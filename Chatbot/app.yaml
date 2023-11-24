@@ -1,9 +1,9 @@
 name: Chatbot
 language: python
 variables:
-  - name: output
+  - name: topic
     inputType: OutputTopic
-    description: This is the output topic for hello world data
+    description: Chat topic
     defaultValue: hello-world-source
     required: true
 dockerfile: build/dockerfile
