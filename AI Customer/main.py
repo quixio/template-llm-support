@@ -61,6 +61,7 @@ def generate_response(prompt, max_tokens=250, temperature=0.7, top_p=0.95, repea
 
     response = ""
     for iteration in result:
+        print(iteration)
         response += iteration
         row["chat-message"] = response
         row["draft"] = True
