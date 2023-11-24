@@ -115,8 +115,6 @@ def get_answer(row: dict):
     print("I have sent my reply to the agent.")
 
 sdf = app.dataframe(input_topic)
-
-
 def call_llm(row: dict, callback):
 
     result = llm(row["chat-message"])
@@ -125,8 +123,11 @@ def call_llm(row: dict, callback):
     response = ""
     for iteration in result:
         response += iteration
-
-        
+        row["chat-message"] = response
+        row["draft"] = True
+        sdf._produce(output_topic.name, row, message_key())
+        print(iteration, end='')
+    
 
     return response
 
