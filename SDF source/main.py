@@ -37,6 +37,9 @@ def main():
         # Create DataFrame
         df = pd.DataFrame(data)
 
+        df['Timestamp'] = df['Timestamp'].apply(lambda x: x.strftime('%Y-%m-%dT%H:%M:%S'))
+
+
         # Displaying the first few rows of the DataFrame
         print(df)
 
