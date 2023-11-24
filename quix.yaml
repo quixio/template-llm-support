@@ -119,7 +119,7 @@ deployments:
         inputType: Secret
         description: ''
         required: true
-        secretKey: bearerToken
+        secretKey: beareToken
 
 # This section describes the Topics of the data pipeline
 topics:
