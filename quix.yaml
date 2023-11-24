@@ -9,9 +9,9 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: a59498a496c75d375604888bb4ad2a9e3c9eaec5
+    version: 0284d1308efca7df8d117ced6f643e7c541c3572
     resources:
-      cpu: 4000
+      cpu: 8000
       memory: 8000
       replicas: 1
     state:
@@ -29,6 +29,11 @@ deployments:
         description: ''
         required: true
         value: roomba vacum cleaner
+      - name: draft_topic
+        inputType: InputTopic
+        description: ''
+        required: true
+        value: drafts
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
