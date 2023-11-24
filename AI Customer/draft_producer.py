@@ -18,7 +18,7 @@ class DraftProducer:
         self.producer.produce(
                     topic=self.topic,
                     key=str(key),
-                    value=json.dumps(row.to_dict()),
+                    value=json.dumps(row,
                 )
 
     
