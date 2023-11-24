@@ -46,7 +46,7 @@ deployments:
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: ai-chat-history
+        value: messages
       - name: product
         inputType: FreeText
         description: ''
