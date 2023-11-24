@@ -16,7 +16,7 @@ print("Opening input and output topics")
 
 consumer_topic = client.get_topic_consumer(
     os.environ["input"], 
-    "sentiment-analysis",
+    "sentiment-analysis-v1",
     auto_offset_reset = qx.AutoOffsetReset.Earliest)
 producer_topic = client.get_topic_producer(os.environ["output"])
 
