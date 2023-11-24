@@ -6,6 +6,7 @@ import timedelta
 import pandas as pd
 import datetime
 import json
+from datetime import datetime, timedelta
 
 
 def main():
@@ -28,7 +29,7 @@ def main():
 
         # Generate sample data
         data = {
-            'Timestamp': [datetime.datetime.now() - timedelta(days=random.randint(0, 30)) for _ in range(num_samples)],
+            'Timestamp': [datetime.now() - timedelta(days=random.randint(0, 30)) for _ in range(num_samples)],
             'user_id': [random.choice(user_ids) for _ in range(num_samples)],
             'impression': [random.choice(impressions) for _ in range(num_samples)]
         }
