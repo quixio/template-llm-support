@@ -131,7 +131,7 @@ def call_llm(row: dict, callback):
 
     return response
 
-sdf = sdf[sdf.contains("Tags")]
+sdf = sdf[sdf["Tags"].contains("name")]
 # Here put transformation logic.
 sdf = sdf[sdf["Tags"]["name"] == "agent"]
 
