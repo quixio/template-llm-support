@@ -72,9 +72,9 @@ def update_conversation(text, role, conversation_id, counter, filename="conversa
 
     if counter == 0:
         reply_dict = {
-            "role": "AGENT",
-            "conversation_id": conversation_id,
-            "text": text,
+            "TAG__name": "AGENT",
+            "TAG__room": conversation_id,
+            "chat-message": text,
         }
         finalreply = text
         conversation_history.append(reply_dict)
@@ -86,9 +86,9 @@ def update_conversation(text, role, conversation_id, counter, filename="conversa
         print(f"My reply was '{finalreply}'")
         # Create a dictionary for the reply
         reply_dict = {
-            "role": role.upper(),
-            "conversation_id": conversation_id,
-            "text": finalreply,
+            "TAG__name": role.upper(),
+            "TAG__room": conversation_id,
+            "chat-message": finalreply,
         }
         # Append the reply dictionary to the conversation history
         conversation_history.append(reply_dict)
@@ -105,7 +105,7 @@ def publish_rp(response):
     stream = topic_producer.get_or_create_stream("conversation_002")
     stream.properties.name = "Chat conversation_002"
 
-    chatmessage = {"timestamp": [datetime.utcnow()], "role": ["agent"], "text": [response], "conversation_id": ["002"]}
+    chatmessage = {"timestamp": [datetime.utcnow()], "TAG__name": ["agent"], "chat-message": [response], "TAG__room": ["002"]}
     df = pd.DataFrame(chatmessage)
 
     print("Publising stream...")
@@ -125,8 +125,8 @@ print(f"My greeting was: {agentreply}")
 def on_dataframe_received_handler(stream_consumer: qx.StreamConsumer, df: pd.DataFrame):
     global counter
     counter = counter + 1
-    chatmessage = df["text"][0]
-    chatrole = df["role"][0]
+    chatmessage = df["chat-message"][0]
+    chatrole = df["TAG__name"][0]
     # Only respond if the message is from the opposite role
     if chatrole == "agent":
         print("(Detected one of my own messages)")
