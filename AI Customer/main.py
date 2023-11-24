@@ -104,35 +104,8 @@ def update_conversation(text, role, conversation_id, filename="conversation.json
     # Return the generated reply
     return finalreply
 
-def publish_rp(response):
-    print("Getting or creating stream...")
-    stream = topic_producer.get_or_create_stream("conversation_002")
-    stream.properties.name = "Chat conversation_002"
-
-    chatmessage = {"timestamp": [datetime.utcnow()], "TAG__name": ["customer"], "chat-message": [response], "TAG__room": ["002"]}
-    df = pd.DataFrame(chatmessage)
-
-    print("Publising stream...")
-    stream.timeseries.buffer.publish(df)
-    print("Published")
-
 print("Listening for messages...")
 counter = 0
-
-# Callback triggered for each new data frame
-def on_dataframe_received_handler(stream_consumer: qx.StreamConsumer, df: pd.DataFrame):
-    chatmessage = df["chat-message"][0]
-    chatrole = df["TAG__name"][0]
-    # Only respond if the message is from the opposite role
-    if chatrole == "customer":
-        print("(Detected one of my own messages)")
-    elif chatrole == "agent":
-        print(f"\n------\nRESPONDING T0: {chatmessage} \n------\n")
-        custreply = update_conversation({chatmessage}, "customer", stream_consumer.stream_id, convostore)
-        publish_rp(custreply)
-        print("I have sent my reply to the agent.")
-def on_stream_received_handler(stream_consumer: qx.StreamConsumer):
-    stream_consumer.timeseries.on_dataframe_received = on_dataframe_received_handler
 
 def get_answer(row: dict):
     print(f"\n------\nRESPONDING T0: {row['chat-message']} \n------\n")
@@ -153,7 +126,7 @@ def call_llm(row: dict, callback):
     for iteration in result:
         response += iteration
 
-        sdf._producer.produce(response)
+        
 
     return response
 
