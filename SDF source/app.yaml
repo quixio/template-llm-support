@@ -8,7 +8,7 @@ variables:
   - name: output
     inputType: OutputTopic
     description: Name of the output topic to write to.
-    defaultValue: transform
+    defaultValue: test
     required: false
 dockerfile: build/dockerfile
 runEntryPoint: main.py
