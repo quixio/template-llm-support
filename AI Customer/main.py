@@ -68,7 +68,6 @@ def generate_response(row, prompt, max_tokens=250, temperature=0.7, top_p=0.95, 
         iteration_text = iteration["choices"][0]["text"]
         response += iteration_text
         row["chat-message"] = response
-        row["draft"] = True
         draft_producer.produce(row, message_key())
         print(str(iteration_text), end="", flush=True)
 
