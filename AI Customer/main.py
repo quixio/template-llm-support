@@ -46,7 +46,7 @@ else:
 sdf = app.dataframe(input_topic)
 
 def generate_response(prompt, max_tokens=250, temperature=0.7, top_p=0.95, repeat_penalty=1.2, top_k=150):
-    response = llm(
+    result = llm(
         prompt=prompt,
         max_tokens=max_tokens,
         temperature=temperature,
