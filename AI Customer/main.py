@@ -102,6 +102,7 @@ def update_conversation(row, text, role, conversation_id, filename="conversation
     # Generate the reply using the AI model
     print("Thinking about my response....")
     reply = generate_response(row, prompt)  # This function should be defined elsewhere to handle the interaction with the AI model
+    print(reply)
     finalreply = reply.replace(prompt, ' ').replace('{', '').replace('}', '').replace('"', '').strip()
     print(f"My reply was '{finalreply}'")
     # Create a dictionary for the reply
