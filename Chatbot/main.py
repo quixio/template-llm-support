@@ -38,7 +38,6 @@ llm = LlamaCpp(
         temperature=0.7,
         repeat_penalty=1.2,
         streaming=False,
-        stop=["{}:".format(AGENT_ROLE.upper()),"{}:".format(CUSTOMER_ROLE.upper()),"\n"],
     )
 
 model = Llama2Chat(llm=llm)
@@ -53,22 +52,22 @@ memory = ConversationTokenBufferMemory(
 prompt = None
 if role == AGENT_ROLE:
     prompt = PromptTemplate(
-            input_variables=["history", "input", "product"],
-            template="""The following transcript represents a converstation between you, a customer 
-                        support agent who works for a large electronics retailer called 'ACME electronics', 
-                        and a customer who has bought a defective {product} and wants to understand what 
-                        their options are for resolving the issue. Please continue the conversation.\n\n
-                        Current conversation:\n{history}\nCUSTOMER: {input}\nAGENT:"""
-        )
+        input_variables=["history", "input"],
+        partial_variables={"product": os.environ["product"]},
+        template="""The following transcript represents a converstation between you, a customer 
+                    support agent who works for a large electronics retailer called 'ACME electronics', 
+                    and a customer who has bought a defective {product} and wants to understand what 
+                    their options are for resolving the issue. Please continue the conversation.\n\n
+                    Current conversation:\n{history}\nCUSTOMER: {input}\nAGENT:""")
 else:
     prompt = PromptTemplate(
-        input_variables=["history", "input", "product"],
+        input_variables=["history", "input"],
+        partial_variables={"product": os.environ["product"]},
         template="""The following transcript represents a conversation between you, a customer of a large 
                     electronics retailer called 'ACME electronics', and a support agent who you are contacting 
                     to resolve an issue with a defective {product} you purchased. Your goal is try and 
                     understand what your options are for resolving the issue. Please continue the conversation.\n\n
-                    Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER:"""
-        )
+                    Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER:""")
 
 chain = ConversationChain(llm=model, prompt=prompt, memory=memory)
 
