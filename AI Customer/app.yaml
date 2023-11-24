@@ -4,7 +4,7 @@ variables:
   - name: output
     inputType: OutputTopic
     description: This is the output topic to write data to
-    defaultValue: ai-chat-history
+    defaultValue: messages
     required: true
   - name: product
     inputType: FreeText
