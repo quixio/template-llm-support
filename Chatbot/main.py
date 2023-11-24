@@ -1,9 +1,14 @@
 import os, sys
-import quixstreams as qx
 from pathlib import Path
-from llama_cpp import Llama
 from datetime import datetime
+
+import quixstreams as qx
 from huggingface_hub import hf_hub_download
+
+from langchain.llms import LlamaCpp
+from langchain.chains import LLMChain
+from langchain_experimental.chat_models import Llama2Chat
+from langchain.memory import ConversationTokenBufferMemory
 
 AGENT_ROLE = "agent"
 CUSTOMER_ROLE = "customer"
@@ -24,7 +29,10 @@ if not Path(model_path).exists():
 else:
     print("Loading model from state...")
 
-llm = Llama(model_path)
+llm = LlamaCpp(model_path=model_path, streaming=False)
+model = Llama2Chat(llm=llm)
+memory = ConversationTokenBufferMemory(llm=llm, max_token_limit=300, return_messages=True)
+chain = LLMChain(llm=model, memory=memory)
 
 client = qx.QuixStreamingClient()
 topic_producer = client.get_topic_producer(os.environ["topic"])
@@ -48,7 +56,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
         if sender != role:
             msg = ts.parameters["text"].string_value
             print("{}: {}".format(sender, msg))
-            reply = ""
+            reply = chain.run(msg)
             print("{}: {}".format(role, reply))
             
             td = qx.TimeseriesData()
