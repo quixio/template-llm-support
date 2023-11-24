@@ -66,12 +66,12 @@ deployments:
         inputType: InputTopic
         description: Name of the input topic to listen to.
         required: false
-        value: ai-chat-history
+        value: messages
       - name: output
         inputType: OutputTopic
         description: Name of the output topic to write to.
         required: true
-        value: ai-chat-history-with-sentiment
+        value: sentiment
       - name: buffer_delay
         inputType: FreeText
         description: Input buffer configuration (timeout and timespan in milliseconds).
