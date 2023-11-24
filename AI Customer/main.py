@@ -114,9 +114,9 @@ def update_conversation(row, text, role, conversation_id, filename="conversation
 
     print(reply_dict)
 
-    print(conversation_history)
     # Append the reply dictionary to the conversation history
     conversation_history.append(reply_dict)
+    print(conversation_history)
 
     # Write the updated conversation history back to the file
     with open(filename, 'w') as file:
