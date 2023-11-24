@@ -11,6 +11,11 @@ variables:
     description: 'Chatbot role: AGENT, CUSTOMER'
     defaultValue: ''
     required: true
+  - name: product
+    inputType: FreeText
+    description: Product name.
+    defaultValue: Roomba vacuum cleaner
+    required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
