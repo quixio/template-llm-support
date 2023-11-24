@@ -143,6 +143,21 @@ def get_answer(row: dict):
 
 sdf = app.dataframe(input_topic)
 
+
+def call_llm(row: dict, callback):
+
+    result = llm(row["chat-message"])
+
+
+    response = ""
+    for iteration in result:
+        response += iteration
+
+        sdf._producer.produce(response)
+
+    return response
+
+
 # Here put transformation logic.
 sdf = sdf[sdf["Tags"]["name"] == "agent"]
 
@@ -150,12 +165,14 @@ sdf = sdf.apply(get_answer)
 
 sdf = sdf.update(lambda row: print(row))
 
+draft_sdf = sdf[sdf["draft"] == True]
+
+messages_sdf = sdf[sdf["draft"] == False]
+
 #sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
-    app.run(sdf)
+    app.run(draft_sdf, messages_sdf)
 
 
-# Handle termination signals and provide a graceful exit
-qx.App.run()
 
