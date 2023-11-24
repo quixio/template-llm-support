@@ -1,0 +1,35 @@
+name: Sentiment Demo UI
+language: nodejs
+variables:
+  - name: sentiment
+    inputType: FreeText
+    description: The topic to read from
+    defaultValue: chat-with-sentiment
+    required: true
+  - name: messages
+    inputType: FreeText
+    description: The topic to read from
+    defaultValue: chat-messages
+    required: true
+  - name: drafts
+    inputType: FreeText
+    description: ''
+    defaultValue: drafts
+    required: true
+  - name: drafts_sentiment
+    inputType: FreeText
+    description: ''
+    defaultValue: drafts_sentiment
+    required: false
+  - name: twitch_messages
+    inputType: FreeText
+    description: ''
+    defaultValue: twitch_messages
+    required: false
+  - name: bearer_token
+    inputType: Secret
+    description: ''
+    defaultValue: bearerToken
+    required: true
+dockerfile: src/build/dockerfile
+defaultFile: src/app/services/quix.service.ts

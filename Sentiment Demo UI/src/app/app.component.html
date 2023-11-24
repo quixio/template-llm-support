@@ -1,0 +1,29 @@
+<mat-drawer-container class="example-container" fxFlexFill>
+  <mat-drawer-content fxLayout="column">
+    <header>
+      <mat-toolbar fxLayout="row" fxLayoutAlign="space-between center" [ngClass.gt-sm]="'py-3 px-5'" class="p-4">
+        <div fxLayoutAlign="start center">
+          <a routerLink="/lobby" routerLinkActive="active" class="me-2">
+            <img src="assets/quix-logo-text.svg" alt="Quix" height="24" />
+          </a>
+          <span class="mat-h4 text-uppercase text-white mb-0">Templates</span>
+        </div>
+        <div fxLayoutAlign="start center">
+          <a mat-raised-button color="accent" class="small me-2" fxLayout="row" fxLayoutAlign="center center"
+            href="https://github.com/quixio/chat-demo-app" target="_blank">
+            <img src="assets/github.svg" alt="Quix" height="16" class="me-2" />
+            <span>View repo</span>
+          </a>
+          <a fxHide.lt-sm mat-raised-button color="primary" class="small" fxLayout="row" fxLayoutAlign="center center"
+            [href]="'https://portal.platform.quix.io/pipeline?workspace=' + workspaceId + '&token=' + ungatedToken" target="_blank">
+            <img src="assets/quix-logo.svg" alt="Quix" height="16" class="me-2" />
+            <span>Look under the hood</span>
+          </a>
+        </div>
+      </mat-toolbar>
+    </header>
+    <main fxFlex>
+      <router-outlet></router-outlet>
+    </main>
+  </mat-drawer-content>
+</mat-drawer-container>

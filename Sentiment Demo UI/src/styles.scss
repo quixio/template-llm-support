@@ -1,0 +1,29 @@
+/* You can add global styles to this file, and also import other style files */
+html, body { height: 100%; }
+body { margin: 0; }
+
+a {
+  color: #0064FF;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.text-success {
+  color: #13a963 !important;
+}
+
+.text-danger {
+  color: #c23131 !important;
+}
+
+.text-grey {
+  color: #646471;
+}
+
+.text-grey-light {
+  color: #A2A2B0;
+}
