@@ -6,6 +6,7 @@ import quixstreams as qx
 from huggingface_hub import hf_hub_download
 
 from langchain.llms import LlamaCpp
+from langchain.prompts import PromptTemplate
 from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
@@ -36,11 +37,40 @@ llm = LlamaCpp(
         top_k=150,
         temperature=0.7,
         repeat_penalty=1.2,
-        streaming=False
+        streaming=False,
+        stop=["{}:".format(AGENT_ROLE.upper()),"{}:".format(CUSTOMER_ROLE.upper()),"\n"],
     )
+
 model = Llama2Chat(llm=llm)
-memory = ConversationTokenBufferMemory(llm=llm, max_token_limit=300, return_messages=True)
-chain = ConversationChain(llm=model, memory=memory)
+
+memory = ConversationTokenBufferMemory(
+    llm=llm,
+    max_token_limit=300,
+    ai_prefix= CUSTOMER_ROLE.upper() if role == CUSTOMER_ROLE else AGENT_ROLE.upper(),
+    human_prefix= AGENT_ROLE.upper() if role == CUSTOMER_ROLE else CUSTOMER_ROLE.upper(),
+    return_messages=True)
+
+prompt = None
+if role == AGENT_ROLE:
+    prompt = PromptTemplate(
+            input_variables=["history", "input", "product"],
+            template="""The following transcript represents a converstation between you, a customer 
+                        support agent who works for a large electronics retailer called 'ACME electronics', 
+                        and a customer who has bought a defective {product} and wants to understand what 
+                        their options are for resolving the issue. Please continue the conversation.\n\n
+                        Current conversation:\n{history}\nCUSTOMER: {input}\nAGENT:"""
+        )
+else:
+    prompt = PromptTemplate(
+        input_variables=["history", "input", "product"],
+        template="""The following transcript represents a conversation between you, a customer of a large 
+                    electronics retailer called 'ACME electronics', and a support agent who you are contacting 
+                    to resolve an issue with a defective {product} you purchased. Your goal is try and 
+                    understand what your options are for resolving the issue. Please continue the conversation.\n\n
+                    Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER:"""
+        )
+
+chain = ConversationChain(llm=model, prompt=prompt, memory=memory)
 
 client = qx.QuixStreamingClient()
 topic_producer = client.get_topic_producer(os.environ["topic"])
