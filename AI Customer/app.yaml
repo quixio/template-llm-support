@@ -11,6 +11,11 @@ variables:
     description: ''
     defaultValue: printer
     required: true
+  - name: draft_topic
+    inputType: InputTopic
+    description: ''
+    defaultValue: drafts
+    required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
