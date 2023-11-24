@@ -58,7 +58,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
               .add_value("conversation_id", conversation_id)
 
             sp = topic_producer.get_or_create_stream(sc.stream_id)
-            sp.timeseries.buffer.publish(td)
+            sp.timeseries.publish(td)
 
     buf = sc.timeseries.create_buffer()
     buf.packet_size = 1
@@ -67,15 +67,16 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
 topic_consumer.on_stream_received = on_stream_recv_handler
 
 if role == AGENT_ROLE:
-    # start conversation
     greeting = "Hello, welcome to ACME Electronics support, my name is Percy. How can I help you today?"
+
     msg = qx.TimeseriesData()
     msg.add_timestamp(datetime.utcnow()) \
        .add_value("role", role) \
        .add_value("text", greeting) \
        .add_value("conversation_id", conversation_id)
+    
     sp = topic_producer.get_or_create_stream("conversation_{}".format(conversation_id))
-    sp.timeseries.buffer.publish(msg)
+    sp.timeseries.publish(msg)
 
 print("Listening to streams. Press CTRL-C to exit.")
 qx.App.run()
