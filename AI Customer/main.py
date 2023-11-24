@@ -130,7 +130,7 @@ counter = 0
 
 def get_answer(row: dict):
     print(f"\n------\nRESPONDING T0: {row['chat-message']} \n------\n")
-    custreply = update_conversation(row, {row['chat-message']}, "customer", message_key() , convostore)
+    custreply = update_conversation(row, {row['chat-message']}, "customer", bytes.decode(message_key()) , convostore)
     print(custreply)
     #publish_rp(custreply)
     print("I have sent my reply to the agent.")
