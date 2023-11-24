@@ -111,6 +111,8 @@ def update_conversation(row, text, role, conversation_id, filename="conversation
         "chat-message": finalreply,
     }
 
+    print(reply_dict)
+
     # Append the reply dictionary to the conversation history
     conversation_history.append(reply_dict)
 
