@@ -6,7 +6,7 @@ import quixstreams as qx
 from huggingface_hub import hf_hub_download
 
 from langchain.llms import LlamaCpp
-from langchain.chains import LLMChain
+from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
 
@@ -32,20 +32,13 @@ else:
 llm = LlamaCpp(model_path=model_path, streaming=False)
 model = Llama2Chat(llm=llm)
 memory = ConversationTokenBufferMemory(llm=llm, max_token_limit=300, return_messages=True)
-chain = LLMChain(llm=model, memory=memory)
+chain = ConversationChain(llm=model, memory=memory)
 
 client = qx.QuixStreamingClient()
 topic_producer = client.get_topic_producer(os.environ["topic"])
 topic_consumer = client.get_topic_consumer(os.environ["topic"])
 
 product = os.environ["product"]
-scenario = """
-            The following transcript represents a converstation between a customer 
-            support agent who works for a large electronics retailer called 'ACME 
-            electronics', and a customer who has bought a defective {} and wants to 
-            understand what their options are for resolving the issue. 
-            Please continue the conversation, but only reply as {}:
-            """.format(product, role.upper())
 
 def on_stream_recv_handler(sc: qx.StreamConsumer):
     print("Received stream {}".format(sc.stream_id))
