@@ -12,6 +12,11 @@ from quixstreams import Application, State, message_key
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
 from draft_producer import DraftProducer
 
+print("HI ", end="")
+print("HI ", end="")
+print("HI ", end="")
+print("HI ", end="")
+
 app = Application.Quix("transformation-v6", auto_offset_reset="earliest")
 
 input_topic = app.topic(os.environ["output"], value_deserializer=QuixDeserializer())
