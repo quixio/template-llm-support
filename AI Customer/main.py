@@ -7,6 +7,19 @@ from datetime import datetime
 from huggingface_hub import hf_hub_download
 from pathlib import Path
 
+
+import os
+from quixstreams import Application, State
+from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
+
+
+app = Application.Quix("transformation-v1", auto_offset_reset="latest")
+
+input_topic = app.topic(os.environ["input"], value_deserializer=QuixDeserializer())
+output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
+
+
+
 file_path = Path('./state/llama-2-7b-chat.Q4_K_M.gguf')
 REPO_ID = "TheBloke/Llama-2-7b-Chat-GGUF"
 FILENAME = "llama-2-7b-chat.Q4_K_M.gguf"
@@ -133,5 +146,18 @@ topic_consumer.on_stream_received = on_stream_received_handler
 
 print("Listening to streams. Press CTRL-C to exit.")
 
+sdf = app.dataframe(input_topic)
+
+# Here put transformation logic.
+
+sdf = sdf.update(lambda row: print(row))
+
+sdf = sdf.to_topic(output_topic)
+
+if __name__ == "__main__":
+    app.run(sdf)
+
+
 # Handle termination signals and provide a graceful exit
 qx.App.run()
+
