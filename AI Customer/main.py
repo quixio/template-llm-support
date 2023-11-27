@@ -10,7 +10,10 @@ from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseries
 from llm_bot import LlmBot
 from draft_producer import DraftProducer
 
-app = Application.Quix("transformation-v9", auto_offset_reset="latest")
+role = os.environ["role"]
+
+
+app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 
 input_topic = app.topic(os.environ["output"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
@@ -19,7 +22,6 @@ state_key = "conversation-history-v1"
 
 product = os.environ["product"]
 scenario = os.environ["scenario"]
-role = os.environ["role"]
 
 llm_bot = LlmBot(product, scenario, draft_producer)
 
