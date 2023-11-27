@@ -1,0 +1,4 @@
+quixstreams==0.5.7
+huggingface_hub
+joblib
+llama-cpp-python
