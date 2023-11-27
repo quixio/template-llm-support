@@ -8,7 +8,7 @@ classifier = pipeline('sentiment-analysis')
 app = Application.Quix("transformation-v1", auto_offset_reset="latest")
 
 input_topic = app.topic(os.environ["input"], value_deserializer=QuixDeserializer())
-output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
+#output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
 
 
 
@@ -29,7 +29,7 @@ sdf["sentiment"] = sdf["chat-message"].apply(lambda value: classifier(value))
 
 sdf = sdf.update(lambda row: print(row))
 
-sdf = sdf.to_topic(output_topic)
+#sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
     app.run(sdf)
