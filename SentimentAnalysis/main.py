@@ -25,12 +25,12 @@ storage_key = "mean_v1"
 def mean(row: dict, state: State):
     mean_state = state.get(storage_key, {'sum': 0.0, 'count': 0})
 
-    mean_state.sum += row["sentiment"]
-    mean_state.count += 1
+    mean_state["sum"] += row["sentiment"]
+    mean_state["count"] += 1
 
     state.set(storage_key, mean_state)
 
-    return mean_state.sum / mean_state.count
+    return mean_state["sum"] / mean_state["count"]
 
 sdf = app.dataframe(input_topic)
 
