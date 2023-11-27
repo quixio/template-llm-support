@@ -4,5 +4,5 @@ export interface MessagePayload {
 	profilePicColor?: string;
 	value?: string;
 	sentiment?: number;
-	timestamp: number;
+	timestamp?: number;
 }
