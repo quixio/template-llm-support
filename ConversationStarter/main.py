@@ -18,6 +18,9 @@ serialize = QuixTimeseriesSerializer()
 
 headers = {**self.serialize.extra_headers, "uuid": str(uuid.uuid4())}
 
+value = {
+    "Timestamp"
+}
 
 # Generate a UUID and then take the first 8 characters
 key = str(uuid.uuid4())[:8]
@@ -29,3 +32,5 @@ producer.produce(
     value=serialize(
         value=row, ctx=SerializationContext(topic=self.topic, headers=headers)
     ))
+
+print(f"Conversation {key} started.")
