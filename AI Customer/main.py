@@ -94,6 +94,8 @@ def update_conversation(row, text, role, conversation_id, filename="conversation
         # If the file does not exist or is empty, initialize an empty list
         conversation_history = []
 
+
+
     # Include the conversation history as part of the prompt
     full_history = "\n".join([f"{msg['TAG__name'].upper()}: {msg['chat-message']}" for msg in conversation_history])
     prompt = scenario + '\n\n' + full_history + f'\nAGENT:{text}' + '\nCUSTOMER:'
@@ -105,15 +107,7 @@ def update_conversation(row, text, role, conversation_id, filename="conversation
     finalreply = reply.replace(prompt, ' ').replace('{', '').replace('}', '').replace('"', '').strip()
     print(f"My reply was '{finalreply}'")
     # Create a dictionary for the reply
-    reply_dict = {
-        "TAG__name": role.upper(),
-        "TAG__room": conversation_id,
-        "chat-message": finalreply,
-    }
 
-    print(reply_dict)
-
-    # Append the reply dictionary to the conversation history
     conversation_history.append(reply_dict)
     print(conversation_history)
 
@@ -148,6 +142,8 @@ def call_llm(row: dict, callback):
 sdf = sdf[sdf["Tags"].contains("name")]
 # Here put transformation logic.
 sdf = sdf[sdf["Tags"]["name"] == "agent"]
+
+sdf = sdf.update(lambda row: row["Tags"]["name"] = role.upper())
 
 sdf = sdf.apply(get_answer)
 
