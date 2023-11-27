@@ -130,6 +130,41 @@ deployments:
         description: ''
         required: true
         secretKey: beareToken
+  - name: AI Customer 2
+    application: AI Customer
+    deploymentType: Service
+    version: 02d094ff5e6397681e571f568fd97e1146e87e2b
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    desiredStatus: Running
+    variables:
+      - name: output
+        inputType: OutputTopic
+        description: This is the output topic to write data to
+        required: true
+        value: messages
+      - name: product
+        inputType: FreeText
+        description: ''
+        required: true
+        value: roomba vacum cleaner
+      - name: draft_topic
+        inputType: InputTopic
+        description: ''
+        required: true
+        value: drafts
+      - name: scenario
+        inputType: FreeText
+        description: ''
+        required: true
+        value: "The following transcript represents a converstation between you, a customer support agent who works for a large electronics retailer called 'ACME electronics', and a customer who has bought a defective {product} and wants to understand what their options are for resolving the issue. Please continue the conversation, but only reply as AGENT:"
+      - name: role
+        inputType: FreeText
+        description: ''
+        required: true
+        value: agent
 
 # This section describes the Topics of the data pipeline
 topics:
