@@ -149,6 +149,7 @@ sdf = sdf[sdf["Tags"].contains("name")]
 # Here put transformation logic.
 sdf = sdf[sdf["Tags"]["name"] == "agent"]
 
+sdf = sdf.update(update_role)
 
 
 sdf = sdf.apply(get_answer)
