@@ -11,7 +11,6 @@ class LlmBot:
         file_path = Path('./state/llama-2-7b-chat.Q4_K_M.gguf')
         REPO_ID = "TheBloke/Llama-2-7b-Chat-GGUF"
         FILENAME = "llama-2-7b-chat.Q4_K_M.gguf"
-        state_key = "conversation-history-v1"
 
         if not file_path.exists():
             # perform action if the file does not exist
