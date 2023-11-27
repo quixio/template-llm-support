@@ -38,7 +38,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: true
-        value: "The following transcript represents a conversation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {product} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation with goal to get to resolution and end of chat, but only reply as CUSTOMER:"
+        value: "The following transcript represents a conversation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {product} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation (without discussing forever), but only reply as CUSTOMER:"
       - name: role
         inputType: FreeText
         description: ''
