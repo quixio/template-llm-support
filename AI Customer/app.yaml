@@ -24,7 +24,7 @@ variables:
   - name: role
     inputType: FreeText
     description: ''
-    defaultValue: ''
+    defaultValue: customer
     required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
