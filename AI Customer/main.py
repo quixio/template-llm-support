@@ -86,6 +86,9 @@ def update_conversation(row, text, role, conversation_id, filename="conversation
     Returns:
         str: The generated reply.
     """
+
+    row["Tags"]["name"] = role.upper()
+
     # Read the existing conversation history from the file
     try:
         with open(filename, 'r') as file:
@@ -143,7 +146,7 @@ sdf = sdf[sdf["Tags"].contains("name")]
 # Here put transformation logic.
 sdf = sdf[sdf["Tags"]["name"] == "agent"]
 
-sdf = sdf.update(lambda row: row["Tags"]["name"] = role.upper())
+
 
 sdf = sdf.apply(get_answer)
 
