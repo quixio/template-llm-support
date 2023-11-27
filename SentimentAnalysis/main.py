@@ -24,7 +24,7 @@ input_topic = app.topic(os.environ["input"], value_deserializer=QuixDeserializer
 sdf = app.dataframe(input_topic)
 
 sdf["sentiment"] = sdf["chat-message"].apply(lambda value: classifier(value))
-
+sdf["sentiment"] = sdf["sentiment"]["score"] if sdf["sentiment"]["label"] == "POSITIVE" else - sdf["sentiment"]["score"]
 # Here put transformation logic.
 
 sdf = sdf.update(lambda row: print(row))
