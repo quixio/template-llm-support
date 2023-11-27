@@ -130,13 +130,13 @@ deployments:
         description: ''
         required: true
         secretKey: beareToken
-  - name: AI Customer 2
+  - name: Agent AI
     application: AI Customer
     deploymentType: Service
     version: 02d094ff5e6397681e571f568fd97e1146e87e2b
     resources:
-      cpu: 200
-      memory: 500
+      cpu: 8000
+      memory: 4100
       replicas: 1
     desiredStatus: Stopped
     variables:
