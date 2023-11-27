@@ -33,13 +33,13 @@ def get_answer(row: dict, state: State):
     
     print(f"\n------\nRESPONDING T0: {row['chat-message']} \n------\n")
 
-    row["Tags"]["name"] = "customer"
+    row["Tags"]["name"] = role
 
     conversation_history = state.get(state_key, [])
 
     # Include the conversation history as part of the prompt
     full_history = "\n".join([f"{row['Tags']['name'].upper()}: {msg}" for msg in conversation_history])
-    prompt = scenario + '\n\n' + full_history + f'\nAGENT:{row["chat-message"]}' + '\nCUSTOMER:'
+    prompt = scenario + '\n\n' + full_history[-500:] + f'\nAGENT:{row["chat-message"]}' + '\n{role.upper()}:'
 
     # Generate the reply using the AI model
     print("Thinking about my response....")
