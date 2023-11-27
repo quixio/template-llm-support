@@ -5,7 +5,7 @@ from transformers import pipeline
 
 classifier = pipeline('sentiment-analysis')
 
-app = Application.Quix("sentiment-analysis-v3", auto_offset_reset="earliest")
+app = Application.Quix("sentiment-analysis-v4", auto_offset_reset="earliest")
 
 input_topic = app.topic(os.environ["input"], value_deserializer=QuixDeserializer())
 #output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
@@ -23,14 +23,16 @@ input_topic = app.topic(os.environ["input"], value_deserializer=QuixDeserializer
 storage_key = "mean_v1"
 
 def mean(row: dict, state: State):
-    mean_state = state.get(storage_key, {'sum': 0.0, 'count': 0})
+    mean_state = state.get(storage_key, [])
 
-    mean_state["sum"] += row["sentiment"]
-    mean_state["count"] += 1
+    mean_state.append(row["sentiment"])
+
+    if len(mean_state) > 5:
+        mean_state = mean_state[-5:]
 
     state.set(storage_key, mean_state)
 
-    return mean_state["sum"] / mean_state["count"]
+    return sum(mean_state) / len(mean_state)
 
 sdf = app.dataframe(input_topic)
 
