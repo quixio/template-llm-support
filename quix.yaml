@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: v1
+    version: v1.1
     resources:
       cpu: 8000
       memory: 8000
