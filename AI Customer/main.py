@@ -9,6 +9,7 @@ from quixstreams import Application, State, message_key
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
 from llm_bot import LlmBot
 from draft_producer import DraftProducer
+import time
 
 role = os.environ["role"]
 
@@ -71,7 +72,7 @@ sdf = sdf[sdf["Tags"]["name"] != role]
 
 
 sdf = sdf.apply(get_answer, stateful=True)
-
+sdf["Timestamp"] = time.time_ns()
 sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
