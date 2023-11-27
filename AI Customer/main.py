@@ -126,8 +126,6 @@ def call_llm(row: dict, callback):
     result = llm(row["chat-message"])
 
 
-    
-
     return result
 
 
