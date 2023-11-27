@@ -5,8 +5,6 @@ import pandas as pd
 from datetime import datetime
 from huggingface_hub import hf_hub_download
 from pathlib import Path
-
-
 import os
 from quixstreams import Application, State, message_key
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
@@ -62,10 +60,7 @@ def get_answer(row: dict, state: State):
     return row
 
 
-
-
 sdf = sdf[sdf["Tags"].contains("name")]
-# Here put transformation logic.
 sdf = sdf[sdf["Tags"]["name"] == "agent"]
 
 
