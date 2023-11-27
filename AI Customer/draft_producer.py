@@ -26,7 +26,7 @@ class DraftProducer:
         self.producer.produce(
             headers=headers,
             topic=self.topic,
-            key=str(key),
+            key=key,
             value=self.serialize(
                 value=row, ctx=SerializationContext(topic=self.topic, headers=headers)
             ))
