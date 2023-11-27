@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: v1.1
+    version: v1.3-ai
     resources:
       cpu: 8000
       memory: 8000
@@ -38,7 +38,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: true
-        value: "The following transcript represents a conversation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {product} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation, but only reply as CUSTOMER:"
+        value: "The following transcript represents a conversation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {product} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation (without discussing forever), but only reply as CUSTOMER:"
       - name: role
         inputType: FreeText
         description: ''
@@ -95,7 +95,7 @@ deployments:
   - name: Sentiment Demo UI
     application: Sentiment Demo UI
     deploymentType: Service
-    version: 0e5fea27f587572dfd4a0d25c12d2dee1a874754
+    version: e86598da0d7137b915c43d7857b9f7ee4bd4eb79
     resources:
       cpu: 1000
       memory: 500
@@ -138,11 +138,11 @@ deployments:
   - name: Agent AI
     application: AI Customer
     deploymentType: Service
-    version: v1.1
+    version: v1.3-ai
     resources:
       cpu: 8000
-      memory: 4100
-      replicas: 4
+      memory: 16384
+      replicas: 1
     desiredStatus: Running
     variables:
       - name: output
@@ -164,7 +164,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: true
-        value: "The following transcript represents a converstation between you, a customer support agent who works for a large electronics retailer called 'ACME electronics', and a customer who has bought a defective {product} and wants to understand what their options are for resolving the issue. Please continue the conversation, but only reply as AGENT:"
+        value: "The following transcript represents a conversation between you, a customer support agent who works for a large electronics retailer called 'ACME electronics', and a customer who has bought a defective {product} and wants to understand what their options are for resolving the issue. Please continue the conversation, but only reply as AGENT:"
       - name: role
         inputType: FreeText
         description: ''
@@ -173,7 +173,7 @@ deployments:
   - name: SentimentAnalysis
     application: SentimentAnalysis
     deploymentType: Service
-    version: db75fa525d579fbe3e13997b467bbfe579209601
+    version: 017e4620173caaa8db3562354f938d8fd2d18556
     resources:
       cpu: 2000
       memory: 2000
@@ -190,6 +190,89 @@ deployments:
         description: Name of the output topic to write to.
         required: true
         value: sentiment
+  - name: Customer sink
+    application: Converstations sink
+    deploymentType: Service
+    version: v1-sink
+    resources:
+      cpu: 1000
+      memory: 500
+      replicas: 1
+    desiredStatus: Stopped
+    variables:
+      - name: input
+        inputType: InputTopic
+        description: Name of the input topic to listen to.
+        required: false
+        value: messages
+      - name: consumer_group
+        inputType: FreeText
+        description: ''
+        required: true
+        value: transformation-v10-customer
+  - name: Agent sink
+    application: Converstations sink
+    deploymentType: Service
+    version: v1-sink
+    resources:
+      cpu: 1000
+      memory: 500
+      replicas: 1
+    desiredStatus: Stopped
+    variables:
+      - name: input
+        inputType: InputTopic
+        description: Name of the input topic to listen to.
+        required: false
+        value: messages
+      - name: consumer_group
+        inputType: FreeText
+        description: ''
+        required: true
+        value: transformation-v10-agent
+  - name: Sentiment Demo UI Old
+    application: Sentiment Demo UI
+    deploymentType: Service
+    version: v1-ui
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: app-old
+    desiredStatus: Running
+    variables:
+      - name: sentiment
+        inputType: FreeText
+        description: The topic to read from
+        required: true
+        value: sentiment
+      - name: messages
+        inputType: FreeText
+        description: The topic to read from
+        required: true
+        value: messages
+      - name: drafts
+        inputType: FreeText
+        description: ''
+        required: true
+        value: drafts
+      - name: drafts_sentiment
+        inputType: FreeText
+        description: ''
+        required: false
+        value: drafts_sentiment
+      - name: twitch_messages
+        inputType: FreeText
+        description: ''
+        required: false
+        value: twitch_messages
+      - name: bearer_token
+        inputType: Secret
+        description: ''
+        required: true
+        secretKey: beareToken
 
 # This section describes the Topics of the data pipeline
 topics:
@@ -248,4 +331,25 @@ topics:
       partitions: 8
       replicationFactor: 2
       retentionInMinutes: -1
+      retentionInBytes: 52428800
+  - name: drafts_sentiment
+    persisted: false
+    configuration:
+      partitions: 8
+      replicationFactor: 2
+      retentionInMinutes: 60
+      retentionInBytes: 52428800
+  - name: twitch_messages
+    persisted: false
+    configuration:
+      partitions: 1
+      replicationFactor: 2
+      retentionInMinutes: 1440
+      retentionInBytes: 52428800
+  - name: twitch-messages
+    persisted: false
+    configuration:
+      partitions: 1
+      replicationFactor: 2
+      retentionInMinutes: 1440
       retentionInBytes: 52428800
