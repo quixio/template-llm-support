@@ -1,6 +1,6 @@
 
 
-class LLM_bot:
+class LlmBot:
 
 
     def __init__(self, product: str, scenario: str):
