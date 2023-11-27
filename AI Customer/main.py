@@ -99,7 +99,7 @@ def get_answer(row: dict, state: State):
 
     # Include the conversation history as part of the prompt
     full_history = "\n".join([f"{row['Tags']['name'].upper()}: {msg}" for msg in conversation_history])
-    prompt = scenario + '\n\n' + full_history + f'\nAGENT:{msg}' + '\nCUSTOMER:'
+    prompt = scenario + '\n\n' + full_history + f'\nAGENT:{row["chat-message"]}' + '\nCUSTOMER:'
 
     # Generate the reply using the AI model
     print("Thinking about my response....")
