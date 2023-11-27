@@ -17,7 +17,7 @@ variables:
     defaultValue: drafts
     required: true
   - name: scenario
-    inputType: InputTopic
+    inputType: FreeText
     description: ''
     defaultValue: ''
     required: true
