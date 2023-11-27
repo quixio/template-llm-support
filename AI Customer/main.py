@@ -10,7 +10,6 @@ from pathlib import Path
 import os
 from quixstreams import Application, State, message_key
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
-from draft_producer import DraftProducer
 from llm_bot import LlmBot
 
 app = Application.Quix("transformation-v8", auto_offset_reset="earliest")
