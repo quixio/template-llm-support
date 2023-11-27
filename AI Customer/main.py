@@ -10,7 +10,7 @@ from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseries
 from llm_bot import LlmBot
 from draft_producer import DraftProducer
 
-app = Application.Quix("transformation-v8", auto_offset_reset="earliest")
+app = Application.Quix("transformation-v9", auto_offset_reset="latest")
 
 input_topic = app.topic(os.environ["output"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
@@ -63,7 +63,7 @@ def get_answer(row: dict, state: State):
 
 
 sdf = sdf[sdf["Tags"].contains("name")]
-sdf = sdf[sdf["Tags"]["name"] == "agent"]
+sdf = sdf[sdf["Tags"]["name"] != role]
 
 
 sdf = sdf.apply(get_answer, stateful=True)
