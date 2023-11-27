@@ -6,6 +6,20 @@ class LLM_bot:
     def __init__(self, topic: str):
         
 
+        file_path = Path('./state/llama-2-7b-chat.Q4_K_M.gguf')
+        REPO_ID = "TheBloke/Llama-2-7b-Chat-GGUF"
+        FILENAME = "llama-2-7b-chat.Q4_K_M.gguf"
+        state_key = "conversation-history-v1"
+
+        if not file_path.exists():
+            # perform action if the file does not exist
+            print('The model path does not exist in state. Downloading model...')
+            hf_hub_download(repo_id=REPO_ID, filename=FILENAME, local_dir="state")
+        else:
+            print('The model has been detected in state. Loading model from state...')
+
+        llm = Llama(model_path="./state/llama-2-7b-chat.Q4_K_M.gguf")
+
     
     def generate_response(self, row, prompt, max_tokens=250, temperature=0.7, top_p=0.95, repeat_penalty=1.2, top_k=150):
     
