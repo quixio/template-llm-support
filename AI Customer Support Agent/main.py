@@ -33,6 +33,7 @@ llm = LlamaCpp(
         top_k=150,
         temperature=0.7,
         repeat_penalty=1.2,
+        n_ctx=2048,
         streaming=False)
 
 model = Llama2Chat(llm=llm)
