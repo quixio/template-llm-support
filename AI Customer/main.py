@@ -11,6 +11,7 @@ import os
 from quixstreams import Application, State, message_key
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
 from draft_producer import DraftProducer
+from llm_bot import LL
 
 app = Application.Quix("transformation-v8", auto_offset_reset="earliest")
 
@@ -18,7 +19,7 @@ input_topic = app.topic(os.environ["output"], value_deserializer=QuixDeserialize
 output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
 draft_producer = DraftProducer(os.environ["draft_topic"])
 
-
+llm_bot = 
 
 
 sdf = app.dataframe(input_topic)
