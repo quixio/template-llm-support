@@ -19,6 +19,7 @@ state_key = "conversation-history-v1"
 
 product = os.environ["product"]
 scenario = os.environ["scenario"]
+role = os.environ["role"]
 
 llm_bot = LlmBot(product, scenario, draft_producer)
 
