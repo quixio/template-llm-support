@@ -138,7 +138,7 @@ deployments:
   - name: Agent AI
     application: AI Customer
     deploymentType: Service
-    version: 02d094ff5e6397681e571f568fd97e1146e87e2b
+    version: 3b352a4ff187da56a42168f8f127744246ea5e66
     resources:
       cpu: 8000
       memory: 4100
