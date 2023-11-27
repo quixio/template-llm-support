@@ -12,7 +12,7 @@ from quixstreams import Application, State, message_key
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
 from draft_producer import DraftProducer
 
-app = Application.Quix("transformation-v7", auto_offset_reset="earliest")
+app = Application.Quix("transformation-v8", auto_offset_reset="earliest")
 
 input_topic = app.topic(os.environ["output"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
@@ -121,12 +121,6 @@ def get_answer(row: dict, state: State):
 
     return row
 
-def call_llm(row: dict, callback):
-
-    result = llm(row["chat-message"])
-
-
-    return result
 
 
 
