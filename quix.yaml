@@ -32,7 +32,7 @@ deployments:
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
-    version: b7e99b3e54c5c33979f261c34b429262446ce181
+    version: a9712196ed8ea32ac097eab7699ed5c8323b8bce
     resources:
       cpu: 4000
       memory: 8000
@@ -42,7 +42,7 @@ deployments:
       size: 6
     desiredStatus: Running
     variables:
-      - name: output
+      - name: topic
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
