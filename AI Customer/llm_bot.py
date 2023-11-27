@@ -24,7 +24,7 @@ class LlmBot:
         self.draft_producer = draft_producer
 
     
-    def generate_response(self, row, prompt, max_tokens=250, temperature=0.7, top_p=0.95, repeat_penalty=1.2, top_k=150):
+    def generate_response(self, row, prompt, customer, max_tokens=250, temperature=0.7, top_p=0.95, repeat_penalty=1.2, top_k=150):
         result = self.llm(
             prompt=prompt,
             max_tokens=max_tokens,
@@ -43,7 +43,7 @@ class LlmBot:
             iteration_text = iteration["choices"][0]["text"]
             response += iteration_text
             row["chat-message"] = response
-            self.draft_producer.produce(row, bytes.decode(message_key()))
+            self.draft_producer.produce(row, customer)
             print(str(iteration_text), end="", flush=True)
 
         return response
