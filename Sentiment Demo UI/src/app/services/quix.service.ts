@@ -24,13 +24,13 @@ export class QuixService {
 
   /*~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-*/
   /*WORKING LOCALLY? UPDATE THESE!*/
-  private workingLocally = false; // set to true if working locally
-  private token: string = ''; // Create a token in the Tokens menu and paste it here
-  public workspaceId: string = 'demo-chatappdemo-prod'; // Look in the URL for the Quix Portal your workspace ID is after 'workspace='
-  public messagesTopic: string = 'chat-messages'; // get topic name from the Topics page
+  private workingLocally = true; // set to true if working locally
+  private token: string = 'pat-4f387c78ba7243cc80fd199c3d6a9e32'; // Create a token in the Tokens menu and paste it here
+  public workspaceId: string = 'tomas-llm-frontend'; // Look in the URL for the Quix Portal your workspace ID is after 'workspace='
+  public messagesTopic: string = 'messages'; // get topic name from the Topics page
   public twitchMessagesTopic: string = 'twitch-messages'; // get topic name from the Topics page
   public draftsTopic: string = 'drafts'; // get topic from the Topics page
-  public sentimentTopic: string = 'chat-with-sentiment'; // get topic name from the Topics page
+  public sentimentTopic: string = 'sentiment'; // get topic name from the Topics page
   public draftsSentimentTopic: string = 'drafts_sentiment'; // get topic name from the Topics page
   /*~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-*/
   
