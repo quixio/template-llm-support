@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: v1.1
+    version: bc23e477f683e34e7fe1f24673020c2d577a7197
     resources:
       cpu: 8000
       memory: 8000
@@ -29,21 +29,6 @@ deployments:
         description: ''
         required: true
         value: roomba vacum cleaner
-      - name: draft_topic
-        inputType: InputTopic
-        description: ''
-        required: true
-        value: drafts
-      - name: scenario
-        inputType: FreeText
-        description: ''
-        required: true
-        value: "The following transcript represents a conversation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {product} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation (without discussing forever), but only reply as CUSTOMER:"
-      - name: role
-        inputType: FreeText
-        description: ''
-        required: true
-        value: customer
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
