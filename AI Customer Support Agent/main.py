@@ -15,8 +15,8 @@ from langchain.memory import ConversationTokenBufferMemory
 AGENT_ROLE = "agent"
 CONVERSATION_ID = "002"
 
+role = AGENT_ROLE
 conversation_id = CONVERSATION_ID
-role = os.environ["role"].lower()
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
