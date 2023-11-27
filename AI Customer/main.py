@@ -16,7 +16,7 @@ CUSTOMER_ROLE = "customer"
 CONVERSATION_ID = "002"
 
 conversation_id = CONVERSATION_ID
-role = os.environ["role"].lower()
+role = CUSTOMER_ROLE
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
