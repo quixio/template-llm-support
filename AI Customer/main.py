@@ -30,18 +30,7 @@ print("Listening for messages...")
 counter = 0
 
 def get_answer(row: dict, state: State):
-    """
-    Update the conversation history stored in a JSON file.
-
-    Parameters:
-        prompt (str): The prompt for the AI model, including the conversation history.
-        role (str): The role of the agent (e.g., "customer" or "support_agent").
-        conversation_id (str): The ID of the conversation.
-        filename (str): The name of the file where the conversation history is stored.
-
-    Returns:
-        str: The generated reply.
-    """
+    
     print(f"\n------\nRESPONDING T0: {row['chat-message']} \n------\n")
 
     row["Tags"]["name"] = "customer"
