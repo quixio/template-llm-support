@@ -22,6 +22,7 @@ draft_producer = DraftProducer(os.environ["draft_topic"])
 file_path = Path('./state/llama-2-7b-chat.Q4_K_M.gguf')
 REPO_ID = "TheBloke/Llama-2-7b-Chat-GGUF"
 FILENAME = "llama-2-7b-chat.Q4_K_M.gguf"
+state_key = "conversation-history-v1"
 
 if not file_path.exists():
     # perform action if the file does not exist
@@ -73,7 +74,11 @@ def generate_response(row, prompt, max_tokens=250, temperature=0.7, top_p=0.95, 
 
     return response
     
-def update_conversation(row, text, role, conversation_id, filename="conversation.json"):
+
+print("Listening for messages...")
+counter = 0
+
+def get_answer(row: dict, state: State):
     """
     Update the conversation history stored in a JSON file.
 
@@ -86,56 +91,34 @@ def update_conversation(row, text, role, conversation_id, filename="conversation
     Returns:
         str: The generated reply.
     """
+    print(f"\n------\nRESPONDING T0: {row['chat-message']} \n------\n")
 
+    row["Tags"]["name"] = "customer"
 
-    # Read the existing conversation history from the file
-    try:
-        with open(filename, 'r') as file:
-            conversation_history = json.load(file)
-    except (FileNotFoundError, json.JSONDecodeError):
-        # If the file does not exist or is empty, initialize an empty list
-        conversation_history = []
-
-
+    conversation_history = state.get("state_key", [])
 
     # Include the conversation history as part of the prompt
-    full_history = "\n".join([f"{msg['TAG__name'].upper()}: {msg['chat-message']}" for msg in conversation_history])
-    prompt = scenario + '\n\n' + full_history + f'\nAGENT:{text}' + '\nCUSTOMER:'
+    full_history = "\n".join([f"{row['Tags']['name'].upper()}: {msg}" for msg in conversation_history])
+    prompt = scenario + '\n\n' + full_history + f'\nAGENT:{msg}' + '\nCUSTOMER:'
 
     # Generate the reply using the AI model
     print("Thinking about my response....")
     reply = generate_response(row, prompt)  # This function should be defined elsewhere to handle the interaction with the AI model
     print(reply)
     finalreply = reply.replace(prompt, ' ').replace('{', '').replace('}', '').replace('"', '').strip()
+    
     print(f"My reply was '{finalreply}'")
     # Create a dictionary for the reply
 
-    reply_dict = {
-        "TAG__name": role.upper(),
-        "TAG__room": conversation_id,
-        "chat-message": finalreply,
-    }
-
-    conversation_history.append(reply_dict)
+    conversation_history.append(finalreply)
     print(conversation_history)
 
-    # Write the updated conversation history back to the file
-    with open(filename, 'w') as file:
-        json.dump(conversation_history, file)
+    state.set(state_key, conversation_history)
 
     # Return the generated reply
-    return finalreply
+    row["chat-message"] = finalreply
 
-print("Listening for messages...")
-counter = 0
 
-def get_answer(row: dict):
-    print(f"\n------\nRESPONDING T0: {row['chat-message']} \n------\n")
-    custreply = update_conversation(row, {row['chat-message']}, "customer", bytes.decode(message_key()) , convostore)
-    print(custreply)
-    #publish_rp(custreply)
-    print("I have sent my reply to the agent.")
-    
     return row
 
 def call_llm(row: dict, callback):
@@ -147,20 +130,14 @@ def call_llm(row: dict, callback):
 
     return result
 
-def update_role(row:dict):
-    row["Tags"]["name"] = "customer"
 
 
 sdf = sdf[sdf["Tags"].contains("name")]
 # Here put transformation logic.
 sdf = sdf[sdf["Tags"]["name"] == "agent"]
 
-sdf = sdf.update(update_role)
 
-
-sdf = sdf.apply(get_answer)
-
-sdf = sdf.update(lambda row: print(row))
+sdf = sdf.apply(get_answer, stateful=True)
 
 sdf = sdf.to_topic(output_topic)
 
