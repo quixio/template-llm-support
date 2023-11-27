@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: 92a55bf3da48ab595b16b6e52d73b3b95fe38286
+    version: 586c59d58d3017937e7b9c3dd54945de35b5e541
     resources:
       cpu: 8000
       memory: 8000
@@ -34,6 +34,11 @@ deployments:
         description: ''
         required: true
         value: drafts
+      - name: scenario
+        inputType: FreeText
+        description: ''
+        required: true
+        value: "The following transcript represents a conversation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {product} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation, but only reply as CUSTOMER:"
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
