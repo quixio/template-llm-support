@@ -141,7 +141,7 @@ deployments:
     version: v1.4-ai
     resources:
       cpu: 8000
-      memory: 16384
+      memory: 8000
       replicas: 4
     state:
       enabled: true
