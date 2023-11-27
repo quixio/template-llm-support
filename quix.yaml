@@ -193,7 +193,7 @@ deployments:
   - name: Customer sink
     application: Converstations sink
     deploymentType: Service
-    version: 5b8d4c13aab0971fbc3205a9ca0732e4a764a810
+    version: v1-sink
     resources:
       cpu: 1000
       memory: 500
@@ -204,12 +204,7 @@ deployments:
         inputType: InputTopic
         description: Name of the input topic to listen to.
         required: false
-        value: drafts
-      - name: output
-        inputType: OutputTopic
-        description: Name of the output topic to write to.
-        required: false
-        value: transform
+        value: messages
       - name: consumer_group
         inputType: FreeText
         description: ''
