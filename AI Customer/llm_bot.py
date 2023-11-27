@@ -1,5 +1,6 @@
 from draft_producer import DraftProducer
 from pathlib import Path
+from llama_cpp import Llama
 
 
 class LlmBot:
