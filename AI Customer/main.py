@@ -16,6 +16,7 @@ app = Application.Quix("transformation-v8", auto_offset_reset="earliest")
 input_topic = app.topic(os.environ["output"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
 draft_producer = DraftProducer(os.environ["draft_topic"])
+state_key = "conversation-history-v1"
 
 product = os.environ["product"]
 scenario = f"The following transcript represents a conversation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {product} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation, but only reply as CUSTOMER:"
@@ -34,7 +35,7 @@ def get_answer(row: dict, state: State):
 
     row["Tags"]["name"] = "customer"
 
-    conversation_history = state.get("state_key", [])
+    conversation_history = state.get(state_key, [])
 
     # Include the conversation history as part of the prompt
     full_history = "\n".join([f"{row['Tags']['name'].upper()}: {msg}" for msg in conversation_history])
