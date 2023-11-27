@@ -54,7 +54,7 @@ def get_answer(row: dict, state: State):
 
     reply_dict = {
         "TAG__name": role.upper(),
-        "TAG__room": conversation_id,
+        "TAG__room": bytes.decode(message_key()),
         "chat-message": finalreply,
     }
 
