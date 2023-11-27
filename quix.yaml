@@ -247,12 +247,12 @@ deployments:
         inputType: FreeText
         description: The topic to read from
         required: true
-        value: chat-with-sentiment
+        value: sentiment
       - name: messages
         inputType: FreeText
         description: The topic to read from
         required: true
-        value: chat-messages
+        value: messages
       - name: drafts
         inputType: FreeText
         description: ''
