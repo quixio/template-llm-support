@@ -5,7 +5,7 @@ import pandas as pd
 from datetime import datetime
 from pathlib import Path
 import os
-from quixstreams import Application, State, message_key
+from quixstreams import App, State, message_key
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
 from llm_bot import LlmBot
 from draft_producer import DraftProducer
@@ -13,7 +13,7 @@ from draft_producer import DraftProducer
 role = os.environ["role"]
 
 
-app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
+app = App.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 
 input_topic = app.topic(os.environ["output"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
