@@ -3,4 +3,6 @@
 class LLM_bot:
 
 
-    def
+    def __init__(self, topic: str):
+        
+
