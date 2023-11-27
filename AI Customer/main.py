@@ -63,7 +63,7 @@ def get_answer(row: dict, state: State):
 
 
 sdf = sdf[sdf["Tags"].contains("name")]
-sdf = sdf[sdf["Tags"]["name"] != role]
+sdf = sdf[sdf["Tags"]["name"] == role]
 
 
 sdf = sdf.apply(get_answer, stateful=True)
