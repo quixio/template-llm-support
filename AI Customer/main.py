@@ -13,7 +13,7 @@ from draft_producer import DraftProducer
 role = os.environ["role"]
 
 
-app = App.Quix("transformation-v10-"+role, auto_offset_reset="latest")
+app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 
 input_topic = app.topic(os.environ["output"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
