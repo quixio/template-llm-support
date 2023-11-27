@@ -289,3 +289,10 @@ topics:
       replicationFactor: 2
       retentionInMinutes: -1
       retentionInBytes: 52428800
+  - name: drafts_sentiment
+    persisted: false
+    configuration:
+      partitions: 8
+      replicationFactor: 2
+      retentionInMinutes: 60
+      retentionInBytes: 52428800
