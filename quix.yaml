@@ -138,7 +138,7 @@ deployments:
   - name: Agent AI
     application: AI Customer
     deploymentType: Service
-    version: v1
+    version: v1.1
     resources:
       cpu: 8000
       memory: 4100
