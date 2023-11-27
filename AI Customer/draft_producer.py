@@ -1,6 +1,10 @@
 from quixstreams.kafka import Producer
 from quixstreams.platforms.quix import QuixKafkaConfigsBuilder
-import json
+from quixstreams.models.serializers import (
+    QuixTimeseriesSerializer,
+    SerializationContext,
+)
+import uuid
 
 class DraftProducer:
 
@@ -10,15 +14,22 @@ class DraftProducer:
         self.topic = topics[0]
 
         self.producer = Producer(cfgs.pop("bootstrap.servers"), extra_config=cfgs)
+        self.serialize = QuixTimeseriesSerializer()
 
     def __del__(self):
         self.producer.flush()
             
     def produce(self, row: dict, key: str):
+
+        headers = {**self.serialize.extra_headers, "uuid": str(uuid.uuid4())}
+
+        print(f"Producing value {value}")
         self.producer.produce(
-                    topic=self.topic,
-                    key=str(key),
-                    value=json.dumps(row),
-                )
+            headers=headers,
+            topic=self.topic,
+            key=str(key),
+            value=self.serialize(
+                value=row, ctx=SerializationContext(topic=self.topic, headers=headers)
+            ))
 
     
