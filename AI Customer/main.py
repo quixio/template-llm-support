@@ -87,7 +87,6 @@ def update_conversation(row, text, role, conversation_id, filename="conversation
         str: The generated reply.
     """
 
-    row["Tags"]["name"] = role.upper()
 
     # Read the existing conversation history from the file
     try:
@@ -141,6 +140,10 @@ def call_llm(row: dict, callback):
     
 
     return result
+
+def update_role(row:dict):
+    row["Tags"]["name"] = "customer"
+
 
 sdf = sdf[sdf["Tags"].contains("name")]
 # Here put transformation logic.
