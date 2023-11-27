@@ -72,7 +72,7 @@ sdf = sdf[sdf["Tags"]["name"] != role]
 
 
 sdf = sdf.apply(get_answer, stateful=True)
-sdf["Timestamp"] = time.time_ns()
+sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
