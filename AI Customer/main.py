@@ -42,7 +42,7 @@ def get_answer(row: dict, state: State):
 
     # Generate the reply using the AI model
     print("Thinking about my response....")
-    reply = llm_bot.generate_response(row, prompt)  # This function should be defined elsewhere to handle the interaction with the AI model
+    reply = llm_bot.generate_response(row, prompt, bytes.decode(message_key()))  # This function should be defined elsewhere to handle the interaction with the AI model
     print(reply)
     finalreply = reply.replace(prompt, ' ').replace('{', '').replace('}', '').replace('"', '').strip()
     
