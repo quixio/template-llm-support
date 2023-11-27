@@ -19,20 +19,6 @@ output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSe
 draft_producer = DraftProducer(os.environ["draft_topic"])
 
 
-file_path = Path('./state/llama-2-7b-chat.Q4_K_M.gguf')
-REPO_ID = "TheBloke/Llama-2-7b-Chat-GGUF"
-FILENAME = "llama-2-7b-chat.Q4_K_M.gguf"
-state_key = "conversation-history-v1"
-
-if not file_path.exists():
-    # perform action if the file does not exist
-    print('The model path does not exist in state. Downloading model...')
-    hf_hub_download(repo_id=REPO_ID, filename=FILENAME, local_dir="state")
-else:
-    print('The model has been detected in state. Loading model from state...')
-
-llm = Llama(model_path="./state/llama-2-7b-chat.Q4_K_M.gguf")
-
 product = os.environ["product"]
 scenario = f"The following transcript represents a conversation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {product} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation, but only reply as CUSTOMER:"
 
