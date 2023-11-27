@@ -11,6 +11,11 @@ variables:
     description: Name of the output topic to write to.
     defaultValue: transform
     required: false
+  - name: consumer_group
+    inputType: FreeText
+    description: ''
+    defaultValue: ''
+    required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
