@@ -1,7 +1,7 @@
 import os
 from quixstreams import Application, State
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
-
+import time
 
 app = Application.Quix("transformation-v1", auto_offset_reset="earliest")
 
