@@ -141,7 +141,7 @@ deployments:
     version: v1.2-ai
     resources:
       cpu: 8000
-      memory: 4100
+      memory: 16384
       replicas: 1
     desiredStatus: Running
     variables:
