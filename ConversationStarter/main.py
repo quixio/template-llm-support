@@ -42,4 +42,4 @@ producer.flush()
 
 print(f"Conversation {key} started.")
 
-time.sleep(10)
+time.sleep(1)
