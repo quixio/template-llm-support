@@ -3,8 +3,9 @@
 class LLM_bot:
 
 
-    def __init__(self, topic: str):
+    def __init__(self, product: str, scenario: str):
         
+
 
         file_path = Path('./state/llama-2-7b-chat.Q4_K_M.gguf')
         REPO_ID = "TheBloke/Llama-2-7b-Chat-GGUF"
