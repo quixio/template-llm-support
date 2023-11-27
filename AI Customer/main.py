@@ -110,6 +110,12 @@ def update_conversation(row, text, role, conversation_id, filename="conversation
     print(f"My reply was '{finalreply}'")
     # Create a dictionary for the reply
 
+    reply_dict = {
+        "TAG__name": role.upper(),
+        "TAG__room": conversation_id,
+        "chat-message": finalreply,
+    }
+
     conversation_history.append(reply_dict)
     print(conversation_history)
 
