@@ -22,25 +22,22 @@ headers = {**serialize.extra_headers, "uuid": str(uuid.uuid4())}
 key = str(uuid.uuid4())[:8]
 
 row = {
-  "Timestamps": [
+  "Timestamp": 
     time.time_ns()
-  ],
+  ,
   "NumericValues": {},
-  "StringValues": {
-    "chat-message": [
-      "Hello, welcome to ACME Electronics support, my name is Percy. How can I help you today?"
-    ]
-  },
+  "chat-message":
+      "Hello, welcome to ACME Electronics support, my name is Percy. How can I help you today?",
   "TagValues": {
-    "room": [
+    "room": 
       key
-    ],
-    "role": [
+    ,
+    "role": 
       "agent"
-    ],
-    "name": [
+    ,
+    "name": 
       "agent"
-    ],
+    ,
   }
 }
 
