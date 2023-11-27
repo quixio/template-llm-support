@@ -16,6 +16,11 @@ variables:
     description: ''
     defaultValue: drafts
     required: true
+  - name: scenario
+    inputType: InputTopic
+    description: ''
+    defaultValue: ''
+    required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
