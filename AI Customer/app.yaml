@@ -8,8 +8,8 @@ variables:
     required: true
   - name: product
     inputType: FreeText
-    description: roomba vacum cleaner
-    defaultValue: printer
+    description: ''
+    defaultValue: roomba vacum cleaner
     required: true
   - name: draft_topic
     inputType: OutputTopic
