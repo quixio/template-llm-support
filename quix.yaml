@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: bc23e477f683e34e7fe1f24673020c2d577a7197
+    version: v1.4-ai
     resources:
       cpu: 8000
       memory: 8000
@@ -29,6 +29,21 @@ deployments:
         description: ''
         required: true
         value: roomba vacum cleaner
+      - name: draft_topic
+        inputType: InputTopic
+        description: ''
+        required: true
+        value: drafts
+      - name: scenario
+        inputType: FreeText
+        description: ''
+        required: true
+        value: "The following transcript represents a conversation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {product} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation (without discussing forever), but only reply as CUSTOMER:"
+      - name: role
+        inputType: FreeText
+        description: ''
+        required: true
+        value: customer
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
@@ -123,11 +138,14 @@ deployments:
   - name: Agent AI
     application: AI Customer
     deploymentType: Service
-    version: v1.1
+    version: v1.4-ai
     resources:
       cpu: 8000
-      memory: 4100
+      memory: 16384
       replicas: 1
+    state:
+      enabled: true
+      size: 1
     desiredStatus: Running
     variables:
       - name: output
@@ -149,7 +167,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: true
-        value: "The following transcript represents a converstation between you, a customer support agent who works for a large electronics retailer called 'ACME electronics', and a customer who has bought a defective {product} and wants to understand what their options are for resolving the issue. Please continue the conversation, but only reply as AGENT:"
+        value: "The following transcript represents a conversation between you, a customer support agent who works for a large electronics retailer called 'ACME electronics', and a customer who has bought a defective {product} and wants to understand what their options are for resolving the issue. Please continue the conversation, but only reply as AGENT:"
       - name: role
         inputType: FreeText
         description: ''
@@ -232,12 +250,12 @@ deployments:
         inputType: FreeText
         description: The topic to read from
         required: true
-        value: chat-with-sentiment
+        value: sentiment
       - name: messages
         inputType: FreeText
         description: The topic to read from
         required: true
-        value: chat-messages
+        value: messages
       - name: drafts
         inputType: FreeText
         description: ''
