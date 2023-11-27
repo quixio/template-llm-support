@@ -3,7 +3,6 @@ import os
 import json
 import pandas as pd
 from datetime import datetime
-from huggingface_hub import hf_hub_download
 from pathlib import Path
 import os
 from quixstreams import Application, State, message_key
