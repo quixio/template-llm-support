@@ -12,7 +12,7 @@ variables:
     defaultValue: printer
     required: true
   - name: draft_topic
-    inputType: InputTopic
+    inputType: OutputTopic
     description: ''
     defaultValue: drafts
     required: true
