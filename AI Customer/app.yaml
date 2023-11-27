@@ -19,7 +19,7 @@ variables:
   - name: scenario
     inputType: FreeText
     description: ''
-    defaultValue: ''
+    defaultValue: "The following transcript represents a conversation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {product} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation (without discussing forever), but only reply as CUSTOMER:"
     required: true
   - name: role
     inputType: FreeText
