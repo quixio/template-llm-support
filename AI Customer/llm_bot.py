@@ -2,7 +2,7 @@ from draft_producer import DraftProducer
 
 
 class LlmBot:
-
+    
 
     def __init__(self, product: str, scenario: str, draft_producer: DraftProducer):
         
@@ -23,7 +23,6 @@ class LlmBot:
 
     
     def generate_response(self, row, prompt, max_tokens=250, temperature=0.7, top_p=0.95, repeat_penalty=1.2, top_k=150):
-    
         draft_producer.produce(row, message_key())
         
         result = self.llm(
