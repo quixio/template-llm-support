@@ -23,7 +23,6 @@ class DraftProducer:
 
         headers = {**self.serialize.extra_headers, "uuid": str(uuid.uuid4())}
 
-        print(f"Producing value {value}")
         self.producer.produce(
             headers=headers,
             topic=self.topic,
