@@ -13,6 +13,7 @@ sdf = app.dataframe(input_topic)
 # Here put transformation logic.
 
 sdf = sdf.update(lambda row: print(row))
+sdf["Timestamp"] = time.time_ns()
 
 #sdf = sdf.to_topic(output_topic)
 
