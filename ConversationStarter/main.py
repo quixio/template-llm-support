@@ -47,6 +47,7 @@ producer.produce(
     value=serialize(
         value=row, ctx=SerializationContext(topic=topic, headers=headers)
     ))
+producer.flush()
 
 print(f"Conversation {key} started.")
 
