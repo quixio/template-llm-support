@@ -8,7 +8,6 @@ from quixstreams.platforms.quix import QuixKafkaConfigsBuilder
 import uuid
 import time
 
-
 cfg_builder = QuixKafkaConfigsBuilder()
 cfgs, topics, _ = cfg_builder.get_confluent_client_configs([os.environ["output"]])
 topic = topics[0]
@@ -50,3 +49,5 @@ producer.produce(
     ))
 
 print(f"Conversation {key} started.")
+
+time.sleep(10)
