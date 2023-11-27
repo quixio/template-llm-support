@@ -18,7 +18,7 @@ app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 input_topic = app.topic(os.environ["output"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
 draft_producer = DraftProducer(os.environ["draft_topic"])
-state_key = "conversation-history-v2"
+state_key = "conversation-history-v1"
 
 product = os.environ["product"]
 scenario = os.environ["scenario"]
@@ -39,9 +39,11 @@ def get_answer(row: dict, state: State):
 
     conversation_history = state.get(state_key, [])
 
-     # Include the conversation history as part of the prompt
-    full_history = "\n".join([f"{msg['TAG__name'].upper()}: {msg['chat-message']}" for msg in conversation_history])
-    prompt = scenario + '\n\n' + full_history[-500:] + f"\nAGENT:{row['chat-message']}" + '\nCUSTOMER:'
+    
+
+    # Include the conversation history as part of the prompt
+    full_history = "\n".join([f"{row['Tags']['name'].upper()}: {msg}" for msg in conversation_history])
+    prompt = scenario + '\n\n' + full_history[-500:] + f'\nAGENT:{row["chat-message"]}' + '\n{role.upper()}:'
 
     # Generate the reply using the AI model
     print("Thinking about my response....")
@@ -52,13 +54,7 @@ def get_answer(row: dict, state: State):
     print(f"My reply was '{finalreply}'")
     # Create a dictionary for the reply
 
-    reply_dict = {
-        "TAG__name": role.upper(),
-        "TAG__room": bytes.decode(message_key()),
-        "chat-message": finalreply,
-    }
-
-    conversation_history.append(reply_dict)
+    conversation_history.append(finalreply)
     print(conversation_history)
 
     state.set(state_key, conversation_history)
