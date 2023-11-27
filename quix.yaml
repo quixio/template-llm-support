@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: b7a43c2588f1ae793511a778f0207b578e98632d
+    version: 5dd2a2e79e04d228dad44d48b0aea4c1adab2fd8
     resources:
       cpu: 4000
       memory: 8000
@@ -19,7 +19,7 @@ deployments:
       size: 6
     desiredStatus: Running
     variables:
-      - name: output
+      - name: topic
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
