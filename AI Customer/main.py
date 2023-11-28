@@ -90,7 +90,7 @@ sdf = sdf[sdf["index"] < 50]
 
 sdf = sdf.apply(get_answer, stateful=True)
 
-sdf = sdf[sdf["chat-message"].notnull()]
+sdf = sdf[sdf.contains("chat-message")]
 
 sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 sdf = sdf.to_topic(output_topic)
