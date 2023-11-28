@@ -30,7 +30,7 @@ deployments:
         required: true
         value: roomba vacum cleaner
       - name: draft_topic
-        inputType: OutputTopic
+        inputType: FreeText
         description: ''
         required: true
         value: drafts
@@ -111,7 +111,7 @@ deployments:
         required: true
         value: roomba vacum cleaner
       - name: draft_topic
-        inputType: OutputTopic
+        inputType: FreeText
         description: ''
         required: true
         value: drafts
