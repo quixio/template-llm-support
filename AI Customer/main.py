@@ -41,7 +41,7 @@ def get_answer(row: dict, state: State):
         print("Director message: " + row["chat-message"])
         return None 
     else:
-
+        print("NO")
         row["Tags"]["name"] = role
 
         conversation_history = state.get(state_key, [])
