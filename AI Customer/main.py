@@ -47,11 +47,11 @@ def get_answer(row: dict, state: State):
     conversation_history = state.get(state_key, [])
     full_history = "\n".join([f"{msg['TAG__name'].upper()}: {msg['chat-message']}" for msg in conversation_history])
   
-    prompt = scenario + '\n\n' \
-         + full_history[-1000:] \
-         + f'\nAGENT:{row["chat-message"]}'\
-         + director_prompt_state if role == "agent" else "" \
-         + f'\n{role.upper()}:'
+    prompt = scenario + '\n\n'
+    prompt += full_history[-1000:] 
+    prompt += f'\nAGENT:{row["chat-message"]}'
+    prompt +=  director_prompt_state if role == "agent" else "" 
+    prompt += f'\n{role.upper()}:'
 
     print(prompt)
 
