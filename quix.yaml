@@ -92,7 +92,7 @@ deployments:
       replicas: 4
     state:
       enabled: true
-      size: 1
+      size: 20
     desiredStatus: Running
     variables:
       - name: output
