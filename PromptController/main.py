@@ -10,7 +10,9 @@ output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSe
 
 sdf = app.dataframe(input_topic)
 
-# Here put transformation logic.
+
+
+sdf = sdf[sdf["average_sentiment"] < -0.5]
 
 sdf = sdf.update(lambda row: print(row))
 
