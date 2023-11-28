@@ -11,7 +11,7 @@ output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSe
 sdf = app.dataframe(input_topic)
 
 
-sdf = sdf[sdf["average_sentiment_count"].notnull()]
+sdf = sdf[sdf.contains("average_sentiment_count")]
 
 
 sdf = sdf.update(lambda row: print(f"average_sentiment: {row['average_sentiment']}, count: {row['average_sentiment_count']}"))
