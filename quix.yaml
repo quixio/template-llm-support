@@ -123,7 +123,7 @@ deployments:
   - name: SentimentAnalysis
     application: SentimentAnalysis
     deploymentType: Service
-    version: 017e4620173caaa8db3562354f938d8fd2d18556
+    version: v2-sentiment
     resources:
       cpu: 2000
       memory: 2000
