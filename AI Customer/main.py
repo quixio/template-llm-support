@@ -22,7 +22,7 @@ draft_producer = DraftProducer(os.environ["draft_topic"])
 state_key = "conversation-history-v1"
 
 product = os.environ["product"]
-scenario = os.environ["scenario"]
+scenario = os.environ["scenario"].format(product)
 
 llm_bot = LlmBot(product, scenario, draft_producer)
 
