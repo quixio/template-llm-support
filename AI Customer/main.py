@@ -83,7 +83,7 @@ sdf = sdf[sdf["Tags"]["name"] != role or sdf["Tags"]["name"] == "director"]
 
 sdf = sdf.apply(get_answer, stateful=True)
 
-sdf = sdf[sdf.notnull()]
+sdf = sdf[sdf["chat-message"].notnull()]
 
 sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 sdf = sdf.to_topic(output_topic)
