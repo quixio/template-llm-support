@@ -26,6 +26,11 @@ variables:
     description: ''
     defaultValue: customer
     required: true
+  - name: director_name
+    inputType: FreeText
+    description: ''
+    defaultValue: director
+    required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
