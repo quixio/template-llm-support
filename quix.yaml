@@ -148,7 +148,7 @@ deployments:
   - name: Customer sink
     application: Converstations sink
     deploymentType: Service
-    version: v1-sink
+    version: d01a7a865b42cb2449040c391d481783c338c801
     resources:
       cpu: 1000
       memory: 500
