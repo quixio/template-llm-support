@@ -48,7 +48,7 @@ def get_answer(row: dict, state: State):
         full_history = "\n".join([f"{msg['TAG__name'].upper()}: {msg['chat-message']}" for msg in conversation_history])
     
         prompt = scenario + '\n\n'
-        prompt += full_history[-1000:] 
+        prompt += full_history[-400:] 
         prompt += f'\nAGENT:{row["chat-message"]}'
         print(prompt)
         prompt +=  director_prompt_state if role == "agent" else "" 
