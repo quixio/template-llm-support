@@ -18,10 +18,14 @@ sdf = sdf.update(lambda value: value.update({
     'role': 'director'
     }))
 
-sdf = sdf.update(lambda row: print(row))
+
+
 
 
 sdf = sdf[sdf["average_sentiment"] < -0.5 and sdf["average_sentiment_count"] > 3]
+sdf["chat-message"] = "The sentiment of this conversation is very negative, can you increase politeness?"
+
+sdf = sdf.update(lambda row: print(row))
 
 
 
