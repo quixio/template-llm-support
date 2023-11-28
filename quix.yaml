@@ -183,7 +183,7 @@ deployments:
   - name: ConversationStarter
     application: ConversationStarter
     deploymentType: Job
-    version: v1-starter
+    version: v1.1-starter
     resources:
       cpu: 200
       memory: 500
