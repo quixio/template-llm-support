@@ -6,19 +6,13 @@ import { ParameterData } from "../models/parameter-data";
 
 export const QuixChatRoom = 'Quix chatroom';
 
-class RoomChange {
-  roomId: string;
-  isTwitch: boolean;
-}
-
 @Injectable({
   providedIn: "root",
 })
 export class RoomService {
   selectedRoom: string;
-  private _isTwitch: boolean;
 
-  private _roomChanged$ = new Subject<RoomChange>();
+  private _roomChanged$ = new Subject<string>();
   private _previousRooms: string[] = [];
   private _previousRooms$ = new ReplaySubject<string[]>;
 
@@ -43,13 +37,10 @@ export class RoomService {
    * Conditional based on whether it's a Twitch channel or not.
    * 
    * @param roomName The name of the room.
-   * @param isTwitchRoom Whether it's a Twitch channel.
    */
-  public switchRoom(roomName?: string, isTwitchRoom?: boolean): void {
+  public switchRoom(roomName?: string): void {
     // console.log(`Room Service | Switching room - ${roomName}. Is Twitch - ${isTwitchRoom}`);
-    this._isTwitch = !!isTwitchRoom;
-
-    if (roomName && !isTwitchRoom && !this._previousRooms.includes(roomName)) {
+    if (roomName && !this._previousRooms.includes(roomName)) {
       this._previousRooms.push(roomName);
       this.setPreviousRooms();
     }
@@ -64,7 +55,7 @@ export class RoomService {
 
     // Perform room logic
     this.selectedRoom = roomName;
-    this._roomChanged$.next({ roomId: this.selectedRoom, isTwitch: this._isTwitch });
+    this._roomChanged$.next(this.selectedRoom);
   }
 
   /**

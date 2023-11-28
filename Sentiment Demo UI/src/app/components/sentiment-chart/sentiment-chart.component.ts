@@ -90,7 +90,7 @@ export class SentimentChartComponent implements OnInit, AfterViewInit, OnDestroy
     });
 
     // Listens for when the room changes and resets the chart
-    this.roomService.roomChanged$.pipe(takeUntil(this.unsubscribe$)).subscribe(({ roomId }) => {
+    this.roomService.roomChanged$.pipe(takeUntil(this.unsubscribe$)).subscribe((roomId) => {
       this.chartConfiguration.data.datasets!.at(0)!.data = [];
       this.loadPreviousSentiment(roomId);
     });

@@ -14,9 +14,6 @@ import { QuixChatRoom, RoomService } from 'src/app/services/room.service';
   styleUrls: ['./message-source-dropdown.component.scss']
 })
 export class MessageSourceDropdownComponent implements OnInit, OnDestroy {
-
-  @ViewChild('twitchWrapper') twitchWrapper: ElementRef<HTMLElement>;
-
   QuixChatRoom = QuixChatRoom;
   selectedRoom: string | undefined = QuixChatRoom;
   storedRooms: string[];
@@ -38,7 +35,7 @@ export class MessageSourceDropdownComponent implements OnInit, OnDestroy {
     this.isLoadingChannels = true;
 
     // Listen for changes in the selected room
-    this.roomService.roomChanged$.pipe(takeUntil(this.unsubscribe)).subscribe(({roomId}) => {
+    this.roomService.roomChanged$.pipe(takeUntil(this.unsubscribe)).subscribe((roomId) => {
       this.selectedRoom = roomId;
     });
 

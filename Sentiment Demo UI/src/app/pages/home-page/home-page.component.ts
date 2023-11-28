@@ -29,13 +29,13 @@ export class HomePageComponent implements OnInit {
         skip(1), // We don't want to trigger this the first time
         takeUntil(this.unsubscribe$)
       ).subscribe(() => {
-      this.roomService.switchRoom(this.room, this.isTwitchRoom);
+      this.roomService.switchRoom(this.room);
     });
 
      // Listen for connection status changes
      this.quixService.readerConnStatusChanged$.pipe(takeUntil(this.unsubscribe$)).subscribe((status) => {
       if (status === ConnectionStatus.Connected) {
-        this.roomService.switchRoom(this.room, this.isTwitchRoom);
+        this.roomService.switchRoom(this.room);
 
         this.twitchService.activeStreamsChanged();
         this.twitchService.subscribeToChannels();

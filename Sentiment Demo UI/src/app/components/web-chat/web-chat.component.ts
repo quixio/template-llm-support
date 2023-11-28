@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ShareChatroomDialogComponent } from '../dialogs/share-chatroom-dialog/share-chatroom-dialog.component';
 import { RoomService } from 'src/app/services/room.service';
 import { Colors } from 'src/app/constants/colors';
-import { TwitchChannel, TwitchService } from 'src/app/services/twitch.service';
+import { TwitchService } from 'src/app/services/twitch.service';
 
 export const POSITIVE_THRESHOLD = 0.5;
 export const NEGATIVE_THRESHOLD = -0.5;
@@ -31,11 +31,7 @@ export class UserTyping {
   name: 'sentimentFilter'
 })
 export class SentimentFilterPipe implements PipeTransform {
-  transform(messages: MessagePayload[], isTwitch: boolean): any[] {
-    if (!messages || !isTwitch) {
-      return messages;
-    }
-
+  transform(messages: MessagePayload[]): any[] {
     // Filter the messages to only show the ones where sentiment is present
     return messages.filter(message => message.sentiment !== undefined);
   }
@@ -51,9 +47,6 @@ export class WebChatComponent implements OnInit {
   username: string;
   profilePic: string;
   profilePicColor: string;
-
-  isTwitch: boolean = true;
-  twitchChannel$: Observable<TwitchChannel | undefined>;
   scrollTimeoutId: any;
 
   @ViewChild('chatWrapper') chatWrapperEle: ElementRef<HTMLElement>;
@@ -120,20 +113,14 @@ export class WebChatComponent implements OnInit {
       this.messageReceived(payload);
     });
 
-    this.roomService.roomChanged$.subscribe(({ roomId, isTwitch }) => {
+    this.roomService.roomChanged$.subscribe((roomId) => {
       this.messages = [];
-      this.isTwitch = isTwitch;
 
-      if (!isTwitch) {
-        this.roomService.getChatMessageHistory(roomId).pipe(take(1)).subscribe(lastMessages => {
-          let sortedMessages = lastMessages.sort((a, b) => a.timestamp! - b.timestamp!);
-          this.messages = sortedMessages;
-          this.scrollToChatBottom();
-        });
-      } else {
-        // Retrieve the Twitch Channel so we can use it in the template
-        this.twitchChannel$ = this.twitchService.getTwitchChannel(roomId);
-      }
+      this.roomService.getChatMessageHistory(roomId).pipe(take(1)).subscribe(lastMessages => {
+        let sortedMessages = lastMessages.sort((a, b) => a.timestamp! - b.timestamp!);
+        this.messages = sortedMessages;
+        this.scrollToChatBottom();
+      });
     });
   }
 

@@ -3,26 +3,8 @@
   <div fxLayout="column" fxLayoutAlign="center center" fxLayout.lt-md="column" fxFlexFill class="_background-gradient">
     <mat-card fxLayout="column" class="p-0 h-100 w-100" [style.maxWidth.px]="440">
   
-      <!-- TwitchTV Header -->
-      <mat-card-header fxLayout="row" fxLayoutAlign="space-between center" *ngIf="isTwitch">     
-          <div fxLayoutAlign="start center">
-            <button fxHide.gt-sm mat-icon-button color="primary" class="me-1" (click)="scrollToInfo()">
-              <mat-icon>arrow_upward</mat-icon>
-            </button>
-            <div *ngIf="(twitchChannel$ | async)?.profilePic as profilePic" class="_profile-pic me-2">
-              <img [src]="profilePic" height="32">
-            </div>
-            <p class="mat-body-2 fw-bold m-0 me-2">{{ roomService.selectedRoom }}</p>
-          </div>
-  
-          <a fxLayoutAlign="start center" [href]="'https://twitch.tv/' + roomService.selectedRoom" target="_blank">
-            <mat-icon class="me-2">open_in_new</mat-icon>
-            Open in Twitch
-          </a>  
-      </mat-card-header>
-  
       <!-- Standard Chat Header -->
-      <mat-card-header fxLayout="row" fxLayoutAlign="space-between center" *ngIf="!isTwitch">
+      <mat-card-header fxLayout="row" fxLayoutAlign="space-between center">
         <div fxLayoutAlign="start center">
           <button fxHide.gt-sm mat-icon-button color="primary" class="me-1" (click)="scrollToInfo()">
             <mat-icon>arrow_upward</mat-icon>
@@ -50,7 +32,7 @@
   
       <mat-card-content fxFlex fxLayout="column" class="bg-white mb-0 overflow-hidden">
         <div fxFlex class="overflow-auto"  #chatWrapper>
-          <app-message *ngFor="let message of messages | sentimentFilter: isTwitch" [message]="message"></app-message> 
+          <app-message *ngFor="let message of messages | sentimentFilter" [message]="message"></app-message> 
           <ng-container *ngFor="let userTyping of usersTyping | keyvalue">
             <app-message *ngIf="userTyping.value.message?.name !== username"
               [message]=" userTyping.value.message!" class="opacity-50">
@@ -59,7 +41,7 @@
         </div>
         
         <!-- Standard Chat isTyping sentiment indicator -->
-        <div *ngIf="!isTwitch && !!usersTyping.size" fxLayout="row" fxLayoutAlign="space-between center" class="mat-caption text-grey my-2 mx-3">
+        <div *ngIf="!!usersTyping.size" fxLayout="row" fxLayoutAlign="space-between center" class="mat-caption text-grey my-2 mx-3">
           
           <!-- Display sentiment statistics -->
           <div *ngIf="getSentimentStats() as stats" fxLayout="row">
@@ -89,14 +71,10 @@
         </div>
       </mat-card-content>
   
-      <!-- TwitchTV Footer -->
-      <mat-card-footer class="m-0 text-grey" *ngIf="isTwitch">
-        <p class="mb-0 fw-bold text-uppercase">Read only</p>
-      </mat-card-footer>
   
       <!-- Standard Chat Footer -->
-      <mat-card-footer *ngIf="!isTwitch">
-        <form *ngIf="!isTwitch" [formGroup]="chatForm" fxLayout="row" autocomplete="off" (ngSubmit)="submit()"> 
+      <mat-card-footer>
+        <form [formGroup]="chatForm" fxLayout="row" autocomplete="off" (ngSubmit)="submit()"> 
           <!-- Username empty - Prompt user to enter username before they enter chat -->
           <ng-container *ngIf="!username">
             <mat-form-field appearance="outline" fxFlex class="small pb-0">
