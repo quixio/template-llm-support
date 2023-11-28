@@ -40,45 +40,45 @@ def get_answer(row: dict, state: State):
         state.set(director_prompt_state_key, director_prompt_state)
         print("Director message: " + row["chat-message"])
         return None 
+    else:
 
+        row["Tags"]["name"] = role
 
-    row["Tags"]["name"] = role
-
-    conversation_history = state.get(state_key, [])
-    full_history = "\n".join([f"{msg['TAG__name'].upper()}: {msg['chat-message']}" for msg in conversation_history])
-  
-    prompt = scenario + '\n\n'
-    prompt += full_history[-1000:] 
-    prompt += f'\nAGENT:{row["chat-message"]}'
-    print(prompt)
-    prompt +=  director_prompt_state if role == "agent" else "" 
-    prompt += f'\n{role.upper()}:'
-
-    print(prompt)
-
-    # Generate the reply using the AI model
-    print("Thinking about my response....")
-    reply = llm_bot.generate_response(row, prompt, bytes.decode(message_key()))  # This function should be defined elsewhere to handle the interaction with the AI model
-    finalreply = reply.replace(prompt, ' ').replace('{', '').replace('}', '').replace('"', '').strip()
+        conversation_history = state.get(state_key, [])
+        full_history = "\n".join([f"{msg['TAG__name'].upper()}: {msg['chat-message']}" for msg in conversation_history])
     
-    reply_dict = {
-        "TAG__name": role.upper(),
-        "TAG__room": bytes.decode(message_key()),
-        "chat-message": finalreply,
-    }
+        prompt = scenario + '\n\n'
+        prompt += full_history[-1000:] 
+        prompt += f'\nAGENT:{row["chat-message"]}'
+        print(prompt)
+        prompt +=  director_prompt_state if role == "agent" else "" 
+        prompt += f'\n{role.upper()}:'
 
-    print(f"My reply was '{finalreply}'")
-    # Create a dictionary for the reply
+        print(prompt)
 
-    conversation_history.append(reply_dict)
+        # Generate the reply using the AI model
+        print("Thinking about my response....")
+        reply = llm_bot.generate_response(row, prompt, bytes.decode(message_key()))  # This function should be defined elsewhere to handle the interaction with the AI model
+        finalreply = reply.replace(prompt, ' ').replace('{', '').replace('}', '').replace('"', '').strip()
+        
+        reply_dict = {
+            "TAG__name": role.upper(),
+            "TAG__room": bytes.decode(message_key()),
+            "chat-message": finalreply,
+        }
 
-    state.set(state_key, conversation_history)
+        print(f"My reply was '{finalreply}'")
+        # Create a dictionary for the reply
 
-    # Return the generated reply
-    row["chat-message"] = finalreply
+        conversation_history.append(reply_dict)
+
+        state.set(state_key, conversation_history)
+
+        # Return the generated reply
+        row["chat-message"] = finalreply
 
 
-    return row
+        return row
 
 
 sdf = sdf[sdf["Tags"].contains("name")]
