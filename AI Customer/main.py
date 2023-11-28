@@ -68,7 +68,6 @@ def get_answer(row: dict, state: State):
     # Create a dictionary for the reply
 
     conversation_history.append(reply_dict)
-    print(conversation_history)
 
     state.set(state_key, conversation_history)
 
