@@ -46,10 +46,12 @@ def get_answer(row: dict, state: State):
     full_history = "\n".join([f"{msg['TAG__name'].upper()}: {msg['chat-message']}" for msg in conversation_history])
   
     prompt = scenario + '\n\n' \
-         + full_history[-500:] \
+         + full_history[-1000:] \
          + f'\nAGENT:{row["chat-message"]}'\
          + director_prompt_state if role == "director" else "" \
          + '\n{role.upper()}:'
+
+    print(prompt)
 
     # Generate the reply using the AI model
     print("Thinking about my response....")
