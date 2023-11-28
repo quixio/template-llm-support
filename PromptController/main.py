@@ -13,9 +13,10 @@ sdf = app.dataframe(input_topic)
 
 sdf = sdf[sdf.contains("average_sentiment_count")]
 
-sdf["Tags"] = sdf["Tags"].apply(lambda: row["role"] = "director")
-
-sdf = sdf.update(lambda value: value['Timestamp'] = time.time_ns())
+sdf = sdf.update(lambda value: value.update({
+    'Timestamp': time.time_ns(),
+    'role': 'director'
+    }))
 
 sdf = sdf.update(lambda row: print(row))
 
