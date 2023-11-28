@@ -23,7 +23,10 @@ def mean(row: dict, state: State):
 
     state.set(storage_key, mean_state)
 
-    return sum(mean_state) / len(mean_state)
+    row["average_sentiment"] = sum(mean_state) / len(mean_state)
+    row["average_sentiment_count"] = len(mean_state)
+
+    return row
 
 
 # Pipeline definition.
@@ -32,7 +35,7 @@ sdf = app.dataframe(input_topic)
 sdf["sentiment"] = sdf["chat-message"].apply(lambda value: classifier(value)[0])
 sdf["sentiment"] = sdf.apply(lambda row: float(row["sentiment"]["score"]) if row["sentiment"]["label"] == "POSITIVE" else -float(row["sentiment"]["score"]))
 
-sdf["average_sentiment"] = sdf.apply(mean, stateful=True)
+sdf = sdf.apply(mean, stateful=True)
 
 sdf = sdf.update(lambda row: print(row))
 
