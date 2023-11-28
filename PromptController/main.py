@@ -23,7 +23,8 @@ def update_row(row: dict, state: State):
 
     if state_value > 0:
         print("Already sent")
-        return None
+        row["chat-message"] = "SENT"
+        return row
     else:
         state.set(state_key, 1)
         print("Sent")
@@ -35,7 +36,7 @@ sdf = sdf[sdf["average_sentiment"] < -0.5 and sdf["average_sentiment_count"] > 3
 sdf["chat-message"] = "The sentiment of this conversation is very negative, can you increase politeness?"
 
 sdf = sdf.apply(update_row, stateful=True)
-sdf = sdf[sdf.contains("chat-message")]
+sdf = sdf[sdf["chat-message"] != "SENT"]
 
 sdf = sdf.update(lambda row: print(row))
 
