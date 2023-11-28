@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: b7a43c2588f1ae793511a778f0207b578e98632d
+    version: 55201c4e1373f88e43b2aeb75c72efbfb5cf892d
     resources:
       cpu: 4000
       memory: 8000
@@ -19,7 +19,7 @@ deployments:
       size: 6
     desiredStatus: Running
     variables:
-      - name: output
+      - name: topic
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
@@ -32,7 +32,7 @@ deployments:
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
-    version: b7e99b3e54c5c33979f261c34b429262446ce181
+    version: 729095d3e4c78311aea53a7ebf37501e37c92321
     resources:
       cpu: 4000
       memory: 8000
@@ -42,7 +42,7 @@ deployments:
       size: 6
     desiredStatus: Running
     variables:
-      - name: output
+      - name: topic
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
