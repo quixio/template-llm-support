@@ -168,7 +168,7 @@ deployments:
       cpu: 2000
       memory: 500
       replicas: 1
-    desiredStatus: Running
+    desiredStatus: Stopped
     variables:
       - name: input
         inputType: FreeText
