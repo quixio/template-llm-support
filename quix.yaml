@@ -44,29 +44,6 @@ deployments:
         description: ''
         required: true
         value: customer
-  - name: AI Support Agent
-    application: AI Customer Support Agent
-    deploymentType: Service
-    version: 9ece5e862fe249e7eefe74bf238f1247934b6e82
-    resources:
-      cpu: 4000
-      memory: 8000
-      replicas: 1
-    state:
-      enabled: true
-      size: 6
-    desiredStatus: Stopped
-    variables:
-      - name: output
-        inputType: OutputTopic
-        description: This is the output topic to write data to
-        required: true
-        value: messages
-      - name: product
-        inputType: FreeText
-        description: ''
-        required: false
-        value: roomba vacum cleaner
   - name: Sentiment Analyzer
     application: Sentiment Analyzer
     deploymentType: Service
