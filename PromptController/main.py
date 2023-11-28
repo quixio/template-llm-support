@@ -26,6 +26,7 @@ def update_row(row: dict, state: State):
         return None
     else:
         state.set(state_key, 1)
+        print("Sent")
         return row
 
 
@@ -37,7 +38,7 @@ sdf = sdf.apply(update_row, stateful=True)
 
 sdf = sdf.update(lambda row: print(row))
 
-
+sdf = sdf[sdf.contains("chat-message")]
 
 sdf = sdf.to_topic(output_topic)
 
