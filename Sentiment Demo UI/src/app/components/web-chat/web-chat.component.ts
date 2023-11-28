@@ -209,7 +209,7 @@ export class WebChatComponent implements OnInit {
       this.usersTyping.set(name, user);
     }
 
-    if (topicId === this.quixService.messagesTopic || topicId === this.quixService.twitchMessagesTopic) {
+    if (topicId === this.quixService.messagesTopic) {
        // If the user is in the typing map then remove them
        if (user) {
         user?.timeout?.unsubscribe();

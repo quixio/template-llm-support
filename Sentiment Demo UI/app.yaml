@@ -21,11 +21,6 @@ variables:
     description: ''
     defaultValue: drafts_sentiment
     required: false
-  - name: twitch_messages
-    inputType: FreeText
-    description: ''
-    defaultValue: twitch_messages
-    required: false
   - name: bearer_token
     inputType: Secret
     description: ''

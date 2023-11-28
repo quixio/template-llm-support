@@ -27,11 +27,10 @@ export class TwitchService {
 	_channelsChanged$ = new BehaviorSubject<TwitchChannel[]>([]);
 
   constructor(private quixService: QuixService) { 
-
 		// Listen for changes in the active streams and convert them to a list of Twitch channels.
 		this.getActiveStreams$().subscribe((streamSub) => {
-      this.setActiveSteams(streamSub?.streams!, streamSub?.action);
-    });
+			this.setActiveSteams(streamSub?.streams!, streamSub?.action);
+		});
 	}
 
 	/**
@@ -55,6 +54,7 @@ export class TwitchService {
 			.invoke('SubscribeToActiveStreams', this.quixService.messagesTopic)
 			.then((stream: ActiveStream, action?: ActiveStreamAction) => {
 				if (!stream) return;
+        console.log(stream)
 				const streamsArray = Array.isArray(stream) ? stream : [stream];
 				this._activeChannels.next({ streams: streamsArray, action });
 			})
@@ -154,7 +154,7 @@ export class TwitchService {
 	public unsubscribeFromChannels(): void { 
 		// console.log(`Twitch Service | Unsubscribing from retrieve channels`);
 		this.quixService.readerHubConnection
-			.invoke('UnsubscribeFromActiveStreams', this.quixService.twitchMessagesTopic)
+			.invoke('UnsubscribeFromActiveStreams', this.quixService.messagesTopic)
 			.then(() => {
 				this._activeChannels.next({ streams: [], action: ActiveStreamAction.Remove });
 			})

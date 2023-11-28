@@ -25,10 +25,9 @@ export class QuixService {
   /*~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-*/
   /*WORKING LOCALLY? UPDATE THESE!*/
   private workingLocally = false; // set to true if working locally
-  private token: string = ''; // Create a token in the Tokens menu and paste it here
+  private token: string = 'pat-4f387c78ba7243cc80fd199c3d6a9e32'; // Create a token in the Tokens menu and paste it here
   public workspaceId: string = 'tomas-llm-frontend'; // Look in the URL for the Quix Portal your workspace ID is after 'workspace='
   public messagesTopic: string = 'messages'; // get topic name from the Topics page
-  public twitchMessagesTopic: string = 'twitch-messages'; // get topic name from the Topics page
   public draftsTopic: string = 'drafts'; // get topic from the Topics page
   public sentimentTopic: string = 'sentiment'; // get topic name from the Topics page
   public draftsSentimentTopic: string = 'drafts_sentiment'; // get topic name from the Topics page
@@ -38,7 +37,6 @@ export class QuixService {
   readonly server = ''; // leave blank
 
   public sentimentAnalysisDeploymentId: string = "64aa05e9-b8d7-41d0-89d9-8c7996bd3a15"; // links from the info text in the left hand panel use this to link you to the project in the platform. Easier to leave it blank.
-  public twitchSentimentAnalysisDeploymentId: string = "bcab2636-5092-4ea7-920f-f921c2cbae0f"; // links from the info text in the left hand panel use this to link you to the project in the platform. Easier to leave it blank.
 
   private readerReconnectAttempts: number = 0;
   private writerReconnectAttempts: number = 0;
@@ -67,7 +65,6 @@ export class QuixService {
 
     if(this.workingLocally || location.hostname === "localhost" || location.hostname === "127.0.0.1"){
       this.messagesTopic = this.workspaceId + '-' + this.messagesTopic;
-      this.twitchMessagesTopic = this.workspaceId + '-' + this.twitchMessagesTopic;
       this.draftsTopic = this.workspaceId + '-' + this.draftsTopic;
       this.sentimentTopic = this.workspaceId + '-' + this.sentimentTopic;
       this.draftsSentimentTopic = this.workspaceId + '-' + this.draftsSentimentTopic;
@@ -78,7 +75,6 @@ export class QuixService {
       let bearerToken$ = this.httpClient.get(this.server + "bearer_token", {headers, responseType: 'text'});
       let workspaceId$ = this.httpClient.get(this.server + 'workspace_id', {headers, responseType: 'text'});
       let messagesTopic$ = this.httpClient.get(this.server + 'messages_topic', {headers, responseType: 'text'});
-      let twitchMessagesTopic$ = this.httpClient.get(this.server + 'twitch_messages_topic', {headers, responseType: 'text'});
 
       let draftTopic$ = this.httpClient.get(this.server + 'drafts_topic', {headers, responseType: 'text'});
       let sentimentTopic$ = this.httpClient.get(this.server + 'sentiment_topic', {headers, responseType: 'text'});
@@ -93,20 +89,18 @@ export class QuixService {
 
         // Topics
         messagesTopic$,
-        twitchMessagesTopic$,
         draftTopic$,
         sentimentTopic$,
         draftsSentimentTopic$,
 
-      ]).pipe(map(([bearerToken, workspaceId,  portalApi, messagesTopic, twitchMessagesTopic, draftTopic, sentimentTopic, draftsSentimentTopic]) => {
-        return {bearerToken, workspaceId, portalApi, messagesTopic, twitchMessagesTopic, draftTopic, sentimentTopic, draftsSentimentTopic};
+      ]).pipe(map(([bearerToken, workspaceId,  portalApi, messagesTopic, draftTopic, sentimentTopic, draftsSentimentTopic]) => {
+        return {bearerToken, workspaceId, portalApi, messagesTopic, draftTopic, sentimentTopic, draftsSentimentTopic};
       }));
 
-      value$.subscribe(({ bearerToken, workspaceId, portalApi, messagesTopic, twitchMessagesTopic, draftTopic, sentimentTopic, draftsSentimentTopic }) => {
+      value$.subscribe(({ bearerToken, workspaceId, portalApi, messagesTopic, draftTopic, sentimentTopic, draftsSentimentTopic }) => {
         this.token = this.stripLineFeed(bearerToken);
         this.workspaceId = this.stripLineFeed(workspaceId);
         this.messagesTopic = this.stripLineFeed(this.workspaceId + '-' + messagesTopic);
-        this.twitchMessagesTopic = this.stripLineFeed(this.workspaceId + '-' + twitchMessagesTopic);
         this.draftsTopic = this.stripLineFeed(this.workspaceId + '-' + draftTopic);
         this.sentimentTopic = this.stripLineFeed(this.workspaceId + '-' + sentimentTopic);
         this.draftsSentimentTopic = this.stripLineFeed(this.workspaceId + '-' + draftsSentimentTopic);
