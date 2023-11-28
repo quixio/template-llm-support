@@ -34,7 +34,7 @@ def get_answer(row: dict, state: State):
     director_prompt_state = state.get(director_prompt_state_key, "")
 
     if row["Tags"]["name"] == "director":
-        director_prompt_state = row["chat-message"]
+        director_prompt_state = row["chat-message"] + '\n'
         state.set(director_prompt_state_key, director_prompt_state)
         print("Director message: " + row["chat-message"])
         return None 
@@ -50,13 +50,12 @@ def get_answer(row: dict, state: State):
     prompt = scenario + '\n\n' \
          + full_history[-500:] \
          + f'\nAGENT:{row["chat-message"]}'\
-         + 
+         + director_prompt_state \
          + '\n{role.upper()}:'
 
     # Generate the reply using the AI model
     print("Thinking about my response....")
     reply = llm_bot.generate_response(row, prompt, bytes.decode(message_key()))  # This function should be defined elsewhere to handle the interaction with the AI model
-    print(reply)
     finalreply = reply.replace(prompt, ' ').replace('{', '').replace('}', '').replace('"', '').strip()
     
     print(f"My reply was '{finalreply}'")
