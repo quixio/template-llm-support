@@ -85,7 +85,7 @@ deployments:
   - name: Agent AI
     application: AI Customer
     deploymentType: Service
-    version: 97ec45ffcc60ce6ab13b88ba6ccee011a3d3f795
+    version: 8fae93d753359f7d83c7dbdc9e9ba184ed468ec3
     resources:
       cpu: 8000
       memory: 8000
@@ -120,6 +120,11 @@ deployments:
         description: ''
         required: true
         value: agent
+      - name: director_name
+        inputType: FreeText
+        description: ''
+        required: false
+        value: director
   - name: SentimentAnalysis
     application: SentimentAnalysis
     deploymentType: Service
