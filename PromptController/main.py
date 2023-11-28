@@ -9,13 +9,13 @@ input_topic = app.topic(os.environ["input"], value_deserializer=QuixDeserializer
 output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
 
 sdf = app.dataframe(input_topic)
-sdf = sdf[sdf["Tags"]["role"] != "director"]
+sdf = sdf[sdf["Tags"]["name"] != "director"]
 
 sdf = sdf[sdf.contains("average_sentiment_count")]
 
 def update_row(row: dict):
     row['Timestamp']: time.time_ns()
-    row['Tags']['role'] = "director"
+    row['Tags']['name'] = "director"
 
 sdf = sdf.update(update_row)
 
