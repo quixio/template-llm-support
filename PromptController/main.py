@@ -15,7 +15,7 @@ sdf = sdf[sdf.contains("average_sentiment_count")]
 
 def update_row(row: dict):
     row['Timestamp']: time.time_ns()
-    row['Tags']['name'] = "director"
+    row['Tags']['role'] = "director"
 
 sdf = sdf.update(update_row)
 
