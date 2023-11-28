@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: 97ec45ffcc60ce6ab13b88ba6ccee011a3d3f795
+    version: 6453f61ab6f2bedacf2355b4c7ba9c89f6f48db1
     resources:
       cpu: 8000
       memory: 8000
@@ -44,6 +44,11 @@ deployments:
         description: ''
         required: true
         value: customer
+      - name: director_name
+        inputType: FreeText
+        description: ''
+        required: false
+        value: director
   - name: Sentiment Demo UI
     application: Sentiment Demo UI
     deploymentType: Service
