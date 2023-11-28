@@ -27,14 +27,15 @@ else:
     print("Loading model from state...")
 
 llm = LlamaCpp(
-        model_path=model_path,
-        max_tokens=250,
-        top_p=0.95,
-        top_k=150,
-        temperature=0.7,
-        repeat_penalty=1.2,
-        n_ctx=2048,
-        streaming=False)
+    model_path=model_path,
+    max_tokens=250,
+    top_p=0.95,
+    top_k=150,
+    temperature=0.7,
+    repeat_penalty=1.2,
+    n_ctx=2048,
+    streaming=False
+)
 
 model = Llama2Chat(llm=llm)
 
@@ -43,7 +44,8 @@ memory = ConversationTokenBufferMemory(
     max_token_limit=300,
     ai_prefix= "agent",
     human_prefix= "customer",
-    return_messages=True)
+    return_messages=True
+)
 
 prompt = PromptTemplate(
     input_variables=["history", "input"],
@@ -52,7 +54,8 @@ prompt = PromptTemplate(
                 support agent who works for a large electronics retailer called 'ACME electronics', 
                 and a customer who has bought a defective {product} and wants to understand what 
                 their options are for resolving the issue. Please continue the conversation.\n\n
-                Current conversation:\n{history}\nCUSTOMER: {input}\nAGENT:""")
+                Current conversation:\n{history}\nCUSTOMER: {input}\nAGENT:"""
+)
 
 chain = ConversationChain(llm=model, prompt=prompt, memory=memory)
 
