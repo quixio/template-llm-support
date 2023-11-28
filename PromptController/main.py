@@ -17,7 +17,7 @@ sdf["Tags"] = sdf["Tags"].apply(lambda: row["role"] = "director")
 
 sdf = sdf.update(lambda value: value['Timestamp'] = time.time_ns())
 
-sdf = sdf.update(lambda row: print(f"average_sentiment: {row['average_sentiment']}, count: {row['average_sentiment_count']}"))
+sdf = sdf.update(lambda row: print(row))
 
 
 sdf = sdf[sdf["average_sentiment"] < -0.5 and sdf["average_sentiment_count"] > 3]
