@@ -32,7 +32,7 @@ def get_answer(row: dict, state: State):
     print(f"\n------\nRESPONDING T0: {row['chat-message']} \n------\n")
 
     director_prompt_state = state.get(director_prompt_state_key, "")
-
+    print("Director: " + director_prompt_state)
     if row["Tags"]["name"] == "director":
         director_prompt_state = row["chat-message"] + '\n'
         state.set(director_prompt_state_key, director_prompt_state)
