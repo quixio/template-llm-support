@@ -19,6 +19,7 @@ def update_row(row: dict):
 
 sdf = sdf.update(update_row)
 
+
 sdf = sdf[sdf["average_sentiment"] < -0.5 and sdf["average_sentiment_count"] > 3]
 sdf["chat-message"] = "The sentiment of this conversation is very negative, can you increase politeness?"
 
