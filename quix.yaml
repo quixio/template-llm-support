@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: 3e5ed84b58403d6705d7ce55234c9ef22bb53f37
+    version: v1.6-ai
     resources:
       cpu: 8000
       memory: 8000
@@ -38,7 +38,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: true
-        value: "The following transcript represents a conversation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {product} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation (without discussing forever), but only reply as CUSTOMER:"
+        value: "The following transcript represents a conversation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {0} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation (without discussing forever), but only reply as CUSTOMER:"
       - name: role
         inputType: FreeText
         description: ''
