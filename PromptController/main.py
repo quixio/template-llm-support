@@ -13,14 +13,11 @@ sdf = sdf[sdf["Tags"]["role"] != "director"]
 
 sdf = sdf[sdf.contains("average_sentiment_count")]
 
-sdf = sdf.update(lambda value: value.update({
-    'Timestamp': time.time_ns(),
-    'role': 'director'
-    }))
+def update_row(row: dict):
+    row['Timestamp']: time.time_ns()
+    row['Tags']['name'] = "director"
 
-
-
-
+sdf = sdf.update(update_row)
 
 sdf = sdf[sdf["average_sentiment"] < -0.5 and sdf["average_sentiment_count"] > 3]
 sdf["chat-message"] = "The sentiment of this conversation is very negative, can you increase politeness?"
