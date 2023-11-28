@@ -4,12 +4,27 @@ variables:
   - name: output
     inputType: OutputTopic
     description: This is the output topic to write data to
-    defaultValue: ai-chat-history
+    defaultValue: messages
     required: true
   - name: product
     inputType: FreeText
     description: ''
-    defaultValue: printer
+    defaultValue: roomba vacum cleaner
+    required: true
+  - name: draft_topic
+    inputType: OutputTopic
+    description: ''
+    defaultValue: drafts
+    required: true
+  - name: scenario
+    inputType: FreeText
+    description: ''
+    defaultValue: "The following transcript represents a conversation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {product} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation (without discussing forever), but only reply as CUSTOMER:"
+    required: true
+  - name: role
+    inputType: FreeText
+    description: ''
+    defaultValue: customer
     required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py

@@ -1,4 +1,5 @@
-quixstreams==0.5.7
+quixstreams==2.1.2a
 huggingface_hub
 joblib
 llama-cpp-python
+pandas
