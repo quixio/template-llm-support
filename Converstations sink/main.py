@@ -9,7 +9,7 @@ input_topic = app.topic(os.environ["input"], value_deserializer=QuixDeserializer
 
 sdf = app.dataframe(input_topic)
 
-sdf = sdf.update(lambda row: print(row))
+sdf = sdf.update(lambda row: print(row["Timestamp"]))
 
 
 if __name__ == "__main__":
