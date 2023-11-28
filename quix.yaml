@@ -165,6 +165,26 @@ deployments:
         description: ''
         required: true
         value: transformation-v10-agent
+  - name: Customer Bots stopper
+    application: Converstations sink
+    deploymentType: Service
+    version: v1.1-sink
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    desiredStatus: Running
+    variables:
+      - name: input
+        inputType: FreeText
+        description: Name of the input topic to listen to.
+        required: true
+        value: messages
+      - name: consumer_group
+        inputType: FreeText
+        description: ''
+        required: true
+        value: transformation-v10-customer
 
 # This section describes the Topics of the data pipeline
 topics:
