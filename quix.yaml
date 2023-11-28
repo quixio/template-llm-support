@@ -85,7 +85,7 @@ deployments:
   - name: Agent AI
     application: AI Customer
     deploymentType: Service
-    version: v1.5-ai
+    version: v1.6-ai
     resources:
       cpu: 8000
       memory: 8000
@@ -114,7 +114,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: true
-        value: "The following transcript represents a conversation between you, a customer support agent who works for a large electronics retailer called 'ACME electronics', and a customer who has bought a defective {product} and wants to understand what their options are for resolving the issue. Please continue the conversation, but only reply as AGENT:"
+        value: "The following transcript represents a conversation between you, a customer support agent who works for a large electronics retailer called 'ACME electronics', and a customer who has bought a defective {0} and wants to understand what their options are for resolving the issue. Please continue the conversation, but only reply as AGENT:"
       - name: role
         inputType: FreeText
         description: ''
