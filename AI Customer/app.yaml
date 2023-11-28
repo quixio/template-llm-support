@@ -30,7 +30,7 @@ variables:
     inputType: FreeText
     description: ''
     defaultValue: director
-    required: true
+    required: false
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
