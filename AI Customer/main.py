@@ -49,7 +49,7 @@ def get_answer(row: dict, state: State):
          + full_history[-1000:] \
          + f'\nAGENT:{row["chat-message"]}'\
          + director_prompt_state if role == "director" else "" \
-         + '\n{role.upper()}:'
+         + f'\n{role.upper()}:'
 
     print(prompt)
 
