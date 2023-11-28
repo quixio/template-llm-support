@@ -18,6 +18,7 @@ export const NEGATIVE_THRESHOLD = -0.5;
 export class UserTyping {
   timeout?: Subscription;
   sentiment?: number;
+  message?: MessagePayload
 }
 
 
@@ -91,7 +92,7 @@ export class WebChatComponent implements OnInit {
     this.profilePic = this.generateProfilePic();
     this.profilePicColor = this.generateRandomColor();
 
-    this.messageFC.valueChanges.pipe(debounceTime(300), takeUntil(this.unsubscribe$)).subscribe((value) => {
+    this.messageFC.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe((value) => {
       // Prevents it triggering when they send message and debounce is triggered
       if (this.messageSent === value) {
         this.messageSent = undefined;
@@ -125,7 +126,7 @@ export class WebChatComponent implements OnInit {
 
       if (!isTwitch) {
         this.roomService.getChatMessageHistory(roomId).pipe(take(1)).subscribe(lastMessages => {
-          let sortedMessages = lastMessages.sort((a, b) => a.timestamp - b.timestamp);
+          let sortedMessages = lastMessages.sort((a, b) => a.timestamp! - b.timestamp!);
           this.messages = sortedMessages;
           this.scrollToChatBottom();
         });
@@ -195,6 +196,7 @@ export class WebChatComponent implements OnInit {
       // Add the subscription to the object
       this.usersTyping.set(name, {
         ...user,
+        message: { name, profilePic, profilePicColor, sentiment, value},
         timeout: subscription
       });
     }

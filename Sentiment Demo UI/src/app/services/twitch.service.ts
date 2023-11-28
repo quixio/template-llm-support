@@ -52,7 +52,7 @@ export class TwitchService {
   public subscribeToChannels(): void {
     // console.log(`Twitch Service | Subscribing to retrieve channels`);
     this.quixService.readerHubConnection
-			.invoke('SubscribeToActiveStreams', this.quixService.twitchMessagesTopic)
+			.invoke('SubscribeToActiveStreams', this.quixService.messagesTopic)
 			.then((stream: ActiveStream, action?: ActiveStreamAction) => {
 				if (!stream) return;
 				const streamsArray = Array.isArray(stream) ? stream : [stream];

@@ -9,8 +9,11 @@
     </div>
   </div>
   <div fxLayout="row" fxLayoutAlign="end center" class="mat-caption">
-    <p class="mb-0 me-2 text-grey-light mat-caption"> {{ getDateFromTimestamp(message.timestamp) | date:'hh:mm:ss' }}</p>
+    <p class="mb-0 me-2 text-grey-light mat-caption" *ngIf="message.timestamp">
+      {{ getDateFromTimestamp(message.timestamp) | date:'hh:mm:ss' }}
+    </p>
     <div 
+      *ngIf="message?.sentiment"
       [class]="getColor(message?.sentiment!)" fxLayout="row" fxLayoutAlign="start center">
       <mat-icon *ngIf="getSentimentIcon(message?.sentiment!) as icon" inline class="material-icons-outlined me-1" [style.fontSize.px]="16">
         {{ icon }}

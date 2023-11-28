@@ -9,11 +9,11 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: a59498a496c75d375604888bb4ad2a9e3c9eaec5
+    version: 3e5ed84b58403d6705d7ce55234c9ef22bb53f37
     resources:
-      cpu: 4000
+      cpu: 8000
       memory: 8000
-      replicas: 1
+      replicas: 4
     state:
       enabled: true
       size: 6
@@ -29,58 +29,25 @@ deployments:
         description: ''
         required: true
         value: roomba vacum cleaner
-  - name: AI Support Agent
-    application: AI Customer Support Agent
-    deploymentType: Service
-    version: 9ece5e862fe249e7eefe74bf238f1247934b6e82
-    resources:
-      cpu: 4000
-      memory: 8000
-      replicas: 1
-    state:
-      enabled: true
-      size: 6
-    desiredStatus: Running
-    variables:
-      - name: output
-        inputType: OutputTopic
-        description: This is the output topic to write data to
-        required: true
-        value: messages
-      - name: product
-        inputType: FreeText
-        description: ''
-        required: false
-        value: roomba vacum cleaner
-  - name: Sentiment Analyzer
-    application: Sentiment Analyzer
-    deploymentType: Service
-    version: 5d5e8747fb68ae960dc087f7bdb4300123dd9e5b
-    resources:
-      cpu: 2000
-      memory: 4000
-      replicas: 1
-    desiredStatus: Running
-    variables:
-      - name: input
+      - name: draft_topic
         inputType: InputTopic
-        description: Name of the input topic to listen to.
-        required: false
-        value: messages
-      - name: output
-        inputType: OutputTopic
-        description: Name of the output topic to write to.
+        description: ''
         required: true
-        value: sentiment
-      - name: buffer_delay
+        value: drafts
+      - name: scenario
         inputType: FreeText
-        description: Input buffer configuration (timeout and timespan in milliseconds).
-        required: false
-        value: 0
+        description: ''
+        required: true
+        value: "The following transcript represents a conversation between you, a customer of a large electronics retailer called 'ACME electronics', and a support agent who you are contacting to resolve an issue with a defective {product} you purchased. Your goal is try and understand what your options are for resolving the issue. Please continue the conversation (without discussing forever), but only reply as CUSTOMER:"
+      - name: role
+        inputType: FreeText
+        description: ''
+        required: true
+        value: customer
   - name: Sentiment Demo UI
     application: Sentiment Demo UI
     deploymentType: Service
-    version: 0e5fea27f587572dfd4a0d25c12d2dee1a874754
+    version: v3-ui
     resources:
       cpu: 1000
       memory: 500
@@ -110,16 +77,123 @@ deployments:
         description: ''
         required: false
         value: drafts_sentiment
-      - name: twitch_messages
-        inputType: FreeText
-        description: ''
-        required: false
-        value: twitch_messages
       - name: bearer_token
         inputType: Secret
         description: ''
         required: true
         secretKey: beareToken
+  - name: Agent AI
+    application: AI Customer
+    deploymentType: Service
+    version: v1.5-ai
+    resources:
+      cpu: 8000
+      memory: 8000
+      replicas: 4
+    state:
+      enabled: true
+      size: 1
+    desiredStatus: Running
+    variables:
+      - name: output
+        inputType: OutputTopic
+        description: This is the output topic to write data to
+        required: true
+        value: messages
+      - name: product
+        inputType: FreeText
+        description: ''
+        required: true
+        value: roomba vacum cleaner
+      - name: draft_topic
+        inputType: InputTopic
+        description: ''
+        required: true
+        value: drafts
+      - name: scenario
+        inputType: FreeText
+        description: ''
+        required: true
+        value: "The following transcript represents a conversation between you, a customer support agent who works for a large electronics retailer called 'ACME electronics', and a customer who has bought a defective {product} and wants to understand what their options are for resolving the issue. Please continue the conversation, but only reply as AGENT:"
+      - name: role
+        inputType: FreeText
+        description: ''
+        required: true
+        value: agent
+  - name: SentimentAnalysis
+    application: SentimentAnalysis
+    deploymentType: Service
+    version: 017e4620173caaa8db3562354f938d8fd2d18556
+    resources:
+      cpu: 2000
+      memory: 2000
+      replicas: 1
+    desiredStatus: Running
+    variables:
+      - name: input
+        inputType: InputTopic
+        description: Name of the input topic to listen to.
+        required: false
+        value: messages
+      - name: output
+        inputType: OutputTopic
+        description: Name of the output topic to write to.
+        required: true
+        value: sentiment
+  - name: Customer Bots stopper
+    application: Converstations sink
+    deploymentType: Service
+    version: v1.1-sink
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    desiredStatus: Stopped
+    variables:
+      - name: input
+        inputType: FreeText
+        description: Name of the input topic to listen to.
+        required: true
+        value: messages
+      - name: consumer_group
+        inputType: FreeText
+        description: ''
+        required: true
+        value: transformation-v10-customer
+  - name: AI Bots stopper
+    application: Converstations sink
+    deploymentType: Service
+    version: v1.1-sink
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    desiredStatus: Stopped
+    variables:
+      - name: input
+        inputType: FreeText
+        description: Name of the input topic to listen to.
+        required: true
+        value: messages
+      - name: consumer_group
+        inputType: FreeText
+        description: ''
+        required: true
+        value: transformation-v10-agent
+  - name: ConversationStarter
+    application: ConversationStarter
+    deploymentType: Job
+    version: v1-starter
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    variables:
+      - name: output
+        inputType: OutputTopic
+        description: Name of the output topic to write to.
+        required: true
+        value: messages
 
 # This section describes the Topics of the data pipeline
 topics:
@@ -151,17 +225,52 @@ topics:
       replicationFactor: 2
       retentionInMinutes: 1440
       retentionInBytes: 52428800
-  - name: messages
-    persisted: true
-    configuration:
-      partitions: 8
-      replicationFactor: 2
-      retentionInMinutes: -1
-      retentionInBytes: 52428800
   - name: sentiment
     persisted: true
     configuration:
       partitions: 8
       replicationFactor: 2
       retentionInMinutes: -1
+      retentionInBytes: 52428800
+  - name: drafts
+    persisted: false
+    configuration:
+      partitions: 8
+      replicationFactor: 2
+      retentionInMinutes: -1
+      retentionInBytes: 52428800
+  - name: transform
+    persisted: false
+    configuration:
+      partitions: 2
+      replicationFactor: 2
+      retentionInMinutes: 10080
+      retentionInBytes: 52428800
+  - name: messages
+    persisted: false
+    configuration:
+      partitions: 8
+      replicationFactor: 2
+      retentionInMinutes: -1
+      retentionInBytes: 52428800
+  - name: drafts_sentiment
+    persisted: false
+    configuration:
+      partitions: 8
+      replicationFactor: 2
+      retentionInMinutes: 60
+      retentionInBytes: 52428800
+  - name: twitch_messages
+    persisted: false
+    configuration:
+      partitions: 1
+      replicationFactor: 2
+      retentionInMinutes: 1440
+      retentionInBytes: 52428800
+  - name: twitch-messages
+    persisted: false
+    configuration:
+      partitions: 1
+      replicationFactor: 2
+      retentionInMinutes: 1440
       retentionInBytes: 52428800

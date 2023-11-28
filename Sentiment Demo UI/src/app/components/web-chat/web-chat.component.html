@@ -51,8 +51,13 @@
       <mat-card-content fxFlex fxLayout="column" class="bg-white mb-0 overflow-hidden">
         <div fxFlex class="overflow-auto"  #chatWrapper>
           <app-message *ngFor="let message of messages | sentimentFilter: isTwitch" [message]="message"></app-message> 
+          <ng-container *ngFor="let userTyping of usersTyping | keyvalue">
+            <app-message *ngIf="userTyping.value.message?.name !== username"
+              [message]=" userTyping.value.message!" class="opacity-50">
+            </app-message>
+          </ng-container>
         </div>
-  
+        
         <!-- Standard Chat isTyping sentiment indicator -->
         <div *ngIf="!isTwitch && !!usersTyping.size" fxLayout="row" fxLayoutAlign="space-between center" class="mat-caption text-grey my-2 mx-3">
           
