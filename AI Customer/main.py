@@ -48,7 +48,7 @@ def get_answer(row: dict, state: State):
     prompt = scenario + '\n\n' \
          + full_history[-500:] \
          + f'\nAGENT:{row["chat-message"]}'\
-         + director_prompt_state \
+         + director_prompt_state if role == "director" else "" \
          + '\n{role.upper()}:'
 
     # Generate the reply using the AI model
