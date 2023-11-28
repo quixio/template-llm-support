@@ -40,22 +40,25 @@ def get_answer(row: dict, state: State):
 
     conversation_history = state.get(state_key, [])
 
-    
-
-    # Include the conversation history as part of the prompt
-    full_history = "\n".join([f"{row['Tags']['name'].upper()}: {msg}" for msg in conversation_history])
+     # Include the conversation history as part of the prompt
+    full_history = "\n".join([f"{msg['TAG__name'].upper()}: {msg['chat-message']}" for msg in conversation_history])
     prompt = scenario + '\n\n' + full_history[-500:] + f'\nAGENT:{row["chat-message"]}' + '\n{role.upper()}:'
 
     # Generate the reply using the AI model
     print("Thinking about my response....")
     reply = llm_bot.generate_response(row, prompt, bytes.decode(message_key()))  # This function should be defined elsewhere to handle the interaction with the AI model
-    print(reply)
     finalreply = reply.replace(prompt, ' ').replace('{', '').replace('}', '').replace('"', '').strip()
     
+    reply_dict = {
+        "TAG__name": role.upper(),
+        "TAG__room": bytes.decode(message_key()),
+        "chat-message": finalreply,
+    }
+
     print(f"My reply was '{finalreply}'")
     # Create a dictionary for the reply
 
-    conversation_history.append(finalreply)
+    conversation_history.append(reply_dict)
     print(conversation_history)
 
     state.set(state_key, conversation_history)
