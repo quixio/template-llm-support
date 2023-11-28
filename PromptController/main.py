@@ -35,10 +35,10 @@ sdf = sdf[sdf["average_sentiment"] < -0.5 and sdf["average_sentiment_count"] > 3
 sdf["chat-message"] = "The sentiment of this conversation is very negative, can you increase politeness?"
 
 sdf = sdf.apply(update_row, stateful=True)
+sdf = sdf[sdf.contains("chat-message")]
 
 sdf = sdf.update(lambda row: print(row))
 
-sdf = sdf[sdf.contains("chat-message")]
 
 sdf = sdf.to_topic(output_topic)
 
