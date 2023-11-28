@@ -22,6 +22,7 @@ key = str(uuid.uuid4())[:8]
 
 row = {
   "Timestamp": time.time_ns(),
+  "index": 0,
   "chat-message": "Hello, welcome to ACME Electronics support, my name is Percy. How can I help you today?",
   "Tags": {
     "room": key,
