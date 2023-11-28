@@ -47,7 +47,7 @@ deployments:
   - name: Sentiment Demo UI
     application: Sentiment Demo UI
     deploymentType: Service
-    version: e86598da0d7137b915c43d7857b9f7ee4bd4eb79
+    version: bc92baec6bce744c104f33cc679159eff2c36889
     resources:
       cpu: 1000
       memory: 500
@@ -77,11 +77,6 @@ deployments:
         description: ''
         required: false
         value: drafts_sentiment
-      - name: twitch_messages
-        inputType: FreeText
-        description: ''
-        required: false
-        value: twitch_messages
       - name: bearer_token
         inputType: Secret
         description: ''
