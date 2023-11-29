@@ -75,7 +75,6 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
 
         if chat_len > chat_maxlen:
             print("Maximum conversation length reached, ending conversation...")
-
             memory.clear()
             chat_len = 0
 
