@@ -11,6 +11,7 @@ output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSe
 state_key = "state-v1"
 
 sdf = app.dataframe(input_topic)
+sdf = sdf[sdf["Tags"].contains("name")]
 sdf = sdf[sdf["Tags"]["name"] != "director"]
 
 sdf = sdf[sdf.contains("average_sentiment_count")]
