@@ -17,6 +17,8 @@ CONVERSATION_ID = "002"
 
 role = CUSTOMER_ROLE
 conversation_id = CONVERSATION_ID
+conversation_len = 0
+conversation_maxlen = 3 
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
@@ -69,6 +71,15 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
     print("Received stream {}".format(sc.stream_id))
 
     def on_data_recv_handler(_: qx.StreamConsumer, data: qx.TimeseriesData):
+        global conversation_len
+
+        conversation_len += 1
+        if conversation_len > conversation_maxlen:
+            memory.clear()
+            conversation_len = 0
+            print("Maximum conversation length reached, ending conversation...")
+            return
+
         ts = data.timestamps[0]
         sender = ts.parameters["role"].string_value
         if sender != role:
