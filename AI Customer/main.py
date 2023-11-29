@@ -16,8 +16,6 @@ draft_producer = DraftProducer(os.environ["draft_topic"])
 state_key = "conversation-history-v2"
 director_prompt_state_key = "director_prompt_state_key-v1"
 
-director = os.environ["director_name"]
-
 product = os.environ["product"]
 scenario = os.environ["scenario"].format(product)
 
@@ -80,7 +78,7 @@ def get_answer(row: dict, state: State):
 
 
 sdf = sdf[sdf["Tags"].contains("name")]
-sdf = sdf[sdf["Tags"]["name"] != role or sdf["Tags"]["name"] == director]
+sdf = sdf[sdf["Tags"]["name"] != role or sdf["Tags"]["name"] == "director"]
 
 sdf["index"] = sdf["index"] + 1
 
