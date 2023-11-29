@@ -39,9 +39,8 @@ def get_answer(row: dict, state: State):
         director_prompt_state = row["chat-message"] + '\n'
         state.set(director_prompt_state_key, director_prompt_state)
         print("Director message: " + row["chat-message"])
-        return row 
+        return None
     else:
-        print("NO")
         row["Tags"]["name"] = role
 
         conversation_history = state.get(state_key, [])
@@ -50,7 +49,6 @@ def get_answer(row: dict, state: State):
         prompt = scenario + '\n\n'
         prompt += full_history[-400:] 
         prompt += f'\nAGENT:{row["chat-message"]}'
-        print(prompt)
         prompt +=  director_prompt_state if role == "agent" else "" 
         prompt += f'\n{role.upper()}:'
 
@@ -89,7 +87,7 @@ sdf["index"] = sdf["index"] + 1
 sdf = sdf[sdf["index"] < 50]
 
 sdf = sdf.apply(get_answer, stateful=True)
-
+sdf = sdf[sdf.apply(lambda row: row is not None)]
 sdf = sdf[sdf["Tags"]["name"] != director]
 
 
