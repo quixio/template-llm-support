@@ -3,7 +3,7 @@ from quixstreams import Application, State
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
 import time
 
-app = Application.Quix("prompt-controller-vdev2", auto_offset_reset="earliest")
+app = Application.Quix("prompt-controller-v1", auto_offset_reset="earliest")
 
 input_topic = app.topic(os.environ["input"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
