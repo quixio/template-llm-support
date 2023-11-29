@@ -90,6 +90,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             return
 
         chat_len += 1
+        print("chat length: {}".format(chat_len))
 
         ts = data.timestamps[0]
         sender = ts.parameters["role"].string_value
