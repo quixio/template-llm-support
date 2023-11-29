@@ -80,6 +80,7 @@ def get_answer(row: dict, state: State):
 sdf = sdf[sdf["Tags"].contains("name")]
 sdf = sdf[sdf["Tags"]["name"] != role or sdf["Tags"]["name"] == "director"]
 
+sdf["index"] = sdf.apply(lambda row: row["index"] if "index" in row else 0)
 sdf["index"] = sdf["index"] + 1
 
 sdf = sdf[sdf["index"] < 50]
