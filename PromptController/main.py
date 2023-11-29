@@ -41,7 +41,7 @@ sdf = sdf[sdf.apply(lambda v: v is not None)]
 sdf = sdf.update(lambda row: print(row))
 
 
-#sdf = sdf.to_topic(output_topic)
+sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
     app.run(sdf)
