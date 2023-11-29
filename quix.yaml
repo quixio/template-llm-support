@@ -33,7 +33,7 @@ deployments:
         inputType: FreeText
         description: Maximum conversation length, after which the conversation resets.
         required: true
-        value: 2
+        value: 15
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
