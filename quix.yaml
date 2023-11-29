@@ -207,7 +207,7 @@ deployments:
   - name: PromptController
     application: PromptController
     deploymentType: Service
-    version: v1.1-director
+    version: v1.2-director
     resources:
       cpu: 200
       memory: 500
