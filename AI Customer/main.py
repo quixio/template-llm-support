@@ -87,9 +87,9 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
 
                 td = qx.TimeseriesData()
                 td.add_timestamp(datetime.utcnow()) \
-                .add_value("role", role) \
-                .add_value("text", "Noted, I think I have enough information. Thank you for your assistance. Good bye!") \
-                .add_value("conversation_id", chat_id)
+                  .add_value("role", role) \
+                  .add_value("text", "Noted, I think I have enough information. Thank you for your assistance. Good bye!") \
+                  .add_value("conversation_id", chat_id)
 
                 sp = topic_producer.get_or_create_stream(sc.stream_id)
                 sp.timeseries.publish(td)
