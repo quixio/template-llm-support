@@ -12,11 +12,11 @@ from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
 
+CHAT_ID = "002"
 AGENT_ROLE = "agent"
-CONVERSATION_ID = "002"
 
 role = AGENT_ROLE
-conversation_id = CONVERSATION_ID
+chat_id = CHAT_ID
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
@@ -65,6 +65,17 @@ topic_consumer = client.get_topic_consumer(os.environ["topic"])
 
 product = os.environ["product"]
 
+def chat_init():
+    greet = "Hello, welcome to ACME Electronics support, my name is Percy. How can I help you today?"
+    msg = qx.TimeseriesData()
+    msg.add_timestamp(datetime.utcnow()) \
+        .add_value("role", role) \
+        .add_value("text", greet) \
+        .add_value("conversation_id", chat_id)
+
+    sp = topic_producer.get_or_create_stream("conversation_{}".format(chat_id))
+    sp.timeseries.publish(msg)
+
 def on_stream_recv_handler(sc: qx.StreamConsumer):
     print("Received stream {}".format(sc.stream_id))
 
@@ -74,6 +85,13 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
         if sender != role:
             msg = ts.parameters["text"].string_value
             print("{}: {}".format(sender, msg))
+
+            if "good bye" in msg.lower():
+                print("Initializing a new conversation...")
+                memory.clear()
+                chat_init()
+                return
+
             print("Generating response...")
             reply = chain.run(msg)
             print("{}: {}".format(role, reply))
@@ -82,7 +100,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             td.add_timestamp(datetime.utcnow()) \
               .add_value("role", role) \
               .add_value("text", reply) \
-              .add_value("conversation_id", conversation_id)
+              .add_value("conversation_id", chat_id)
 
             sp = topic_producer.get_or_create_stream(sc.stream_id)
             sp.timeseries.publish(td)
@@ -93,16 +111,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
 
 topic_consumer.on_stream_received = on_stream_recv_handler
 
-# init conversation
-greet = "Hello, welcome to ACME Electronics support, my name is Percy. How can I help you today?"
-msg = qx.TimeseriesData()
-msg.add_timestamp(datetime.utcnow()) \
-    .add_value("role", role) \
-    .add_value("text", greet) \
-    .add_value("conversation_id", conversation_id)
-
-sp = topic_producer.get_or_create_stream("conversation_{}".format(conversation_id))
-sp.timeseries.publish(msg)
+chat_init()
 
 print("Listening to streams. Press CTRL-C to exit.")
 qx.App.run()

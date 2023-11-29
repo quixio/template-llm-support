@@ -12,13 +12,13 @@ from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
 
+CHAT_ID = "002"
 CUSTOMER_ROLE = "customer"
-CONVERSATION_ID = "002"
 
 role = CUSTOMER_ROLE
-conversation_id = CONVERSATION_ID
-conversation_len = 0
-conversation_maxlen = 3 
+chat_id = CHAT_ID
+chat_len = 0
+chat_maxlen = os.environ["conversation_length"] 
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
@@ -71,14 +71,25 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
     print("Received stream {}".format(sc.stream_id))
 
     def on_data_recv_handler(_: qx.StreamConsumer, data: qx.TimeseriesData):
-        global conversation_len
+        global chat_len
 
-        conversation_len += 1
-        if conversation_len > conversation_maxlen:
-            memory.clear()
-            conversation_len = 0
+        if chat_len > chat_maxlen:
             print("Maximum conversation length reached, ending conversation...")
+
+            memory.clear()
+            chat_len = 0
+
+            td = qx.TimeseriesData()
+            td.add_timestamp(datetime.utcnow()) \
+              .add_value("role", role) \
+              .add_value("text", "Noted, I think I have enough information. Thank you for your assistance. Good bye!") \
+              .add_value("conversation_id", chat_id)
+
+            sp = topic_producer.get_or_create_stream(sc.stream_id)
+            sp.timeseries.publish(td)
             return
+
+        chat_len += 1
 
         ts = data.timestamps[0]
         sender = ts.parameters["role"].string_value
@@ -93,7 +104,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             td.add_timestamp(datetime.utcnow()) \
               .add_value("role", role) \
               .add_value("text", reply) \
-              .add_value("conversation_id", conversation_id)
+              .add_value("conversation_id", chat_id)
 
             sp = topic_producer.get_or_create_stream(sc.stream_id)
             sp.timeseries.publish(td)
