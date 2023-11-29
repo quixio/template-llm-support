@@ -54,7 +54,7 @@ prompt = PromptTemplate(
                 support agent who works for a large electronics retailer called 'ACME electronics', 
                 and a customer who has bought a defective {product} and wants to understand what 
                 their options are for resolving the issue. Please continue the conversation.\n\n
-                Current conversation:\n{history}\nCUSTOMER: {input}\nAGENT:"""
+                Current conversation:\n{history}\nCUSTOMER: {input}\nAGENT: """
 )
 
 chain = ConversationChain(llm=model, prompt=prompt, memory=memory)
