@@ -37,7 +37,7 @@ deployments:
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
-    version: 729095d3e4c78311aea53a7ebf37501e37c92321
+    version: 117dabe97223822795f1c453461faa3bfbf7765f
     resources:
       cpu: 4000
       memory: 8000
