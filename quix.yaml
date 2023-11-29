@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: 55201c4e1373f88e43b2aeb75c72efbfb5cf892d
+    version: 5c89459c2cf6d5ae5a5bec7752bc4c6674778c83
     resources:
       cpu: 4000
       memory: 8000
@@ -29,6 +29,11 @@ deployments:
         description: ''
         required: true
         value: roomba vacum cleaner
+      - name: conversation_length
+        inputType: FreeText
+        description: Maximum conversation length, after which the conversation resets.
+        required: true
+        value: 2
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
