@@ -18,7 +18,7 @@ CUSTOMER_ROLE = "customer"
 role = CUSTOMER_ROLE
 chat_id = CHAT_ID
 chat_len = 0
-chat_maxlen = int(os.environ["conversation_length"])
+chat_maxlen = int(os.environ["conversation_length"]) // 2
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
@@ -73,26 +73,28 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
     def on_data_recv_handler(_: qx.StreamConsumer, data: qx.TimeseriesData):
         global chat_len
 
-        chat_len += 1
-        if chat_len >= chat_maxlen:
-            print("Maximum conversation length reached, ending conversation...")
-
-            memory.clear()
-            chat_len = -1
-
-            td = qx.TimeseriesData()
-            td.add_timestamp(datetime.utcnow()) \
-              .add_value("role", role) \
-              .add_value("text", "Noted, I think I have enough information. Thank you for your assistance. Good bye!") \
-              .add_value("conversation_id", chat_id)
-
-            sp = topic_producer.get_or_create_stream(sc.stream_id)
-            sp.timeseries.publish(td)
-            return
-
         ts = data.timestamps[0]
         sender = ts.parameters["role"].string_value
+
         if sender != role:
+            chat_len += 1
+            
+            if chat_len >= chat_maxlen:
+                print("Maximum conversation length reached, ending conversation...")
+
+                memory.clear()
+                chat_len = 0
+
+                td = qx.TimeseriesData()
+                td.add_timestamp(datetime.utcnow()) \
+                .add_value("role", role) \
+                .add_value("text", "Noted, I think I have enough information. Thank you for your assistance. Good bye!") \
+                .add_value("conversation_id", chat_id)
+
+                sp = topic_producer.get_or_create_stream(sc.stream_id)
+                sp.timeseries.publish(td)
+                return
+
             msg = ts.parameters["text"].string_value
             print("{}: {}".format(sender, msg))
             print("Generating response...")
