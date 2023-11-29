@@ -18,7 +18,7 @@ CUSTOMER_ROLE = "customer"
 role = CUSTOMER_ROLE
 chat_id = CHAT_ID
 chat_len = 0
-chat_maxlen = os.environ["conversation_length"] 
+chat_maxlen = int(os.environ["conversation_length"])
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
