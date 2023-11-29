@@ -73,10 +73,11 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
     def on_data_recv_handler(_: qx.StreamConsumer, data: qx.TimeseriesData):
         global chat_len
 
-        if chat_len > chat_maxlen:
+        if chat_len >= chat_maxlen:
             print("Maximum conversation length reached, ending conversation...")
+
             memory.clear()
-            chat_len = 0
+            chat_len = -1
 
             td = qx.TimeseriesData()
             td.add_timestamp(datetime.utcnow()) \
