@@ -69,9 +69,9 @@ def chat_init():
     greet = "Hello, welcome to ACME Electronics support, my name is Percy. How can I help you today?"
     msg = qx.TimeseriesData()
     msg.add_timestamp(datetime.utcnow()) \
-        .add_value("role", role) \
-        .add_value("text", greet) \
-        .add_value("conversation_id", chat_id)
+       .add_value("role", role) \
+       .add_value("text", greet) \
+       .add_value("conversation_id", chat_id)
 
     sp = topic_producer.get_or_create_stream("conversation_{}".format(chat_id))
     sp.timeseries.publish(msg)
