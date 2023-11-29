@@ -73,6 +73,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
     def on_data_recv_handler(_: qx.StreamConsumer, data: qx.TimeseriesData):
         global chat_len
 
+        chat_len += 1
         if chat_len >= chat_maxlen:
             print("Maximum conversation length reached, ending conversation...")
 
@@ -88,8 +89,6 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             sp = topic_producer.get_or_create_stream(sc.stream_id)
             sp.timeseries.publish(td)
             return
-
-        chat_len += 1
 
         ts = data.timestamps[0]
         sender = ts.parameters["role"].string_value
