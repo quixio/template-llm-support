@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: 55201c4e1373f88e43b2aeb75c72efbfb5cf892d
+    version: cc86a0a1452df9a6de55e7d3f8fecb7e78ad4cf5
     resources:
       cpu: 4000
       memory: 8000
@@ -29,10 +29,15 @@ deployments:
         description: ''
         required: true
         value: roomba vacum cleaner
+      - name: conversation_length
+        inputType: FreeText
+        description: Maximum conversation length, after which the conversation resets.
+        required: true
+        value: 15
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
-    version: 729095d3e4c78311aea53a7ebf37501e37c92321
+    version: 117dabe97223822795f1c453461faa3bfbf7765f
     resources:
       cpu: 4000
       memory: 8000
@@ -96,6 +101,13 @@ topics:
       retentionInBytes: 52428800
   - name: ai-chat-history-with-sentiment
     persisted: true
+    configuration:
+      partitions: 1
+      replicationFactor: 2
+      retentionInMinutes: 1440
+      retentionInBytes: 52428800
+  - name: default
+    persisted: false
     configuration:
       partitions: 1
       replicationFactor: 2

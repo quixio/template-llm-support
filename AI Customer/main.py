@@ -12,11 +12,13 @@ from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
 
+CHAT_ID = "002"
 CUSTOMER_ROLE = "customer"
-CONVERSATION_ID = "002"
 
 role = CUSTOMER_ROLE
-conversation_id = CONVERSATION_ID
+chat_id = CHAT_ID
+chat_len = 0
+chat_maxlen = int(os.environ["conversation_length"]) // 2
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
@@ -54,7 +56,7 @@ prompt = PromptTemplate(
                 electronics retailer called 'ACME electronics', and a support agent who you are contacting 
                 to resolve an issue with a defective {product} you purchased. Your goal is try and 
                 understand what your options are for resolving the issue. Please continue the conversation.\n\n
-                Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER:"""
+                Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER: """
 )
 
 chain = ConversationChain(llm=model, prompt=prompt, memory=memory)
@@ -69,9 +71,30 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
     print("Received stream {}".format(sc.stream_id))
 
     def on_data_recv_handler(_: qx.StreamConsumer, data: qx.TimeseriesData):
+        global chat_len
+
         ts = data.timestamps[0]
         sender = ts.parameters["role"].string_value
+
         if sender != role:
+            chat_len += 1
+            
+            if chat_len >= chat_maxlen:
+                print("Maximum conversation length reached, ending conversation...")
+
+                memory.clear()
+                chat_len = 0
+
+                td = qx.TimeseriesData()
+                td.add_timestamp(datetime.utcnow()) \
+                  .add_value("role", role) \
+                  .add_value("text", "Noted, I think I have enough information. Thank you for your assistance. Good bye!") \
+                  .add_value("conversation_id", chat_id)
+
+                sp = topic_producer.get_or_create_stream(sc.stream_id)
+                sp.timeseries.publish(td)
+                return
+
             msg = ts.parameters["text"].string_value
             print("{}: {}".format(sender, msg))
             print("Generating response...")
@@ -82,7 +105,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             td.add_timestamp(datetime.utcnow()) \
               .add_value("role", role) \
               .add_value("text", reply) \
-              .add_value("conversation_id", conversation_id)
+              .add_value("conversation_id", chat_id)
 
             sp = topic_producer.get_or_create_stream(sc.stream_id)
             sp.timeseries.publish(td)

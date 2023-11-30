@@ -11,6 +11,11 @@ variables:
     description: ''
     defaultValue: printer
     required: true
+  - name: conversation_length
+    inputType: FreeText
+    description: Maximum conversation length, after which the conversation resets.
+    defaultValue: 15
+    required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
