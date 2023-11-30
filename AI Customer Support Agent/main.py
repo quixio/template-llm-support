@@ -1,4 +1,5 @@
 import os
+import random
 from pathlib import Path
 from datetime import datetime
 
@@ -63,10 +64,22 @@ client = qx.QuixStreamingClient()
 topic_producer = client.get_topic_producer(os.environ["topic"])
 topic_consumer = client.get_topic_consumer(os.environ["topic"])
 
+def agents_init():
+    agents = []
+    with open("agents.txt", "r") as fd:
+        for a in fd:
+            if a:
+                agents.append(a)
+    return agents
+
+agents = agents_init()
+agent = random.choice(agents)
+
 product = os.environ["product"]
 
 def chat_init():
-    greet = "Hello, welcome to ACME Electronics support, my name is Percy. How can I help you today?"
+    greet = """Hello, welcome to ACME Electronics support, my name is {}. 
+               How can I help you today?""".format(agent)
     msg = qx.TimeseriesData()
     msg.add_timestamp(datetime.utcnow()) \
        .add_value("role", role) \
