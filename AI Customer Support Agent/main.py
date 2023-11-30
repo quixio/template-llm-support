@@ -1,4 +1,5 @@
 import os
+import uuid
 import random
 from pathlib import Path
 from datetime import datetime
@@ -17,7 +18,7 @@ CHAT_ID = "002"
 AGENT_ROLE = "agent"
 
 role = AGENT_ROLE
-chat_id = CHAT_ID
+chat_id = str(uuid.uuid4())
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
@@ -66,6 +67,7 @@ topic_consumer = client.get_topic_consumer(os.environ["topic"])
 
 def agents_init():
     agents = []
+    
     with open("agents.txt", "r") as fd:
         for a in fd:
             if a:
@@ -86,7 +88,7 @@ def chat_init():
        .add_value("text", greet) \
        .add_value("conversation_id", chat_id)
 
-    sp = topic_producer.get_or_create_stream("conversation_{}".format(chat_id))
+    sp = topic_producer.get_or_create_stream(chat_id)
     sp.timeseries.publish(msg)
 
 def on_stream_recv_handler(sc: qx.StreamConsumer):
@@ -113,7 +115,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             td.add_timestamp(datetime.utcnow()) \
               .add_value("role", role) \
               .add_value("text", reply) \
-              .add_value("conversation_id", chat_id)
+              .add_value("conversation_id", ts.parameters["conversation_id"].string_value)
 
             sp = topic_producer.get_or_create_stream(sc.stream_id)
             sp.timeseries.publish(td)

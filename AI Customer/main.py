@@ -13,11 +13,9 @@ from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
 
-CHAT_ID = "002"
 CUSTOMER_ROLE = "customer"
 
 role = CUSTOMER_ROLE
-chat_id = CHAT_ID
 chat_len = 0
 chat_maxlen = int(os.environ["conversation_length"]) // 2
 
@@ -68,6 +66,7 @@ topic_consumer = client.get_topic_consumer(os.environ["topic"])
 
 def products_init():
     products = []
+
     with open("products.txt", "r") as fd:
         for p in fd:
             if p:
@@ -99,7 +98,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
                 td.add_timestamp(datetime.utcnow()) \
                   .add_value("role", role) \
                   .add_value("text", "Noted, I think I have enough information. Thank you for your assistance. Good bye!") \
-                  .add_value("conversation_id", chat_id)
+                  .add_value("conversation_id", ts.parameters["conversation_id"].string_value)
 
                 sp = topic_producer.get_or_create_stream(sc.stream_id)
                 sp.timeseries.publish(td)
@@ -115,7 +114,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             td.add_timestamp(datetime.utcnow()) \
               .add_value("role", role) \
               .add_value("text", reply) \
-              .add_value("conversation_id", chat_id)
+              .add_value("conversation_id", ts.parameters["conversation_id"].string_value)
 
             sp = topic_producer.get_or_create_stream(sc.stream_id)
             sp.timeseries.publish(td)
