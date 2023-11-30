@@ -27,6 +27,18 @@ if not Path(model_path).exists():
 else:
     print("Loading model from state...")
 
+def products_init():
+    products = []
+
+    with open("products.txt", "r") as fd:
+        for p in fd:
+            if p:
+                products.append(p.strip())
+    return products
+
+products = products_init()
+product = random.choice(products)
+
 llm = LlamaCpp(
     model_path=model_path,
     max_tokens=250,
@@ -50,7 +62,7 @@ memory = ConversationTokenBufferMemory(
 
 prompt = PromptTemplate(
     input_variables=["history", "input"],
-    partial_variables={"product": os.environ["product"]},
+    partial_variables={"product": product},
     template="""The following transcript represents a conversation between you, a customer of a large 
                 electronics retailer called 'ACME electronics', and a support agent who you are contacting 
                 to resolve an issue with a defective {product} you purchased. Your goal is try and 
@@ -63,18 +75,6 @@ chain = ConversationChain(llm=model, prompt=prompt, memory=memory)
 client = qx.QuixStreamingClient()
 topic_producer = client.get_topic_producer(os.environ["topic"])
 topic_consumer = client.get_topic_consumer(os.environ["topic"])
-
-def products_init():
-    products = []
-
-    with open("products.txt", "r") as fd:
-        for p in fd:
-            if p:
-                products.append(p)
-    return products
-
-products = products_init()
-product = random.choice(products)
 
 def on_stream_recv_handler(sc: qx.StreamConsumer):
     print("Received stream {}".format(sc.stream_id))

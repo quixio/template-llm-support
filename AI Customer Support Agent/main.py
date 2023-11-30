@@ -67,11 +67,11 @@ topic_consumer = client.get_topic_consumer(os.environ["topic"])
 
 def agents_init():
     agents = []
-    
+
     with open("agents.txt", "r") as fd:
         for a in fd:
             if a:
-                agents.append(a)
+                agents.append(a.strip())
     return agents
 
 agents = agents_init()
