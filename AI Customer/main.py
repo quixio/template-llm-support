@@ -1,4 +1,5 @@
 import os
+import random
 from pathlib import Path
 from datetime import datetime
 
@@ -65,7 +66,16 @@ client = qx.QuixStreamingClient()
 topic_producer = client.get_topic_producer(os.environ["topic"])
 topic_consumer = client.get_topic_consumer(os.environ["topic"])
 
-product = os.environ["product"]
+def products_init():
+    products = []
+    with open("products.txt", "r") as fd:
+        for p in fd:
+            if p:
+                products.append(p)
+    return products
+
+products = products_init()
+product = random.choice(products)
 
 def on_stream_recv_handler(sc: qx.StreamConsumer):
     print("Received stream {}".format(sc.stream_id))
