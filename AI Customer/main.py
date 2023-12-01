@@ -62,6 +62,7 @@ memory = ConversationTokenBufferMemory(
 )
 
 print("Initializing prompt: product={}, mood={}".format(product, mood))
+
 prompt = PromptTemplate(
     input_variables=["history", "input"],
     partial_variables={"product": product, "mood": mood},
