@@ -61,7 +61,7 @@ memory = ConversationTokenBufferMemory(
     return_messages=True
 )
 
-print("Initializing prompt: product={}, mood={}", product, mood)
+print("Initializing prompt: product={}, mood={}".format(product, mood))
 prompt = PromptTemplate(
     input_variables=["history", "input"],
     partial_variables={"product": product, "mood": mood},
