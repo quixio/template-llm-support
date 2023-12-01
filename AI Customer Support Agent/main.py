@@ -1,4 +1,6 @@
 import os
+import uuid
+import random
 from pathlib import Path
 from datetime import datetime
 
@@ -16,7 +18,7 @@ CHAT_ID = "002"
 AGENT_ROLE = "agent"
 
 role = AGENT_ROLE
-chat_id = CHAT_ID
+chat_id = str(uuid.uuid4())
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
@@ -42,17 +44,16 @@ model = Llama2Chat(llm=llm)
 memory = ConversationTokenBufferMemory(
     llm=llm,
     max_token_limit=300,
-    ai_prefix= "agent",
-    human_prefix= "customer",
+    ai_prefix= "AGENT",
+    human_prefix= "CUSTOMER",
     return_messages=True
 )
 
 prompt = PromptTemplate(
     input_variables=["history", "input"],
-    partial_variables={"product": os.environ["product"]},
     template="""The following transcript represents a converstation between you, a customer 
                 support agent who works for a large electronics retailer called 'ACME electronics', 
-                and a customer who has bought a defective {product} and wants to understand what 
+                and a customer who has bought a defective appliance and wants to understand what 
                 their options are for resolving the issue. Please continue the conversation.\n\n
                 Current conversation:\n{history}\nCUSTOMER: {input}\nAGENT: """
 )
@@ -63,17 +64,29 @@ client = qx.QuixStreamingClient()
 topic_producer = client.get_topic_producer(os.environ["topic"])
 topic_consumer = client.get_topic_consumer(os.environ["topic"])
 
-product = os.environ["product"]
+def agents_init():
+    agents = []
+
+    with open("agents.txt", "r") as fd:
+        for a in fd:
+            if a:
+                agents.append(a.strip())
+    return agents
+
+agents = agents_init()
 
 def chat_init():
-    greet = "Hello, welcome to ACME Electronics support, my name is Percy. How can I help you today?"
+    agent = random.choice(agents)
+    greet = """Hello, welcome to ACME Electronics support, my name is {}. 
+               How can I help you today?""".format(agent)
+               
     msg = qx.TimeseriesData()
     msg.add_timestamp(datetime.utcnow()) \
        .add_value("role", role) \
        .add_value("text", greet) \
        .add_value("conversation_id", chat_id)
 
-    sp = topic_producer.get_or_create_stream("conversation_{}".format(chat_id))
+    sp = topic_producer.get_or_create_stream(chat_id)
     sp.timeseries.publish(msg)
 
 def on_stream_recv_handler(sc: qx.StreamConsumer):
@@ -84,7 +97,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
         sender = ts.parameters["role"].string_value
         if sender != role:
             msg = ts.parameters["text"].string_value
-            print("{}: {}".format(sender, msg))
+            print("{}: {}\n".format(sender.upper(), msg))
 
             if "good bye" in msg.lower():
                 print("Initializing a new conversation...")
@@ -93,14 +106,15 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
                 return
 
             print("Generating response...")
+            
             reply = chain.run(msg)
-            print("{}: {}".format(role, reply))
+            print("{}: {}\n".format(role.upper(), reply))
             
             td = qx.TimeseriesData()
             td.add_timestamp(datetime.utcnow()) \
               .add_value("role", role) \
               .add_value("text", reply) \
-              .add_value("conversation_id", chat_id)
+              .add_value("conversation_id", ts.parameters["conversation_id"].string_value)
 
             sp = topic_producer.get_or_create_stream(sc.stream_id)
             sp.timeseries.publish(td)

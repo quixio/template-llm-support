@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: cc86a0a1452df9a6de55e7d3f8fecb7e78ad4cf5
+    version: 80d25c2e48c8a6191bc4c692115703590cd906a3
     resources:
       cpu: 4000
       memory: 8000
@@ -24,11 +24,6 @@ deployments:
         description: This is the output topic to write data to
         required: true
         value: ai-chat-history
-      - name: product
-        inputType: FreeText
-        description: ''
-        required: true
-        value: roomba vacum cleaner
       - name: conversation_length
         inputType: FreeText
         description: Maximum conversation length, after which the conversation resets.
@@ -37,7 +32,7 @@ deployments:
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
-    version: 117dabe97223822795f1c453461faa3bfbf7765f
+    version: 898ff2338ee65b8ff4701217a4bf65b2b2ccdee8
     resources:
       cpu: 4000
       memory: 8000
@@ -52,15 +47,10 @@ deployments:
         description: This is the output topic to write data to
         required: true
         value: ai-chat-history
-      - name: product
-        inputType: FreeText
-        description: ''
-        required: false
-        value: roomba vacum cleaner
   - name: Sentiment Analyzer
     application: Sentiment Analyzer
     deploymentType: Service
-    version: 299bbf9fbc280aa902db6b8b56630ed3d3657674
+    version: 23bcef29c7a677db0bcaf945f6456dff445772cb
     resources:
       cpu: 2000
       memory: 4000

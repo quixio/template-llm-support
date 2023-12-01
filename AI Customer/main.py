@@ -1,4 +1,5 @@
 import os
+import random
 from pathlib import Path
 from datetime import datetime
 
@@ -12,11 +13,9 @@ from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
 
-CHAT_ID = "002"
 CUSTOMER_ROLE = "customer"
 
 role = CUSTOMER_ROLE
-chat_id = CHAT_ID
 chat_len = 0
 chat_maxlen = int(os.environ["conversation_length"]) // 2
 
@@ -28,50 +27,66 @@ if not Path(model_path).exists():
 else:
     print("Loading model from state...")
 
-llm = LlamaCpp(
-    model_path=model_path,
-    max_tokens=250,
-    top_p=0.95,
-    top_k=150,
-    temperature=0.7,
-    repeat_penalty=1.2,
-    n_ctx=2048,
-    streaming=False
-)
+def get_list(file: str):
+    list = []
 
-model = Llama2Chat(llm=llm)
+    with open(file, "r") as fd:
+        for p in fd:
+            if p:
+                list.append(p.strip())
+    return list
 
-memory = ConversationTokenBufferMemory(
-    llm=llm,
-    max_token_limit=300,
-    ai_prefix= "customer",
-    human_prefix= "agent",
-    return_messages=True
-)
+moods = get_list("moods.txt")
+products = get_list("products.txt")
 
-prompt = PromptTemplate(
-    input_variables=["history", "input"],
-    partial_variables={"product": os.environ["product"]},
-    template="""The following transcript represents a conversation between you, a customer of a large 
-                electronics retailer called 'ACME electronics', and a support agent who you are contacting 
-                to resolve an issue with a defective {product} you purchased. Your goal is try and 
-                understand what your options are for resolving the issue. Please continue the conversation.\n\n
-                Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER: """
-)
+def chain_init():
+    mood = random.choice(moods)
+    product = random.choice(products)
+    print("Initializing prompt: product={}, mood={}".format(product, mood))
 
-chain = ConversationChain(llm=model, prompt=prompt, memory=memory)
+    prompt = PromptTemplate(
+        input_variables=["history", "input"],
+        partial_variables={"product": product, "mood": mood},
+        template="""The following transcript represents a conversation between you, a {mood} customer of a large 
+                    electronics retailer called 'ACME electronics', and a support agent who you are contacting 
+                    to resolve an issue with a defective {product} you purchased. Your goal is try and 
+                    understand what your options are for resolving the issue. Please continue the conversation.\n\n
+                    Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER:"""
+    )
 
+    llm = LlamaCpp(
+        model_path=model_path,
+        max_tokens=250,
+        top_p=0.95,
+        top_k=150,
+        temperature=0.7,
+        repeat_penalty=1.2,
+        n_ctx=2048,
+        streaming=False
+    )
+
+    model = Llama2Chat(llm=llm)
+
+    memory = ConversationTokenBufferMemory(
+        llm=llm,
+        max_token_limit=300,
+        ai_prefix= "CUSTOMER",
+        human_prefix= "AGENT",
+        return_messages=True
+    )
+
+    return ConversationChain(llm=model, prompt=prompt, memory=memory)
+
+chain = chain_init()
 client = qx.QuixStreamingClient()
 topic_producer = client.get_topic_producer(os.environ["topic"])
 topic_consumer = client.get_topic_consumer(os.environ["topic"])
-
-product = os.environ["product"]
 
 def on_stream_recv_handler(sc: qx.StreamConsumer):
     print("Received stream {}".format(sc.stream_id))
 
     def on_data_recv_handler(_: qx.StreamConsumer, data: qx.TimeseriesData):
-        global chat_len
+        global chain, chat_len
 
         ts = data.timestamps[0]
         sender = ts.parameters["role"].string_value
@@ -82,30 +97,32 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             if chat_len >= chat_maxlen:
                 print("Maximum conversation length reached, ending conversation...")
 
-                memory.clear()
                 chat_len = 0
+                chain = chain_init()
 
                 td = qx.TimeseriesData()
                 td.add_timestamp(datetime.utcnow()) \
                   .add_value("role", role) \
                   .add_value("text", "Noted, I think I have enough information. Thank you for your assistance. Good bye!") \
-                  .add_value("conversation_id", chat_id)
+                  .add_value("conversation_id", ts.parameters["conversation_id"].string_value)
 
                 sp = topic_producer.get_or_create_stream(sc.stream_id)
                 sp.timeseries.publish(td)
                 return
 
             msg = ts.parameters["text"].string_value
-            print("{}: {}".format(sender, msg))
+            print("{}: {}\n".format(sender.upper(), msg))
+
             print("Generating response...")
+
             reply = chain.run(msg)
-            print("{}: {}".format(role, reply))
+            print("{}: {}\n".format(role.upper(), reply))
             
             td = qx.TimeseriesData()
             td.add_timestamp(datetime.utcnow()) \
               .add_value("role", role) \
               .add_value("text", reply) \
-              .add_value("conversation_id", chat_id)
+              .add_value("conversation_id", ts.parameters["conversation_id"].string_value)
 
             sp = topic_producer.get_or_create_stream(sc.stream_id)
             sp.timeseries.publish(td)
