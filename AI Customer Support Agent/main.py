@@ -105,7 +105,13 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
                 return
 
             print("Generating response...")
+            
             reply = chain.run(msg)
+            # sometimes the bot spits out CUSTOMER: or AGENT: in the response
+            reply = reply.replace("{}:".format(role.upper()))
+            reply = reply.replace("{}:".format(sender.upper()))
+            reply = reply.strip()
+
             print("{}: {}\n".format(role.upper(), reply))
             
             td = qx.TimeseriesData()
