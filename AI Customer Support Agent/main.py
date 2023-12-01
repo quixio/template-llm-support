@@ -51,7 +51,7 @@ memory = ConversationTokenBufferMemory(
 product = os.environ["product"]
 tone = os.environ["tone"]
 
-with open('simple_template.txt', 'r') as file:
+with open('prompt_template.txt', 'r') as file:
     loaded_prompt = file.read()
 
 # define a custom PromptTemplate that supports the new variables such as mood and product
