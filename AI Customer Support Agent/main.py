@@ -44,8 +44,8 @@ model = Llama2Chat(llm=llm)
 memory = ConversationTokenBufferMemory(
     llm=llm,
     max_token_limit=300,
-    ai_prefix= "agent",
-    human_prefix= "customer",
+    ai_prefix= "AGENT",
+    human_prefix= "CUSTOMER",
     return_messages=True
 )
 
@@ -106,12 +106,8 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
                 return
 
             print("Generating response...")
+            
             reply = chain.run(msg)
-
-            # sometimes the bot spits out CUSTOMER: or AGENT: in the response
-            reply = reply.replace("{}:".format(role.upper()), "")
-            reply = reply.replace("{}:".format(sender.upper()), "")
-            reply = reply.strip()
             print("{}: {}\n".format(role.upper(), reply))
             
             td = qx.TimeseriesData()
