@@ -68,11 +68,9 @@ def chain_init():
     prompt = PromptTemplate(
         input_variables=["history", "input"],
         partial_variables={"product": product, "mood": mood},
-        template="""The following transcript represents a conversation between you, a customer of a large 
-                    electronics retailer called 'ACME electronics', and a support agent who you are contacting 
-                    to resolve an issue with a defective {product} you purchased. You are very {mood}. Your goal is
-                    try and understand what your options are for resolving the issue. Please continue the
-                    conversation.\n\nCurrent conversation:\n{history}\nAGENT: {input}\nCUSTOMER: """
+        template="""You are a {} customer who purchased a defective {product}. Your goal is
+                    try and understand what your options are for resolving the issue.\n\n
+                    Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER: """
     )
 
     return ConversationChain(llm=model, prompt=prompt, memory=memory)
