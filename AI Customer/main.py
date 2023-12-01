@@ -47,9 +47,11 @@ def chain_init():
     prompt = PromptTemplate(
         input_variables=["history", "input"],
         partial_variables={"product": product, "mood": mood},
-        template="""You are a {mood} customer who purchased a defective {product}. Your are speaking 
-                    to a customer support agent to understand what your options are for resolving the 
-                    issue.\n\nCurrent conversation:\n{history}\nAGENT: {input}\nCUSTOMER: """
+        template="""The following transcript represents a conversation between you, a {mood} customer of a large 
+                    electronics retailer called 'ACME electronics', and a support agent who you are contacting 
+                    to resolve an issue with a defective {product} you purchased. Your goal is try and 
+                    understand what your options are for resolving the issue. Please continue the conversation.\n\n
+                    Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER: """
     )
 
     llm = LlamaCpp(
