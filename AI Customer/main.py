@@ -97,7 +97,6 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             if chat_len >= chat_maxlen:
                 print("Maximum conversation length reached, ending conversation...")
 
-                memory.clear()
                 chat_len = 0
                 chain = chain_init()
 
@@ -112,10 +111,10 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
                 return
 
             msg = ts.parameters["text"].string_value
-            print("{}: {}".format(sender, msg))
+            print("{}: {}\n".format(sender.upper(), msg))
             print("Generating response...")
             reply = chain.run(msg)
-            print("{}: {}".format(role, reply))
+            print("{}: {}\n".format(role.upper(), reply))
             
             td = qx.TimeseriesData()
             td.add_timestamp(datetime.utcnow()) \
