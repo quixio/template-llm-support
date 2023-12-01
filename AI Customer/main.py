@@ -36,6 +36,9 @@ def get_list(file: str):
                 list.append(p.strip())
     return list
 
+moods = get_list("moods.txt")
+products = get_list("products.txt")
+
 llm = LlamaCpp(
     model_path=model_path,
     max_tokens=250,
@@ -58,8 +61,8 @@ memory = ConversationTokenBufferMemory(
 )
 
 def chain_init():
-    mood = random.choice(get_list("moods.txt"))
-    product = random.choice(get_list("products.txt"))
+    mood = random.choice(moods)
+    product = random.choice(products)
     print("Initializing prompt: product={}, mood={}".format(product, mood))
 
     prompt = PromptTemplate(
@@ -74,6 +77,7 @@ def chain_init():
 
     return ConversationChain(llm=model, prompt=prompt, memory=memory)
 
+chain = chain_init()
 client = qx.QuixStreamingClient()
 topic_producer = client.get_topic_producer(os.environ["topic"])
 topic_consumer = client.get_topic_consumer(os.environ["topic"])
@@ -82,7 +86,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
     print("Received stream {}".format(sc.stream_id))
 
     def on_data_recv_handler(_: qx.StreamConsumer, data: qx.TimeseriesData):
-        global chat_len
+        global chain, chat_len
 
         ts = data.timestamps[0]
         sender = ts.parameters["role"].string_value
@@ -95,6 +99,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
 
                 memory.clear()
                 chat_len = 0
+                chain = chain_init()
 
                 td = qx.TimeseriesData()
                 td.add_timestamp(datetime.utcnow()) \
