@@ -27,17 +27,18 @@ if not Path(model_path).exists():
 else:
     print("Loading model from state...")
 
-def products_init():
-    products = []
+def get_list(file: str):
+    list = []
 
-    with open("products.txt", "r") as fd:
+    with open(file, "r") as fd:
         for p in fd:
             if p:
-                products.append(p.strip())
-    return products
+                list.append(p.strip())
+    return list
 
-products = products_init()
-product = random.choice(products)
+
+mood = random.choice(get_list("moods.txt"))
+product = random.choice(get_list("products.txt"))
 
 llm = LlamaCpp(
     model_path=model_path,
@@ -62,8 +63,8 @@ memory = ConversationTokenBufferMemory(
 
 prompt = PromptTemplate(
     input_variables=["history", "input"],
-    partial_variables={"product": product},
-    template="""The following transcript represents a conversation between you, a customer of a large 
+    partial_variables={"product": product, "mood": mood},
+    template="""The following transcript represents a conversation between you, a {mood} customer of a large 
                 electronics retailer called 'ACME electronics', and a support agent who you are contacting 
                 to resolve an issue with a defective {product} you purchased. Your goal is try and 
                 understand what your options are for resolving the issue. Please continue the conversation.\n\n
