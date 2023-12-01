@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: c5e67eb85b71c5411a41b1b562d956f36f370ed0
+    version: 48e3b249122e353f897c3e013003bba3cf55a69a
     resources:
       cpu: 4000
       memory: 8000
@@ -24,11 +24,6 @@ deployments:
         description: This is the output topic to write data to
         required: true
         value: ai-chat-history
-      - name: product
-        inputType: FreeText
-        description: ''
-        required: true
-        value: printer
       - name: conversation_length
         inputType: FreeText
         description: Maximum conversation length, after which the conversation resets.
