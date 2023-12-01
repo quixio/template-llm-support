@@ -51,7 +51,7 @@ def chain_init():
                     electronics retailer called 'ACME electronics', and a support agent who you are contacting 
                     to resolve an issue with a defective {product} you purchased. Your goal is try and 
                     understand what your options are for resolving the issue. Please continue the conversation.\n\n
-                    Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER: """
+                    Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER:"""
     )
 
     llm = LlamaCpp(
@@ -70,8 +70,8 @@ def chain_init():
     memory = ConversationTokenBufferMemory(
         llm=llm,
         max_token_limit=300,
-        ai_prefix= "customer",
-        human_prefix= "agent",
+        ai_prefix= "CUSTOMER",
+        human_prefix= "AGENT",
         return_messages=True
     )
 
@@ -114,12 +114,8 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             print("{}: {}\n".format(sender.upper(), msg))
 
             print("Generating response...")
-            reply = chain.run(msg)
 
-            # sometimes the bot spits out CUSTOMER: or AGENT: in the response
-            reply = reply.replace("{}:".format(role.upper()), "")
-            reply = reply.replace("{}:".format(sender.upper()), "")
-            reply = reply.strip()
+            reply = chain.run(msg)
             print("{}: {}\n".format(role.upper(), reply))
             
             td = qx.TimeseriesData()
