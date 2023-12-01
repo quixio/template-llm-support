@@ -51,10 +51,9 @@ memory = ConversationTokenBufferMemory(
 
 prompt = PromptTemplate(
     input_variables=["history", "input"],
-    template="""The following transcript represents a converstation between you, a customer 
-                support agent who works for a large electronics retailer called 'ACME electronics', 
-                and a customer who has bought a defective appliance and wants to understand what 
-                their options are for resolving the issue. Please continue the conversation.\n\n
+    template="""You are a helpful support agent who works for a large electronics retailer called
+                'ACME electronics'. Your goal is to help a customer who has bought a defective 
+                appliance and wants to understand what their options are for resolving the issue.\n\n
                 Current conversation:\n{history}\nCUSTOMER: {input}\nAGENT: """
 )
 
