@@ -96,7 +96,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
         sender = ts.parameters["role"].string_value
         if sender != role:
             msg = ts.parameters["text"].string_value
-            print("{}: {}".format(sender, msg))
+            print("{}: {}\n".format(sender.upper(), msg))
 
             if "good bye" in msg.lower():
                 print("Initializing a new conversation...")
