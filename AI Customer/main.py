@@ -36,10 +36,6 @@ def get_list(file: str):
                 list.append(p.strip())
     return list
 
-
-mood = random.choice(get_list("moods.txt"))
-product = random.choice(get_list("products.txt"))
-
 llm = LlamaCpp(
     model_path=model_path,
     max_tokens=250,
@@ -61,19 +57,22 @@ memory = ConversationTokenBufferMemory(
     return_messages=True
 )
 
-print("Initializing prompt: product={}, mood={}".format(product, mood))
+def chain_init():
+    mood = random.choice(get_list("moods.txt"))
+    product = random.choice(get_list("products.txt"))
+    print("Initializing prompt: product={}, mood={}".format(product, mood))
 
-prompt = PromptTemplate(
-    input_variables=["history", "input"],
-    partial_variables={"product": product, "mood": mood},
-    template="""The following transcript represents a conversation between you, a {mood} customer of a large 
-                electronics retailer called 'ACME electronics', and a support agent who you are contacting 
-                to resolve an issue with a defective {product} you purchased. Your goal is try and 
-                understand what your options are for resolving the issue. Please continue the conversation.\n\n
-                Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER: """
-)
+    prompt = PromptTemplate(
+        input_variables=["history", "input"],
+        partial_variables={"product": product, "mood": mood},
+        template="""The following transcript represents a conversation between you, a {mood} customer of a large 
+                    electronics retailer called 'ACME electronics', and a support agent who you are contacting 
+                    to resolve an issue with a defective {product} you purchased. Your goal is try and 
+                    understand what your options are for resolving the issue. Please continue the conversation.\n\n
+                    Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER: """
+    )
 
-chain = ConversationChain(llm=model, prompt=prompt, memory=memory)
+    return ConversationChain(llm=model, prompt=prompt, memory=memory)
 
 client = qx.QuixStreamingClient()
 topic_producer = client.get_topic_producer(os.environ["topic"])
