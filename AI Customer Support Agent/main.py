@@ -47,23 +47,34 @@ memory = ConversationTokenBufferMemory(
     return_messages=True
 )
 
-prompt = PromptTemplate(
-    input_variables=["history", "input"],
-    partial_variables={"product": os.environ["product"]},
-    template="""The following transcript represents a converstation between you, a customer 
-                support agent who works for a large electronics retailer called 'ACME electronics', 
-                and a customer who has bought a defective {product} and wants to understand what 
-                their options are for resolving the issue. Please continue the conversation.\n\n
-                Current conversation:\n{history}\nCUSTOMER: {input}\nAGENT: """
-)
+# Loading conversation from file
+product = os.environ["product"]
+tone = os.environ["tone"]
 
-chain = ConversationChain(llm=model, prompt=prompt, memory=memory)
+with open('simple_template.txt', 'r') as file:
+    loaded_prompt = file.read()
+
+# define a custom PromptTemplate that supports the new variables such as mood and product
+class CustomPromptTemplate(StringPromptTemplate):
+    # Define more variables here as needed.
+    tone: str
+    product: str
+    template: str
+
+    def format(self, **kwargs) -> str:
+        kwargs['tone']=self.tone
+        kwargs['product'] = self.product
+        return self.template.format(**kwargs)
+
+
+# Feeding the PromptTemplate with the new variables
+PROMPT = CustomPromptTemplate(input_variables=["history", "input"], template=loaded_prompt, tone=tone,product=product)
+
+chain = ConversationChain(llm=model, prompt=PROMPT, memory=memory)
 
 client = qx.QuixStreamingClient()
 topic_producer = client.get_topic_producer(os.environ["topic"])
 topic_consumer = client.get_topic_consumer(os.environ["topic"])
-
-product = os.environ["product"]
 
 def chat_init():
     greet = "Hello, welcome to ACME Electronics support, my name is Percy. How can I help you today?"
