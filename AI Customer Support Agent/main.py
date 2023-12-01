@@ -75,8 +75,6 @@ def agents_init():
 agents = agents_init()
 agent = random.choice(agents)
 
-product = os.environ["product"]
-
 def chat_init():
     greet = """Hello, welcome to ACME Electronics support, my name is {}. 
                How can I help you today?""".format(agent)
