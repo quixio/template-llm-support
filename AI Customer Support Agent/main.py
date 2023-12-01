@@ -106,7 +106,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
 
             print("Generating response...")
             reply = chain.run(msg)
-            print("{}: {}".format(role, reply))
+            print("{}: {}".format(role.upper(), reply))
             
             td = qx.TimeseriesData()
             td.add_timestamp(datetime.utcnow()) \
