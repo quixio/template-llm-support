@@ -74,11 +74,12 @@ def agents_init():
     return agents
 
 agents = agents_init()
-agent = random.choice(agents)
 
 def chat_init():
+    agent = random.choice(agents)
     greet = """Hello, welcome to ACME Electronics support, my name is {}. 
                How can I help you today?""".format(agent)
+               
     msg = qx.TimeseriesData()
     msg.add_timestamp(datetime.utcnow()) \
        .add_value("role", role) \
