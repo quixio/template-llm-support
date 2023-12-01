@@ -32,7 +32,7 @@ deployments:
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
-    version: a12237c837187599ec97b9a3208b1d16226ed4ab
+    version: 4815498ea12a46595a19ab8deab8e20a30e4df9f
     resources:
       cpu: 4000
       memory: 8000
@@ -47,11 +47,6 @@ deployments:
         description: This is the output topic to write data to
         required: true
         value: ai-chat-history
-      - name: product
-        inputType: FreeText
-        description: ''
-        required: false
-        value: printer
   - name: Sentiment Analyzer
     application: Sentiment Analyzer
     deploymentType: Service
