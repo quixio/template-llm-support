@@ -8,7 +8,7 @@ import quixstreams as qx
 from huggingface_hub import hf_hub_download
 
 from langchain.llms import LlamaCpp
-from langchain.prompts import PromptTemplate
+from langchain.prompts import load_prompt
 from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
@@ -40,19 +40,11 @@ moods = get_list("moods.txt")
 products = get_list("products.txt")
 
 def chain_init():
-    mood = random.choice(moods)
-    product = random.choice(products)
-    print("Initializing prompt: product={}, mood={}".format(product, mood))
+    prompt = load_prompt("prompt.yaml")
+    prompt.partial_variables["mood"] = random.choice(moods)
+    prompt.partial_variables["product"] = random.choice(products)
 
-    prompt = PromptTemplate(
-        input_variables=["history", "input"],
-        partial_variables={"product": product, "mood": mood},
-        template="""The following transcript represents a conversation between you, a {mood} customer of a large 
-                    electronics retailer called 'ACME electronics', and a support agent who you are contacting 
-                    to resolve an issue with a defective {product} you purchased. Your goal is try and 
-                    understand what your options are for resolving the issue. Please continue the conversation.\n\n
-                    Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER:"""
-    )
+    print("Prompt:\n{}".format(prompt.to_json()))
 
     llm = LlamaCpp(
         model_path=model_path,

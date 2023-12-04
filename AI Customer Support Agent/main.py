@@ -9,7 +9,7 @@ import quixstreams as qx
 from huggingface_hub import hf_hub_download
 
 from langchain.llms import LlamaCpp
-from langchain.prompts import PromptTemplate
+from langchain.prompts import load_prompt
 from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
@@ -49,16 +49,7 @@ memory = ConversationTokenBufferMemory(
     return_messages=True
 )
 
-prompt = PromptTemplate(
-    input_variables=["history", "input"],
-    template="""The following transcript represents a converstation between you, a customer 
-                support agent who works for a large electronics retailer called 'ACME electronics', 
-                and a customer who has bought a defective appliance and wants to understand what 
-                their options are for resolving the issue. Please continue the conversation.\n\n
-                Current conversation:\n{history}\nCUSTOMER: {input}\nAGENT: """
-)
-
-chain = ConversationChain(llm=model, prompt=prompt, memory=memory)
+chain = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
 
 client = qx.QuixStreamingClient()
 topic_producer = client.get_topic_producer(os.environ["topic"])

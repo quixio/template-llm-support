@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: 80d25c2e48c8a6191bc4c692115703590cd906a3
+    version: f6c7bc89bd58919862b40c0049189161041b13c1
     resources:
       cpu: 4000
       memory: 8000
@@ -32,7 +32,7 @@ deployments:
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
-    version: 898ff2338ee65b8ff4701217a4bf65b2b2ccdee8
+    version: 1c31cb055975405c95250c1a7748e09baa15762a
     resources:
       cpu: 4000
       memory: 8000
@@ -50,7 +50,7 @@ deployments:
   - name: Sentiment Analyzer
     application: Sentiment Analyzer
     deploymentType: Service
-    version: 23bcef29c7a677db0bcaf945f6456dff445772cb
+    version: d6627cff53e8e5af236a45b10e2dacc00069cdbc
     resources:
       cpu: 2000
       memory: 4000
