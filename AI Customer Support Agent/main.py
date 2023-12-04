@@ -10,7 +10,6 @@ from huggingface_hub import hf_hub_download
 
 from langchain.llms import LlamaCpp
 from langchain.prompts import load_prompt
-from langchain.prompts import PromptTemplate
 from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
