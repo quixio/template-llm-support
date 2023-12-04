@@ -1,5 +1,5 @@
 _type: prompt
-    input_variables:
+    input_variables: 
         ["history", "input"]
     template: >
         The following transcript represents a converstation between you, a customer 
