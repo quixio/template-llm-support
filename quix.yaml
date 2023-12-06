@@ -17,7 +17,7 @@ deployments:
     state:
       enabled: true
       size: 6
-    desiredStatus: Running
+    desiredStatus: Stopped
     variables:
       - name: topic
         inputType: OutputTopic
@@ -40,7 +40,7 @@ deployments:
     state:
       enabled: true
       size: 6
-    desiredStatus: Running
+    desiredStatus: Stopped
     variables:
       - name: topic
         inputType: OutputTopic
@@ -55,7 +55,7 @@ deployments:
       cpu: 2000
       memory: 4000
       replicas: 1
-    desiredStatus: Running
+    desiredStatus: Stopped
     variables:
       - name: input
         inputType: InputTopic
