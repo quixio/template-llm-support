@@ -1,5 +1,6 @@
 import quixstreams as qx
 import os
+from datetime import timedelta
 
 import redis
 from redis.commands.json.path import Path
@@ -9,8 +10,6 @@ r = redis.Redis(
   port=int(os.environ["redis_port"]),
   password=os.environ["redis_pwd"]
 )
-
-expire_after_s = int(os.environ["expire_after"]) * 60
 
 client = qx.QuixStreamingClient()
 topic_consumer = client.get_topic_consumer(topic_id_or_name = os.environ["input"])
@@ -31,7 +30,9 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
                 cached = []
 
             cached.append(entry)
-            r.json().set(sc.stream_id, Path.root_path(), cached, ex=expire_after_s)
+            r.json().set(sc.stream_id, Path.root_path(), cached)
+            r.expire(sc.stream_id, timedelta(minutes=float(os.environ["expire_after"])))
+
             print("saved: \n{}".format(cached))
     
     sc.timeseries.on_data_received = on_data_recv_handler
