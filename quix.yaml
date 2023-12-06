@@ -143,7 +143,7 @@ topics:
       retentionInMinutes: 240
       retentionInBytes: 52428800
   - name: ai-chat-history
-    persisted: false
+    persisted: true
     configuration:
       partitions: 2
       replicationFactor: 2
