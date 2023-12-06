@@ -92,7 +92,7 @@ deployments:
     deploymentType: Service
     version: v2.1-ai
     resources:
-      cpu: 8000
+      cpu: 4000
       memory: 8000
       replicas: 1
     state:
