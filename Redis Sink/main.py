@@ -6,7 +6,7 @@ import redis
 
 r = redis.Redis(
   host=os.environ["redis_host"],
-  port=os.redis["redis_port"],
+  port=int(os.redis["redis_port"]),
   password=os.environ["redis_pwd"]
 )
 
