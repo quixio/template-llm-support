@@ -6,29 +6,6 @@ metadata:
 
 # This section describes the Deployments of the data pipeline
 deployments:
-  - name: AI Customer
-    application: AI Customer
-    deploymentType: Service
-    version: f6c7bc89bd58919862b40c0049189161041b13c1
-    resources:
-      cpu: 4000
-      memory: 8000
-      replicas: 1
-    state:
-      enabled: true
-      size: 6
-    desiredStatus: Stopped
-    variables:
-      - name: topic
-        inputType: OutputTopic
-        description: This is the output topic to write data to
-        required: true
-        value: ai-chat-history
-      - name: conversation_length
-        inputType: FreeText
-        description: Maximum conversation length, after which the conversation resets.
-        required: true
-        value: 15
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
