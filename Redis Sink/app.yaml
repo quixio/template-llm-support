@@ -6,6 +6,11 @@ variables:
     description: This is the input topic for demo data
     defaultValue: ai-chat-history-with-sentiment
     required: true
+  - name: redis_host
+    inputType: Secret
+    description: Redis host.
+    defaultValue: redis_host
+    required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
