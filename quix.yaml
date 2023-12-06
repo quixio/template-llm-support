@@ -72,6 +72,41 @@ deployments:
         description: Input buffer configuration (timeout and timespan in milliseconds).
         required: false
         value: 0
+  - name: Redis Sink
+    application: Redis Sink
+    deploymentType: Service
+    version: 71cec6931734bc38731fa5e2bc676aeae24f4731
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    desiredStatus: Running
+    variables:
+      - name: input
+        inputType: InputTopic
+        description: This is the input topic for demo data
+        required: true
+        value: ai-chat-history-with-sentiment
+      - name: redis_host
+        inputType: Secret
+        description: Redis host.
+        required: true
+        secretKey: redis_host
+      - name: redis_port
+        inputType: FreeText
+        description: Redis port.
+        required: true
+        value: 15737
+      - name: redis_pwd
+        inputType: Secret
+        description: Redis password.
+        required: true
+        secretKey: redis_pwd
+      - name: expire_after
+        inputType: FreeText
+        description: Conversation storage duration in minutes.
+        required: true
+        value: 1440
 
 # This section describes the Topics of the data pipeline
 topics:
