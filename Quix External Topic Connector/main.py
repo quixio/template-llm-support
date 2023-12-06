@@ -28,7 +28,8 @@ if input_topic is None:
 # Quix injects credentials automatically to the client. 
 # Alternatively, you can always pass an SDK token manually as an argument.
 external_quix_client = qx.QuixStreamingClient(token=external_env_token)
-internal_quix_client = qx.QuixStreamingClient() # no token needed as this will use the token from your workspace when deployed in Quix
+# no token needed as this will use the token from your workspace when deployed in Quix
+internal_quix_client = qx.QuixStreamingClient()
 
 # setup to consume from the external Quix topic (external is the one OUTside of this project or repo)
 topic_consumer = external_quix_client.get_topic_consumer(input_topic, consumer_group = "quix-quix-connector")
