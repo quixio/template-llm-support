@@ -22,73 +22,38 @@ scenario = os.environ["scenario"].format(product)
 llm_bot = LlmBot(product, scenario, draft_producer)
 
 
+
+
+llm = Llama(model_path="./state/llama-2-7b-chat.Q4_K_M.gguf")
+    
+def generate_response(message):
+    
+    result = llm(
+        prompt=get_promt(message),
+        max_tokens=250,
+        temperature=0.7,
+        top_p=0.95,
+        stop=["AGENT:","CUSTOMER:","\n"],
+        repeat_penalty=1.2,
+        top_k=150,
+        echo=True
+    )
+
+    finalreply = result["choices"][0]["text"]
+    finalreply = finalreply.replace(prompt, ' ').replace('{', '').replace('}', '').replace('"', '').strip()
+
+    return finalreply
+
+
 sdf = app.dataframe(input_topic)
 
-print("Listening for messages...")
-counter = 0
-
-def get_answer(row: dict, state: State):
-    
-    print(f"\n------\nRESPONDING T0: {row['chat-message']} \n------\n")
-
-    director_prompt_state = state.get(director_prompt_state_key, "")
-    print("Director: " + director_prompt_state)
-    if row["Tags"]["name"] == "director":
-        director_prompt_state = row["chat-message"] + '\n'
-        state.set(director_prompt_state_key, director_prompt_state)
-        print("Director message: " + row["chat-message"])
-        return None
-    else:
-        row["Tags"]["name"] = role
-
-        conversation_history = state.get(state_key, [])
-        full_history = "\n".join([f"{msg['TAG__name'].upper()}: {msg['chat-message']}" for msg in conversation_history])
-    
-        prompt = scenario + '\n\n'
-        prompt += full_history[-400:] 
-        prompt += f'\nAGENT:{row["chat-message"]}'
-        prompt +=  director_prompt_state if role == "agent" else "" 
-        prompt += f'\n{role.upper()}:'
-
-        print(prompt)
-
-        # Generate the reply using the AI model
-        print("Thinking about my response....")
-        reply = llm_bot.generate_response(row, prompt, bytes.decode(message_key()))  # This function should be defined elsewhere to handle the interaction with the AI model
-        finalreply = reply.replace(prompt, ' ').replace('{', '').replace('}', '').replace('"', '').strip()
-        
-        reply_dict = {
-            "TAG__name": role.upper(),
-            "TAG__room": bytes.decode(message_key()),
-            "chat-message": finalreply,
-        }
-
-        print(f"My reply was '{finalreply}'")
-        # Create a dictionary for the reply
-
-        conversation_history.append(reply_dict)
-
-        state.set(state_key, conversation_history)
-
-        # Return the generated reply
-        row["chat-message"] = finalreply
-
-
-        return row
-
-
-sdf = sdf[sdf["Tags"].contains("name")]
-sdf = sdf[sdf["Tags"]["name"] != role or sdf["Tags"]["name"] == "director"]
-
-sdf["index"] = sdf.apply(lambda row: row["index"] if "index" in row else 0)
-sdf["index"] = sdf["index"] + 1
-
-sdf = sdf[sdf["index"] < 50]
-
-sdf = sdf.apply(get_answer, stateful=True)
-sdf = sdf[sdf.apply(lambda row: row is not None)]
-
+sdf = sdf[sdf["role"] == "customer"]
+sdf["role"] = "agent"
 sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
+
+sdf["chat-message"] = sdf["chat-message"].apply(generate_response)
+
+
 sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
