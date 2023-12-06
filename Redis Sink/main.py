@@ -6,7 +6,7 @@ from redis.commands.json.path import Path
 
 r = redis.Redis(
   host=os.environ["redis_host"],
-  port=int(os.redis["redis_port"]),
+  port=int(os.environ["redis_port"]),
   password=os.environ["redis_pwd"]
 )
 
