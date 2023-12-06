@@ -16,7 +16,7 @@ topic_consumer = client.get_topic_consumer(topic_id_or_name = os.environ["input"
 def on_stream_recv_handler(sc: qx.StreamConsumer):
     
     def on_data_recv_handler(stream_consumer: qx.StreamConsumer, data: qx.TimeseriesData):
-        for ts in data:
+        for ts in data.timestamps:
             entry = {
                 "text": ts.parameters["text"].string_value,
                 "role": ts.parameters["role"].string_value,
