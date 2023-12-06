@@ -1,8 +1,6 @@
-# Python hello world
+# Redis Sink
 
-[This project](https://github.com/quixio/quix-samples/tree/main/python/destinations/Empty-Template) is most basic and essential "Hello World" sample. 
-
-The sample contained in this folder gives an example of how to connect to Kafka and detect the arrival of a new stream and read 'HelloWorld' parameter.
+Caches conversation history and the result of sentiment analysis in Redis.
 
 ## How to run
 
@@ -15,6 +13,10 @@ Clicking `Edit code` on the Sample, forks the project to your own Git repo so yo
 The code sample uses the following environment variables:
 
 - **input**: This is the input topic for demo data.
+- **redis_host**: Redis host information.
+- **redis_port**: Redis server port.
+- **redis_pwd**: Redis password.
+- **expire_after**: Cnversation cache TTL.
 
 ## Contribute
 
