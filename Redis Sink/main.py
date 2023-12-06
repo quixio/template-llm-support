@@ -19,6 +19,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
     def on_data_recv_handler(stream_consumer: qx.StreamConsumer, data: qx.TimeseriesData):
         for ts in data.timestamps:
             entry = {
+                "timestamp": ts.timestamp_milliseconds,
                 "text": ts.parameters["text"].string_value,
                 "role": ts.parameters["role"].string_value,
                 "sentiment": ts.parameters["sentiment"].numeric_value,
