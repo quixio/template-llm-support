@@ -32,7 +32,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             r.json().set(sc.stream_id, Path.root_path(), cached)
             print("saved: \n{}".format(cached))
     
-    sc.timeseries.on_dataframe_received = on_data_recv_handler
+    sc.timeseries.on_data_received = on_data_recv_handler
 
 topic_consumer.on_stream_received = on_stream_recv_handler
 
