@@ -15,7 +15,7 @@ variables:
     inputType: Secret
     description: ''
     defaultValue: external_token
-    required: false
+    required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
