@@ -7,7 +7,7 @@ variables:
     defaultValue: hello-world-source
     required: true
   - name: input
-    inputType: InputTopic
+    inputType: FreeText
     description: ''
     defaultValue: ''
     required: true
