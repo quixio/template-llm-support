@@ -1,34 +1,61 @@
 import quixstreams as qx
 import time
 import datetime
-import math
 import os
+import pandas as pd
+
+
+token_env_var = "external_token"
+input_topic_env_var = "input"
+output_topic_env_var = "output"
+external_env_token = os.getenv(token_env_var)
+input_topic = os.getenv(input_topic_env_var)
+output_topic = os.getenv(output_topic_env_var)
+
+if external_env_token is None:
+    print(f"The environment variable {token_env_var} is not set.")
+    raise Exception(f"The environment variable {token_env_var} is not set.")
+
+if output_topic is None:
+    print(f"The environment variable {output_topic_env_var} is not set.")
+    raise Exception(f"The environment variable {output_topic_env_var} is not set.")
+
+if input_topic is None:
+    print(f"The environment variable {input_topic_env_var} is not set.")
+    raise Exception(f"The environment variable {input_topic_env_var} is not set.")
 
 
 # Quix injects credentials automatically to the client. 
 # Alternatively, you can always pass an SDK token manually as an argument.
-client = qx.QuixStreamingClient()
+external_quix_client = qx.QuixStreamingClient(token=external_env_token)
+internal_quix_client = qx.QuixStreamingClient() # no token needed as this will use the token from your workspace when deployed in Quix
 
-# Open the output topic where to write data out
-topic_producer = client.get_topic_producer(topic_id_or_name = os.environ["output"])
+# setup to consume from the external Quix topic (external is the one OUTside of this project or repo)
+topic_consumer = external_quix_client.get_topic_consumer(input_topic, consumer_group = "quix-quix-connector")
 
-# Set stream ID or leave parameters empty to get stream ID generated.
-stream = topic_producer.create_stream()
-stream.properties.name = "Hello World Python stream"
+# and produce to the internal Quix topic (internal is the one INside of this project or repo)
+topic_producer = client.get_topic_producer(output_topic)
 
-# Add metadata about time series data you are about to send. 
-stream.timeseries.add_definition("ParameterA").set_range(-1.2, 1.2)
-stream.timeseries.buffer.time_span_in_milliseconds = 100
 
-print("Sending values for 30 seconds.")
+def on_stream_received_handler(stream_consumer: qx.StreamConsumer):
 
-for index in range(0, 3000):
-    stream.timeseries \
-        .buffer \
-        .add_timestamp(datetime.datetime.utcnow()) \
-        .add_value("ParameterA", math.sin(index / 200.0) + math.sin(index) / 5.0) \
-        .publish()
-    time.sleep(0.01)
+    def on_dataframe_received_handler(stream_consumer: qx.StreamConsumer, df: pd.DataFrame):
+        stream_producer = topic_producer.get_or_create_stream(stream_id = stream_consumer.stream_id)
+        stream_producer.timeseries.buffer.publish(df)
 
-print("Closing stream")
-stream.close()
+    # Handle event data from samples that emit event data
+    def on_event_data_received_handler(stream_consumer: qx.StreamConsumer, data: qx.EventData):
+        print(data)
+        # handle your event data here
+
+    stream_consumer.events.on_data_received = on_event_data_received_handler # register the event data callback
+    stream_consumer.timeseries.on_dataframe_received = on_dataframe_received_handler
+
+
+# subscribe to new streams being received
+topic_consumer.on_stream_received = on_stream_received_handler
+
+print("Listening to streams. Press CTRL-C to exit.")
+
+# Handle termination signals and provide a graceful exit
+qx.App.run()
