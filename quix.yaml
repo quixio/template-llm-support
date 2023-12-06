@@ -107,6 +107,31 @@ deployments:
         description: Conversation storage duration in minutes.
         required: true
         value: 1440
+  - name: Quix External Topic Connector
+    application: Quix External Topic Connector
+    deploymentType: Service
+    version: ebca70e5d6e6e4f1a1d476b925ef33b4dd7981c2
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    desiredStatus: Running
+    variables:
+      - name: output
+        inputType: OutputTopic
+        description: This is the output topic for hello world data
+        required: true
+        value: ai-chat-history
+      - name: input
+        inputType: FreeText
+        description: ''
+        required: true
+        value: ai-chat-history
+      - name: external_token
+        inputType: Secret
+        description: ''
+        required: true
+        secretKey: external_token
 
 # This section describes the Topics of the data pipeline
 topics:
