@@ -2,6 +2,14 @@ import quixstreams as qx
 import os
 import pandas as pd
 
+import redis
+
+r = redis.Redis(
+  host=os.environ["redis_host"],
+  port=os.redis["redis_port"],
+  password=os.environ["redis_pwd"]
+)
+
 client = qx.QuixStreamingClient()
 topic_consumer = client.get_topic_consumer(topic_id_or_name = os.environ["input"])
 
