@@ -27,9 +27,10 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             cached = r.json().get(sc.stream_id)
             if not cached:
                 cached = []
-                
+
             cached.append(entry)
             r.json().set(sc.stream_id, Path.root_path(), cached)
+            print("saved: \n{}".format(cached))
     
     sc.timeseries.on_dataframe_received = on_data_recv_handler
 
