@@ -21,6 +21,11 @@ variables:
     description: Redis password.
     defaultValue: redis_pwd
     required: true
+  - name: expire_after
+    inputType: FreeText
+    description: Conversation storage duration in minutes.
+    defaultValue: 1440
+    required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
