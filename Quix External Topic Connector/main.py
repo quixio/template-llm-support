@@ -35,7 +35,7 @@ internal_quix_client = qx.QuixStreamingClient()
 topic_consumer = external_quix_client.get_topic_consumer(input_topic, consumer_group = "quix-quix-connector")
 
 # and produce to the internal Quix topic (internal is the one INside of this project or repo)
-topic_producer = client.get_topic_producer(output_topic)
+topic_producer = internal_quix_client.get_topic_producer(output_topic)
 
 
 def on_stream_received_handler(stream_consumer: qx.StreamConsumer):
