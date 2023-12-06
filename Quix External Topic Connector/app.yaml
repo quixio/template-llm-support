@@ -10,7 +10,7 @@ variables:
     inputType: InputTopic
     description: ''
     defaultValue: ''
-    required: false
+    required: true
   - name: external_token
     inputType: Secret
     description: ''
