@@ -6,24 +6,6 @@ metadata:
 
 # This section describes the Deployments of the data pipeline
 deployments:
-  - name: AI Support Agent
-    application: AI Customer Support Agent
-    deploymentType: Service
-    version: 1c31cb055975405c95250c1a7748e09baa15762a
-    resources:
-      cpu: 4000
-      memory: 8000
-      replicas: 1
-    state:
-      enabled: true
-      size: 6
-    desiredStatus: Stopped
-    variables:
-      - name: topic
-        inputType: OutputTopic
-        description: This is the output topic to write data to
-        required: true
-        value: ai-chat-history
   - name: Sentiment Analyzer
     application: Sentiment Analyzer
     deploymentType: Service
