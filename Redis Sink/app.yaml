@@ -1,0 +1,11 @@
+name: Redis Sink
+language: python
+variables:
+  - name: input
+    inputType: InputTopic
+    description: This is the input topic for demo data
+    defaultValue: ai-chat-history-with-sentiment
+    required: true
+dockerfile: build/dockerfile
+runEntryPoint: main.py
+defaultFile: main.py
