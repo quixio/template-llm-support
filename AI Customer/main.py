@@ -107,7 +107,7 @@ def reply(row: dict, state: State):
 
     return row
 
-sdf = sdf[sdf["Tags"]["name"] != role]
+sdf = sdf[sdf["Tags"]["role"] != role]
 sdf = sdf.apply(reply, stateful=True)
 sdf = sdf[sdf.apply(lambda row: row is not None)]
 
