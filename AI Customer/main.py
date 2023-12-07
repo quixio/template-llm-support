@@ -26,6 +26,37 @@ llm_bot = LlmBot(product, scenario, draft_producer)
 
 sdf = app.dataframe(input_topic)
 
+def chain_init():
+    prompt = load_prompt("prompt.yaml")
+    prompt.partial_variables["mood"] = random.choice(moods)
+    prompt.partial_variables["product"] = random.choice(products)
+
+    print("Prompt:\n{}".format(prompt.to_json()))
+
+    llm = LlamaCpp(
+        model_path=model_path,
+        max_tokens=250,
+        top_p=0.95,
+        top_k=150,
+        temperature=0.7,
+        repeat_penalty=1.2,
+        n_ctx=2048,
+        streaming=False
+    )
+
+    model = Llama2Chat(llm=llm)
+
+    memory = ConversationTokenBufferMemory(
+        llm=llm,
+        max_token_limit=300,
+        ai_prefix= "CUSTOMER",
+        human_prefix= "AGENT",
+        return_messages=True
+    )
+
+    return ConversationChain(llm=model, prompt=prompt, memory=memory)
+
+
 print("Listening for messages...")
 counter = 0
 
