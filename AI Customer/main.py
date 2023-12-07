@@ -1,9 +1,10 @@
 import os
+import time
 import random
 from pathlib import Path
-from datetime import datetime
 
-import quixstreams as qx
+from quixstreams import Application, State
+from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
 
 from huggingface_hub import hf_hub_download
 
@@ -16,11 +17,11 @@ from langchain.memory import ConversationTokenBufferMemory
 CUSTOMER_ROLE = "customer"
 
 role = CUSTOMER_ROLE
-chat_len = 0
 chat_maxlen = int(os.environ["conversation_length"]) // 2
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
+
 if not Path(model_path).exists():
     print("The model path does not exist in state. Downloading model...")
     hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
@@ -70,60 +71,49 @@ def chain_init():
     return ConversationChain(llm=model, prompt=prompt, memory=memory)
 
 chain = chain_init()
-client = qx.QuixStreamingClient()
-topic_producer = client.get_topic_producer(os.environ["topic"])
-topic_consumer = client.get_topic_consumer(os.environ["topic"])
 
-def on_stream_recv_handler(sc: qx.StreamConsumer):
-    print("Received stream {}".format(sc.stream_id))
+app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
+input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
+output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
 
-    def on_data_recv_handler(_: qx.StreamConsumer, data: qx.TimeseriesData):
-        global chain, chat_len
+sdf = app.dataframe(input_topic)
 
-        ts = data.timestamps[0]
-        sender = ts.parameters["role"].string_value
+def reply(row: dict, state: State):
+    global chain
 
-        if sender != role:
-            chat_len += 1
-            
-            if chat_len >= chat_maxlen:
-                print("Maximum conversation length reached, ending conversation...")
+    row["Tags"]["role"] = role
 
-                chat_len = 0
-                chain = chain_init()
+    if not state.exists("chatlen"):
+        state.set("chatlen", 0)
 
-                td = qx.TimeseriesData()
-                td.add_timestamp(datetime.utcnow()) \
-                  .add_value("role", role) \
-                  .add_value("text", "Noted, I think I have enough information. Thank you for your assistance. Good bye!") \
-                  .add_value("conversation_id", ts.parameters["conversation_id"].string_value)
+    chatlen = state.get("chatlen")
+    
+    if chatlen >= chat_maxlen:
+        print("Maximum conversation length reached, ending conversation...")
+        chain = chain_init()
+        state.set("chatlen", 0)
 
-                sp = topic_producer.get_or_create_stream(sc.stream_id)
-                sp.timeseries.publish(td)
-                return
+        row["text"] = "Noted, I think I have enough information. Thank you for your assistance. Good bye!"
+        return row
 
-            msg = ts.parameters["text"].string_value
-            print("{}: {}\n".format(sender.upper(), msg))
+    print("Generating response...")
+    msg = chain.run(row["text"])
+    print("{}: {}\n".format(role.upper(), msg))
+    
+    row["Tags"]["role"] = role
+    row["text"] = msg
+    
+    state.set("count", chatlen + 1)
 
-            print("Generating response...")
+    return row
 
-            reply = chain.run(msg)
-            print("{}: {}\n".format(role.upper(), reply))
-            
-            td = qx.TimeseriesData()
-            td.add_timestamp(datetime.utcnow()) \
-              .add_value("role", role) \
-              .add_value("text", reply) \
-              .add_value("conversation_id", ts.parameters["conversation_id"].string_value)
+sdf = sdf[sdf["Tags"]["name"] != role]
+sdf = sdf.apply(reply, stateful=True)
+sdf = sdf[sdf.apply(lambda row: row is not None)]
 
-            sp = topic_producer.get_or_create_stream(sc.stream_id)
-            sp.timeseries.publish(td)
+sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 
-    buf = sc.timeseries.create_buffer()
-    buf.packet_size = 1
-    buf.on_data_released = on_data_recv_handler
+sdf = sdf.to_topic(output_topic)
 
-topic_consumer.on_stream_received = on_stream_recv_handler
-
-print("Listening to streams. Press CTRL-C to exit.")
-qx.App.run()
+if __name__ == "__main__":
+    app.run(sdf)
