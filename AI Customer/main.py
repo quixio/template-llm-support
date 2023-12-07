@@ -81,7 +81,7 @@ sdf = app.dataframe(input_topic)
 def reply(row: dict, state: State):
     global chain
 
-    row["Tags"]["role"] = role
+    row["role"] = role
 
     if not state.exists("chatlen"):
         state.set("chatlen", 0)
@@ -100,14 +100,14 @@ def reply(row: dict, state: State):
     msg = chain.run(row["text"])
     print("{}: {}\n".format(role.upper(), msg))
     
-    row["Tags"]["role"] = role
+    row["role"] = role
     row["text"] = msg
     
     state.set("count", chatlen + 1)
 
     return row
 
-sdf = sdf[sdf["Tags"]["role"] != role]
+sdf = sdf[sdf["role"] != role]
 sdf = sdf.apply(reply, stateful=True)
 sdf = sdf[sdf.apply(lambda row: row is not None)]
 
