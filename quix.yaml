@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: b40353acc5856e2fcc9a7d39d219ac7a82d978e9
+    version: 4cb64919085ae4a4b2eac56a3be1d73dd9b977e8
     resources:
       cpu: 4000
       memory: 8000
@@ -17,7 +17,7 @@ deployments:
     state:
       enabled: true
       size: 6
-    desiredStatus: Stopped
+    desiredStatus: Running
     variables:
       - name: topic
         inputType: OutputTopic
