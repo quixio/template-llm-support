@@ -12,7 +12,9 @@ app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 
 input_topic = app.topic(os.environ["output"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
+
 draft_producer = DraftProducer(os.environ["draft_topic"])
+
 state_key = "conversation-history-v2"
 director_prompt_state_key = "director_prompt_state_key-v1"
 
