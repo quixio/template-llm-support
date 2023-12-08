@@ -77,6 +77,7 @@ def chat_init():
     sdf["conversation_id"] = str(uuid.uuid4())
 
     sdf.to_topic(output_topic)
+    print("Started chat")
 
 chat_init()
 
