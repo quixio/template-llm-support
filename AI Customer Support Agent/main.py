@@ -78,8 +78,6 @@ def chat_init():
 
     sdf.to_topic(output_topic)
 
-
-
 def on_stream_recv_handler(sc: qx.StreamConsumer):
     print("Received stream {}".format(sc.stream_id))
 
@@ -114,8 +112,6 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
     buf.packet_size = 1
     buf.on_data_released = on_data_recv_handler
 
-chat_init()
-
 sdf = sdf[sdf["role"] != role]
 sdf = sdf.apply(reply, stateful=True)
 sdf = sdf[sdf.apply(lambda row: row is not None)]
@@ -126,3 +122,4 @@ sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
     app.run(sdf)
+    chat_init()
