@@ -2,6 +2,7 @@ import os
 import time
 import random
 from pathlib import Path
+from draft_producer import DraftProducer
 
 from quixstreams import Application, State
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
@@ -55,7 +56,7 @@ def chain_init():
         temperature=0.7,
         repeat_penalty=1.2,
         n_ctx=2048,
-        streaming=False
+        streaming=True
     )
 
     model = Llama2Chat(llm=llm)
@@ -71,6 +72,7 @@ def chain_init():
     return ConversationChain(llm=model, prompt=prompt, memory=memory)
 
 chain = chain_init()
+draft_producer = DraftProducer(os.environ["draft_topic"])
 
 app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
