@@ -14,7 +14,6 @@ def stream_init():
     sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 
     sdf.to_topic(output_topic)
-    print("Started chat")
 
 stream_init()
 
