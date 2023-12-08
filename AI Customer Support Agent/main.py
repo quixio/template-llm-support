@@ -56,8 +56,6 @@ output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSer
 
 sdf = app.dataframe(topic=input_topic)
 
-agents = []
-
 def agents_init():
     out = []
 
@@ -66,6 +64,8 @@ def agents_init():
             if a:
                 out.append(a.strip())
     return out
+
+agents = agents_init()
 
 def chat_init():
     agent = random.choice(agents)
@@ -107,8 +107,5 @@ sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
-    global agents
-    
-    agents = agents_init()
     chat_init()
     app.run(sdf)
