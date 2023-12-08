@@ -1,10 +1,10 @@
 import os
+import time
 import uuid
 import random
 from pathlib import Path
-from datetime import datetime
 
-from quixstreams import Application, State
+from quixstreams import Application
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
 
 from huggingface_hub import hf_hub_download
@@ -78,42 +78,25 @@ def chat_init():
 
     sdf.to_topic(output_topic)
 
-def on_stream_recv_handler(sc: qx.StreamConsumer):
-    print("Received stream {}".format(sc.stream_id))
+chat_init()
 
-    def on_data_recv_handler(_: qx.StreamConsumer, data: qx.TimeseriesData):
-        ts = data.timestamps[0]
-        sender = ts.parameters["role"].string_value
-        if sender != role:
-            msg = ts.parameters["text"].string_value
-            print("{}: {}\n".format(sender.upper(), msg))
+def reply(row: dict):
+    if "good bye" in row["text"].lower():
+        print("Initializing a new conversation...")
+        memory.clear()
+        chat_init()
+        return
 
-            if "good bye" in msg.lower():
-                print("Initializing a new conversation...")
-                memory.clear()
-                chat_init()
-                return
-
-            print("Generating response...")
-            
-            reply = chain.run(msg)
-            print("{}: {}\n".format(role.upper(), reply))
-            
-            td = qx.TimeseriesData()
-            td.add_timestamp(datetime.utcnow()) \
-              .add_value("role", role) \
-              .add_value("text", reply) \
-              .add_value("conversation_id", ts.parameters["conversation_id"].string_value)
-
-            sp = topic_producer.get_or_create_stream(sc.stream_id)
-            sp.timeseries.publish(td)
-
-    buf = sc.timeseries.create_buffer()
-    buf.packet_size = 1
-    buf.on_data_released = on_data_recv_handler
+    print("Generating response...")
+    msg = chain.run(row["text"])
+    print("{}: {}\n".format(role.upper(), msg))
+    
+    row["role"] = role
+    row["text"] = msg
+    return row
 
 sdf = sdf[sdf["role"] != role]
-sdf = sdf.apply(reply, stateful=True)
+sdf = sdf.apply(reply, stateful=False)
 sdf = sdf[sdf.apply(lambda row: row is not None)]
 
 sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
