@@ -107,6 +107,8 @@ sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
+    global agents
+    
     agents = agents_init()
     chat_init()
     app.run(sdf)
