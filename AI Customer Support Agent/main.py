@@ -10,10 +10,11 @@ output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSer
 sdf = app.dataframe(topic=input_topic)
 
 def stream_init():
-    sdf["message"] = "Hello, world!"
-    sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
+    df = app.dataframe(topic=input_topic)
+    df["message"] = "Hello, world!"
+    df["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 
-    sdf.to_topic(output_topic)
+    df.to_topic(output_topic)
 
 stream_init()
 
