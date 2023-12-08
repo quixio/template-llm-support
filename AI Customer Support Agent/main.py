@@ -81,6 +81,8 @@ def chat_init():
 chat_init()
 
 def reply(row: dict):
+    print("Replying to: {}".format(row["text"]))
+    
     if "good bye" in row["text"].lower():
         print("Initializing a new conversation...")
         memory.clear()
