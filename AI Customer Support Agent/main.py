@@ -53,6 +53,7 @@ chain = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=m
 app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
+
 sdf = app.dataframe(topic=input_topic)
 
 def agents_init():
@@ -76,6 +77,8 @@ def chat_init():
     sdf["conversation_id"] = str(uuid.uuid4())
 
     sdf.to_topic(output_topic)
+
+
 
 def on_stream_recv_handler(sc: qx.StreamConsumer):
     print("Received stream {}".format(sc.stream_id))
@@ -112,6 +115,14 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
     buf.on_data_released = on_data_recv_handler
 
 chat_init()
+
+sdf = sdf[sdf["role"] != role]
+sdf = sdf.apply(reply, stateful=True)
+sdf = sdf[sdf.apply(lambda row: row is not None)]
+
+sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
+
+sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
     app.run(sdf)
