@@ -99,12 +99,9 @@ def reply(row: dict, state: State):
     print("Generating response...")
     msg = chain.run(row["text"])
     print("{}: {}\n".format(role.upper(), msg))
-    
-    row["role"] = role
-    row["text"] = msg
-    
-    state.set("count", chatlen + 1)
 
+    row["text"] = msg
+    state.set("count", chatlen + 1)
     return row
 
 sdf = sdf[sdf["role"] != role]
