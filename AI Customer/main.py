@@ -96,6 +96,7 @@ def reply(row: dict, state: State):
         row["text"] = "Noted, I think I have enough information. Thank you for your assistance. Good bye!"
         return row
 
+    print("Replying to: {}".format(row["text"]))
     print("Generating response...")
     msg = chain.run(row["text"])
     print("{}: {}\n".format(role.upper(), msg))
