@@ -108,4 +108,5 @@ sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
     chat_init()
+    print("sent message")
     app.run(sdf)
