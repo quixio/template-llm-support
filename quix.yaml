@@ -75,7 +75,7 @@ deployments:
   - name: Redis Sink
     application: Redis Sink
     deploymentType: Service
-    version: 71cec6931734bc38731fa5e2bc676aeae24f4731
+    version: 87454d851ab870c6c6696e915adbc16a36c27634
     resources:
       cpu: 200
       memory: 500
