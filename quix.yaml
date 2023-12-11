@@ -23,7 +23,7 @@ deployments:
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: ai-chat-history
+        value: test-topic
       - name: conversation_length
         inputType: FreeText
         description: Maximum conversation length, after which the conversation resets.
