@@ -23,6 +23,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
                 "text": ts.parameters["text"].string_value,
                 "role": ts.parameters["role"].string_value,
                 "sentiment": ts.parameters["sentiment"].numeric_value,
+                "average_sentiment": ts.parameters["average_sentiment"].numeric_value,
                 "conversation_id": ts.parameters["conversation_id"].string_value
             }
 
