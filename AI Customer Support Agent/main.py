@@ -5,7 +5,9 @@ import random
 from pathlib import Path
 
 from quixstreams import Application
-from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
+from quixstreams.kafka import Producer
+from quixstreams.platforms.quix import QuixKafkaConfigsBuilder, TopicCreationConfigs
+from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer, SerializationContext
 
 from huggingface_hub import hf_hub_download
 
@@ -54,6 +56,12 @@ app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
 
+cfg_builder = QuixKafkaConfigsBuilder()
+cfgs, topics, _ = cfg_builder.get_confluent_client_configs([output_topic])
+output_topic = topics[0]
+cfg_builder.create_topics([TopicCreationConfigs(name=output_topic)])
+serializer = QuixTimeseriesSerializer()
+
 sdf = app.dataframe(topic=input_topic)
 
 def agents_init():
@@ -68,15 +76,26 @@ def agents_init():
 agents = agents_init()
 
 def chat_init():
+    uuid = str(uuid.uuid4())
     agent = random.choice(agents)
     greet = """Hello, welcome to ACME Electronics support, my name is {}. 
                How can I help you today?""".format(agent)
+    headers = {**serializer.extra_headers, "uuid": uuid}
+    value = {
+        "role": role,
+        "text": greet,
+        "conversation_id": uuid,
+        "Timestamp": time.time_ns(),
+    }
 
-    sdf["role"] = role
-    sdf["text"] = greet
-    sdf["conversation_id"] = str(uuid.uuid4())
-
-    sdf.to_topic(output_topic)
+    with Producer(broker_address=cfgs.pop("bootstrap.servers"), extra_config=cfgs) as producer:
+        producer.produce(
+            topic=output_topic,
+            headers=headers,
+            key=str(uuid.uuid4()),
+            value=serializer(value=value, ctx=SerializationContext(topic=output_topic, headers=headers)),
+        )
+    
     print("Started chat")
 
 chat_init()
