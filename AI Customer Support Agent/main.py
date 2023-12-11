@@ -57,9 +57,8 @@ input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer
 output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
 
 cfg_builder = QuixKafkaConfigsBuilder()
-cfgs, topics, _ = cfg_builder.get_confluent_client_configs([output_topic])
-output_topic = topics[0]
-cfg_builder.create_topics([TopicCreationConfigs(name=output_topic)])
+cfgs, topics, _ = cfg_builder.get_confluent_client_configs([os.environ["topic"]])
+cfg_builder.create_topics([TopicCreationConfigs(name=topics[0])])
 serializer = QuixTimeseriesSerializer()
 
 sdf = app.dataframe(topic=input_topic)
@@ -80,6 +79,7 @@ def chat_init():
     agent = random.choice(agents)
     greet = """Hello, welcome to ACME Electronics support, my name is {}. 
                How can I help you today?""".format(agent)
+    
     headers = {**serializer.extra_headers, "uuid": chat_id}
     value = {
         "role": role,
@@ -90,10 +90,10 @@ def chat_init():
 
     with Producer(broker_address=cfgs.pop("bootstrap.servers"), extra_config=cfgs) as producer:
         producer.produce(
-            topic=output_topic,
+            topic=topics[0],
             headers=headers,
             key=str(uuid.uuid4()),
-            value=serializer(value=value, ctx=SerializationContext(topic=output_topic, headers=headers)),
+            value=serializer(value=value, ctx=SerializationContext(topic=topics[0], headers=headers)),
         )
     
     print("Started chat")
