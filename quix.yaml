@@ -107,6 +107,34 @@ deployments:
         description: Conversation storage duration in minutes.
         required: true
         value: 1440
+  - name: Streamlit Dashboard
+    application: Streamlit Dashboard
+    deploymentType: Service
+    version: 4e58779cd3b4e8f8c54be932ec87cbcc0e85f378
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: dashboard
+    desiredStatus: Running
+    variables:
+      - name: redis_host
+        inputType: Secret
+        description: Redis server.
+        required: true
+        secretKey: redis_host
+      - name: redis_port
+        inputType: FreeText
+        description: Redis server port.
+        required: true
+        value: 15737
+      - name: redis_pwd
+        inputType: Secret
+        description: Redis password.
+        required: true
+        secretKey: redis_pwd
 
 # This section describes the Topics of the data pipeline
 topics:
