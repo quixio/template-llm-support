@@ -11,6 +11,11 @@ variables:
     description: Redis server port.
     defaultValue: 15737
     required: true
+  - name: redis_pwd
+    inputType: Secret
+    description: Redis password.
+    defaultValue: redis_pwd
+    required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
