@@ -36,8 +36,13 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             r.expire(sc.stream_id, timedelta(minutes=float(os.environ["expire_after"])))
 
             print("saved: \n{}".format(cached))
+
+    def stream_closed_handler(_: qx.StreamConsumer, end: qx.StreamEndType):
+        r.delete(sc.stream_id)
+        print("Removed conversation {} from cache", sc.stream_id)
     
     sc.timeseries.on_data_received = on_data_recv_handler
+    sc.on_stream_closed = stream_closed_handler
 
 topic_consumer.on_stream_received = on_stream_recv_handler
 
