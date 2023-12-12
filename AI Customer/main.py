@@ -4,7 +4,7 @@ import random
 from pathlib import Path
 
 from quixstreams import Application, State
-from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
+from quixstreams.models.serializers.quix import JSONSerializer, JSONDeserializer
 
 from huggingface_hub import hf_hub_download
 
@@ -73,8 +73,8 @@ def chain_init():
 chain = chain_init()
 
 app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
-input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
-output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
+input_topic = app.topic(os.environ["topic"], value_deserializer=JSONDeserializer())
+output_topic = app.topic(os.environ["topic"], value_serializer=JSONSerializer())
 
 sdf = app.dataframe(input_topic)
 
