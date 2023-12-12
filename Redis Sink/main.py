@@ -37,6 +37,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             cached = r.json().get(key)
             if not cached:
                 cached = []
+                print("New key = {}".format(key))
 
             cached.append(entry)
             r.json().set(key, Path.root_path(), cached)
