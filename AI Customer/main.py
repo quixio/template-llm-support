@@ -18,6 +18,8 @@ CUSTOMER_ROLE = "customer"
 
 role = CUSTOMER_ROLE
 chat_id = ""
+customer_id = 0
+customer_name = ""
 chat_maxlen = int(os.environ["conversation_length"]) // 2
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
@@ -38,6 +40,7 @@ def get_list(file: str):
                 list.append(p.strip())
     return list
 
+names = get_list("names.txt")
 moods = get_list("moods.txt")
 products = get_list("products.txt")
 
@@ -80,13 +83,19 @@ output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSer
 sdf = app.dataframe(input_topic)
 
 def reply(row: dict, state: State):
-    global chain, chat_id
+    global chain, chat_id, customer_id, customer_name
 
     if chat_id:
         if row["conversation_id"] != chat_id:
             return None
     else:
         chat_id = row["conversation_id"]
+
+    if not "customer_name" in row:
+        customer_id = random.getrandbits(32)
+        customer_name = random.choice(names)
+        row["customer_id"] = customer_id
+        row["customer_name"] = customer_name
 
     row["role"] = role
 
