@@ -32,7 +32,7 @@ while True:
         mood_avg = ""
         
         if last["average_sentiment"] > 0:
-                mood_avg = "Good"
+            mood_avg = "Good"
         elif last["average_sentiment"] < 0:
             mood_avg = "Bad"
         else:
