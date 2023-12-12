@@ -6,9 +6,9 @@ import redis
 from redis.commands.json.path import Path
 
 r = redis.Redis(
-  host=os.environ["redis_host"],
+  host="redis-12393.c250.eu-central-1-1.ec2.cloud.redislabs.com",
   port=int(os.environ["redis_port"]),
-  password=os.environ["redis_pwd"]
+  password="FR2Qu5XZRUivILpW0Cx8atWPMnOpP7op"
 )
 
 client = qx.QuixStreamingClient()
