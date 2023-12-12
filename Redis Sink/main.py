@@ -37,7 +37,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             r.json().set(key, Path.root_path(), cached)
             r.expire(key, timedelta(minutes=float(os.environ["expire_after"])))
 
-            print("saved: \n{}".format(cached))
+            print("updated key: {}".format(key))
 
     def stream_closed_handler(_: qx.StreamConsumer, end: qx.StreamEndType):
         r.delete(key)
