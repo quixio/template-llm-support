@@ -9,7 +9,7 @@ r = redis.Redis(
   password=os.environ["redis_pwd"]
 )
 
-key_prefix = os.environ["Quix__Workspace__Id"]
+key_prefix = os.environ["Quix__Workspace__Id"] + ":"
 
 st.set_page_config(
     page_title="LLM Customer Support",
