@@ -96,7 +96,7 @@ deployments:
         inputType: FreeText
         description: Redis port.
         required: true
-        value: 15737
+        value: 12393
       - name: redis_pwd
         inputType: Secret
         description: Redis password.
