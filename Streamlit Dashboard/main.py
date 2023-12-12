@@ -31,12 +31,15 @@ while True:
         last = chat[-1]
         mood_avg = ""
         
-        if last["average_sentiment"] > 0:
-            mood_avg = "Good"
-        elif last["average_sentiment"] < 0:
-            mood_avg = "Bad"
+        if "average_sentiment" in last:
+            if last["average_sentiment"] > 0:
+                mood_avg = "Good"
+            elif last["average_sentiment"] < 0:
+                mood_avg = "Bad"
+            else:
+                mood_avg = "Neutral"
         else:
-            mood_avg = "Neutral"
+            mood_avg = "Unknown"
 
         with cols[i % 3].container():
             st.subheader("Conversation #{}".format(i + 1))
