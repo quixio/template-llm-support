@@ -39,7 +39,7 @@ while True:
             mood_avg = "Unknown"
 
         with cols[i % 3].container():
-            st.subheader("Conversation #{}".format(i))
+            st.subheader("Conversation #{}".format(i + 1))
             st.text("Agent ID: 12345667 (Bob Johnston)")
             st.text("Customer ID: 12345677 (Sue Ladysmith)")
             st.text("Average Sentiment: " + mood_avg)
