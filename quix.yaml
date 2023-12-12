@@ -138,13 +138,6 @@ deployments:
 
 # This section describes the Topics of the data pipeline
 topics:
-  - name: ai-chat-messages
-    persisted: true
-    configuration:
-      partitions: 2
-      replicationFactor: 2
-      retentionInMinutes: 240
-      retentionInBytes: 52428800
   - name: ai-chat-history
     persisted: true
     configuration:
