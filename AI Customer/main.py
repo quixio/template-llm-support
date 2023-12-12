@@ -119,7 +119,7 @@ def reply(row: dict, state: State):
     print("{}: {}\n".format(role.upper(), msg))
 
     row["text"] = msg
-    state.set("count", chatlen + 1)
+    state.set("chatlen", chatlen + 1)
     return row
 
 sdf = sdf[sdf["role"] != role]
