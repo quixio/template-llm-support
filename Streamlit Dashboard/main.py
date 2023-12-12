@@ -9,6 +9,8 @@ r = redis.Redis(
   password=os.environ["redis_pwd"]
 )
 
+key_prefix = os.environ["Quix__Workspace__Id"]
+
 st.set_page_config(
     page_title="LLM Customer Support",
     page_icon="favicon.ico",
@@ -25,7 +27,8 @@ while True:
     chats = []
 
     for key in r.scan_iter() :
-        chats.append(r.json().get(key))
+        if key.starswith(key_prefix):
+            chats.append(r.json().get(key))
 
     for i, chat in enumerate(chats):
         last = chat[-1]
