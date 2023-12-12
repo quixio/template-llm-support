@@ -1,12 +1,12 @@
 name: AI Customer
 language: python
 variables:
-  - name: output
+  - name: topic
     inputType: OutputTopic
     description: This is the output topic to write data to
     defaultValue: messages
     required: true
-  - name: product
+  - name: conversation_length
     inputType: FreeText
     description: ''
     defaultValue: roomba vacum cleaner

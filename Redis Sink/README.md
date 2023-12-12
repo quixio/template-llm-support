@@ -1,6 +1,6 @@
-# Sample template
+# Redis Sink
 
-[This project](https://github.com/quixio/quix-samples/tree/main/python/empty) is a template for developing Quix Code Samples with Python.
+Caches conversation history and the result of sentiment analysis in Redis.
 
 ## How to run
 
@@ -10,15 +10,13 @@ Clicking `Edit code` on the Sample, forks the project to your own Git repo so yo
 
 ## Environment variables
 
-This code sample uses the following environment variables:
+The code sample uses the following environment variables:
 
-- **VariableName**: {Description of the variable}
-- **input**: {Description of the variable}
-- **output**: {Description of the variable}
-
-## Requirements/prerequisites (optional)
-
-{This will contain any external resource needed to run this sample and the instructions to get them.}
+- **input**: This is the input topic for demo data.
+- **redis_host**: Redis host information.
+- **redis_port**: Redis server port.
+- **redis_pwd**: Redis password.
+- **expire_after**: Cnversation cache TTL.
 
 ## Contribute
 

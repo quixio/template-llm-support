@@ -1,20 +1,31 @@
-from llama_cpp import Llama
 import os
-import json
-import quixstreams as qx
-import pandas as pd
-from datetime import datetime
-from huggingface_hub import hf_hub_download
+import time
+import uuid
+import random
 from pathlib import Path
 
-file_path = Path('./state/llama-2-7b-chat.Q4_K_M.gguf')
-REPO_ID = "TheBloke/Llama-2-7b-Chat-GGUF"
-FILENAME = "llama-2-7b-chat.Q4_K_M.gguf"
+from quixstreams import Application
+from quixstreams.kafka import Producer
+from quixstreams.platforms.quix import QuixKafkaConfigsBuilder, TopicCreationConfigs
+from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer, SerializationContext
 
-if not file_path.exists():
-    # perform action if the file does not exist
-    print('The model path does not exist in state. Downloading model...')
-    hf_hub_download(repo_id=REPO_ID, filename=FILENAME, local_dir="state")
+from huggingface_hub import hf_hub_download
+
+from langchain.llms import LlamaCpp
+from langchain.prompts import load_prompt
+from langchain.chains import ConversationChain
+from langchain_experimental.chat_models import Llama2Chat
+from langchain.memory import ConversationTokenBufferMemory
+
+AGENT_ROLE = "agent"
+role = AGENT_ROLE
+
+model_name = "llama-2-7b-chat.Q4_K_M.gguf"
+model_path = "./state/{}".format(model_name)
+
+if not Path(model_path).exists():
+    print("The model path does not exist in state. Downloading model...")
+    hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
 else:
     print('The model has been detected in state. Loading model from state...')
 

@@ -19,14 +19,14 @@ deployments:
       size: 20
     desiredStatus: Running
     variables:
-      - name: output
+      - name: topic
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
         value: messages
       - name: product
         inputType: FreeText
-        description: ''
+        description: Maximum conversation length, after which the conversation resets.
         required: true
         value: roomba vacum cleaner
       - name: draft_topic
@@ -95,7 +95,7 @@ deployments:
       size: 20
     desiredStatus: Running
     variables:
-      - name: output
+      - name: topic
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
