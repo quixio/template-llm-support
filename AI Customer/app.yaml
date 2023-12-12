@@ -11,11 +11,6 @@ variables:
     description: ''
     defaultValue: roomba vacum cleaner
     required: true
-  - name: draft_topic
-    inputType: OutputTopic
-    description: ''
-    defaultValue: drafts
-    required: true
   - name: scenario
     inputType: FreeText
     description: ''
