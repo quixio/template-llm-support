@@ -31,20 +31,17 @@ while True:
         last = chat[-1]
         mood_avg = ""
         
-        if "average_sentiment" in last:
-            if last["average_sentiment"] > 0:
-                mood_avg = "Good"
-            elif last["average_sentiment"] < 0:
-                mood_avg = "Bad"
-            else:
-                mood_avg = "Neutral"
+        if last["average_sentiment"] > 0:
+            mood_avg = "Good"
+        elif last["average_sentiment"] < 0:
+            mood_avg = "Bad"
         else:
-            mood_avg = "Unknown"
+            mood_avg = "Neutral"
 
         with cols[i % 3].container():
             st.subheader("Conversation #{}".format(i + 1))
-            st.text("Agent ID: 12345667 (Bob Johnston)")
-            st.text("Customer ID: 12345677 (Sue Ladysmith)")
+            st.text("Agent ID: {} ({})".format(last["agent_id"], last["agent_name"]))
+            st.text("Customer ID: {} ({})".format(last["customer_id"], last["customer_name"]))
             st.text("Average Sentiment: " + mood_avg)
 
     time.sleep(1)
