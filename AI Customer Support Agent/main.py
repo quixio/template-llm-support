@@ -2,12 +2,13 @@ import os
 import time
 import uuid
 import random
+import json
 from pathlib import Path
 
 from quixstreams import Application
 from quixstreams.kafka import Producer
 from quixstreams.platforms.quix import QuixKafkaConfigsBuilder, TopicCreationConfigs
-from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer, SerializationContext
+from quixstreams.models.serializers.quix import JSONDeserializer, JSONSerializer
 
 from huggingface_hub import hf_hub_download
 
@@ -53,13 +54,12 @@ memory = ConversationTokenBufferMemory(
 chain = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
 
 app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
-input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
-output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
+input_topic = app.topic(os.environ["topic"], value_deserializer=JSONDeserializer())
+output_topic = app.topic(os.environ["topic"], value_serializer=JSONSerializer())
 
 cfg_builder = QuixKafkaConfigsBuilder()
 cfgs, topics, _ = cfg_builder.get_confluent_client_configs([os.environ["topic"]])
 cfg_builder.create_topics([TopicCreationConfigs(name=topics[0])])
-serializer = QuixTimeseriesSerializer()
 
 sdf = app.dataframe(topic=input_topic)
 
@@ -80,7 +80,6 @@ def chat_init():
     greet = """Hello, welcome to ACME Electronics support, my name is {}. 
                How can I help you today?""".format(agent)
     
-    headers = {**serializer.extra_headers, "uuid": chat_id}
     value = {
         "role": role,
         "text": greet,
@@ -91,9 +90,8 @@ def chat_init():
     with Producer(broker_address=cfgs.pop("bootstrap.servers"), extra_config=cfgs) as producer:
         producer.produce(
             topic=topics[0],
-            headers=headers,
             key=str(uuid.uuid4()),
-            value=serializer(value=value, ctx=SerializationContext(topic=topics[0], headers=headers)),
+            value=json.dumps(value),
         )
     
     print("Started chat")
