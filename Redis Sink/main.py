@@ -18,11 +18,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
     key = os.environ["Quix__Workspace__Id"] + ":" + sc.stream_id
     
     def on_data_recv_handler(stream_consumer: qx.StreamConsumer, data: qx.TimeseriesData):
-        print("line 21")
-
         for ts in data.timestamps:
-            print("line 24")
-
             entry = {
                 "timestamp": ts.timestamp_milliseconds,
                 "text": ts.parameters["text"].string_value,
@@ -36,24 +32,16 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
                 "customer_name": ts.parameters["customer_name"].string_value if "customer_name" in ts.parameters else "",
             }
 
-            print("line 39")
-
             cached = r.json().get(key)
-
-            print("line 43")
 
             if not cached:
                 cached = []
                 print("New key = {}".format(key))
 
-            print("line 49")
-
             cached.append(entry)
-            print("line 52")
             r.json().set(key, Path.root_path(), cached)
-            print("line 54")
             r.expire(key, timedelta(minutes=float(os.environ["expire_after"])))
-
+            
             print("updated key: {}".format(key))
 
     def stream_closed_handler(_: qx.StreamConsumer, end: qx.StreamEndType):
