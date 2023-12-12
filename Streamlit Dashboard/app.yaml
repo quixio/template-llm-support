@@ -9,7 +9,7 @@ variables:
   - name: redis_port
     inputType: FreeText
     description: Redis server port.
-    defaultValue: 15737
+    defaultValue: 12393
     required: true
   - name: redis_pwd
     inputType: Secret
