@@ -76,7 +76,7 @@ agents = agents_init()
 
 def chat_init():
     chat_id = str(uuid.uuid4())
-    agent_id = 0
+    agent_id = random.getrandbits(16)
     agent_name = random.choice(agents)
     first_name = agent_name.split(' ')[0]
     greet = """Hello, welcome to ACME Electronics support, my name is {}. 
