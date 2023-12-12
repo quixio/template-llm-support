@@ -15,8 +15,6 @@ client = qx.QuixStreamingClient()
 topic_consumer = client.get_topic_consumer(topic_id_or_name = os.environ["input"])
 
 def on_stream_recv_handler(sc: qx.StreamConsumer):
-    print("Received new stream: " + sc.stream_id)
-
     key = os.environ["Quix__Workspace__Id"] + ":" + sc.stream_id
     
     def on_data_recv_handler(stream_consumer: qx.StreamConsumer, data: qx.TimeseriesData):
