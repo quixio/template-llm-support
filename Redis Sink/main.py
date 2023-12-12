@@ -15,6 +15,8 @@ client = qx.QuixStreamingClient()
 topic_consumer = client.get_topic_consumer(topic_id_or_name = os.environ["input"])
 
 def on_stream_recv_handler(sc: qx.StreamConsumer):
+
+    key = os.environ["Quix__Workspace__Id"] + ":" + sc.stream_id
     
     def on_data_recv_handler(stream_consumer: qx.StreamConsumer, data: qx.TimeseriesData):
         for ts in data.timestamps:
@@ -27,18 +29,18 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
                 "conversation_id": ts.parameters["conversation_id"].string_value
             }
 
-            cached = r.json().get(sc.stream_id)
+            cached = r.json().get(key)
             if not cached:
                 cached = []
 
             cached.append(entry)
-            r.json().set(sc.stream_id, Path.root_path(), cached)
-            r.expire(sc.stream_id, timedelta(minutes=float(os.environ["expire_after"])))
+            r.json().set(key, Path.root_path(), cached)
+            r.expire(key, timedelta(minutes=float(os.environ["expire_after"])))
 
             print("saved: \n{}".format(cached))
 
     def stream_closed_handler(_: qx.StreamConsumer, end: qx.StreamEndType):
-        r.delete(sc.stream_id)
+        r.delete(key)
         print("Removed conversation {} from cache", sc.stream_id)
     
     sc.timeseries.on_data_received = on_data_recv_handler
