@@ -16,16 +16,19 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-keys = r.scan_iter() 
 cols = st.columns([0.25, 0.25, 0.25, 0.25])
 
 for col in cols:
     col = st.empty()
 
 while True:
-    for i, key in enumerate(keys):
-        data = r.json().get(key)
-        last = data[-1]
+    chats = []
+
+    for key in r.scan_iter() :
+        chats.append(r.json().get(key))
+
+    for i, chat in enumerate(chats):
+        last = chat[-1]
         mood_avg = ""
         
         if "average_sentiment" in last:
@@ -44,5 +47,5 @@ while True:
             st.text("Customer ID: 12345677 (Sue Ladysmith)")
             st.text("Average Sentiment: " + mood_avg)
 
-    time.sleep(0.5)
+    time.sleep(1)
 
