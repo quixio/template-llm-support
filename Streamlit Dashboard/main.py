@@ -35,7 +35,7 @@ while True:
                 mood_avg = "Bad"
             else:
                 mood_avg = "Neutral"
-        else
+        else:
             mood_avg = "Unknown"
 
         with cols[i % 3].container():
