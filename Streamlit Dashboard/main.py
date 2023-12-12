@@ -20,3 +20,5 @@ cols = st.columns([0.25, 0.25, 0.25, 0.25])
 
 for i, key in enumerate(keys):
     print("{}: {}".format(i, key))
+
+print("printed keys.")
