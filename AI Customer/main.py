@@ -17,6 +17,7 @@ from langchain.memory import ConversationTokenBufferMemory
 CUSTOMER_ROLE = "customer"
 
 role = CUSTOMER_ROLE
+chat_id = ""
 chat_maxlen = int(os.environ["conversation_length"]) // 2
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
@@ -79,7 +80,13 @@ output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSer
 sdf = app.dataframe(input_topic)
 
 def reply(row: dict, state: State):
-    global chain
+    global chain, chat_id
+
+    if chat_id:
+        if row["conversation_id"] != chat_id:
+            return None
+    else:
+        chat_id = row["conversation_id"]
 
     row["role"] = role
 
@@ -90,6 +97,7 @@ def reply(row: dict, state: State):
     
     if chatlen >= chat_maxlen:
         print("Maximum conversation length reached, ending conversation...")
+        chat_id = ""
         chain = chain_init()
         state.set("chatlen", 0)
 
