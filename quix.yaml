@@ -50,7 +50,7 @@ deployments:
   - name: Sentiment Analyzer
     application: Sentiment Analyzer
     deploymentType: Service
-    version: d6627cff53e8e5af236a45b10e2dacc00069cdbc
+    version: 60f533418c5d83d619562bc5a346c40e3f340612
     resources:
       cpu: 2000
       memory: 4000
@@ -61,7 +61,7 @@ deployments:
         inputType: InputTopic
         description: Name of the input topic to listen to.
         required: false
-        value: ai-chat-history
+        value: chat-1
       - name: output
         inputType: OutputTopic
         description: Name of the output topic to write to.
