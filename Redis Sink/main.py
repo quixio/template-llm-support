@@ -41,7 +41,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             cached.append(entry)
             r.json().set(key, Path.root_path(), cached)
             r.expire(key, timedelta(minutes=float(os.environ["expire_after"])))
-            
+
             print("updated key: {}".format(key))
 
     def stream_closed_handler(_: qx.StreamConsumer, end: qx.StreamEndType):
@@ -52,6 +52,10 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
     sc.on_stream_closed = stream_closed_handler
 
 topic_consumer.on_stream_received = on_stream_recv_handler
+
+print("trying...")
+r.json().get("test")
+print("got key")
 
 print("Listening to streams. Press CTRL-C to exit.")
 qx.App.run()
