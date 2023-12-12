@@ -1,4 +1,5 @@
 import os
+import time
 import redis
 import streamlit as st
 
@@ -18,7 +19,27 @@ st.set_page_config(
 keys = r.scan_iter() 
 cols = st.columns([0.25, 0.25, 0.25, 0.25])
 
-for i, key in enumerate(keys):
-    print("{}: {}".format(i, key))
+for col in cols:
+    col = st.empty()
 
-print("printed keys.")
+while True:
+    for i, key in enumerate(keys):
+        data = r.json().get(key)
+        last = data[-1]
+        mood_avg = ""
+        
+        if last["average_sentiment"] > 0:
+            mood_avg = "Good"
+        elif last["average_sentiment"] < 0:
+            mood_avg = "Bad"
+        else:
+            mood_avg = "Neutral"
+
+        with cols[i % 3].container():
+            st.subheader("Conversation #{}".format(i))
+            st.text("Agent ID: 12345667 (Bob Johnston)")
+            st.text("Customer ID: 12345677 (Sue Ladysmith)")
+            st.text("Average Sentiment: " + mood_avg)
+
+    time.sleep(0.5)
+
