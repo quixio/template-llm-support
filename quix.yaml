@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: 03d2ad6d2d6763e160bb305638310e4c69cdcfaa
+    version: 040300becefbfc7de2405ff7431047640c7dba1e
     resources:
       cpu: 4000
       memory: 8000
