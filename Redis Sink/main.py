@@ -53,9 +53,5 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
 
 topic_consumer.on_stream_received = on_stream_recv_handler
 
-print("trying...")
-r.json().get("test")
-print("got key")
-
 print("Listening to streams. Press CTRL-C to exit.")
 qx.App.run()
