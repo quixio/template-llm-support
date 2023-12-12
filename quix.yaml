@@ -16,7 +16,7 @@ deployments:
       replicas: 1
     state:
       enabled: true
-      size: 10
+      size: 20
     desiredStatus: Running
     variables:
       - name: topic
@@ -39,7 +39,7 @@ deployments:
       replicas: 1
     state:
       enabled: true
-      size: 10
+      size: 20
     desiredStatus: Running
     variables:
       - name: topic
