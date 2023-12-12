@@ -20,6 +20,8 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
     key = os.environ["Quix__Workspace__Id"] + ":" + sc.stream_id
     
     def on_data_recv_handler(stream_consumer: qx.StreamConsumer, data: qx.TimeseriesData):
+        print("Recv data")
+
         for ts in data.timestamps:
             entry = {
                 "timestamp": ts.timestamp_milliseconds,
