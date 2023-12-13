@@ -32,11 +32,14 @@ while True:
 
     for key in r.scan_iter() :
         if key.decode().startswith(key_prefix):
-            chats.append(r.json().get(key))
-            count += 1
-            # limit the number of chats displayed
-            if count >= maxlen:
-                break
+            chat = r.json().get(key)
+            # customer_id is not available until the customer responds to agent
+            if chat and "customer_id" in chat[-1]:
+                chats.append(chat)
+                count += 1
+                # limit the number of chats displayed
+                if count >= maxlen:
+                    break
 
     for i, c in enumerate(containers):
         c.empty()
