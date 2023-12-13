@@ -114,10 +114,7 @@ def reply(row: dict, state: State):
     print("{}: {}\n".format(role.upper(), msg))
 
     row["text"] = msg
-
-    chatlen += 1
-    state.set(chatlen_key, chatlen)
-    print("Updated chat length to " + str(chatlen))
+    state.set(chatlen_key, chatlen + 1)
 
     return row
 
