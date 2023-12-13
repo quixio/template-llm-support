@@ -1,135 +1,51 @@
 import os
 import time
-import uuid
-import random
-from pathlib import Path
+import redis
+import streamlit as st
 
-from quixstreams import Application
-from quixstreams.kafka import Producer
-from quixstreams.platforms.quix import QuixKafkaConfigsBuilder, TopicCreationConfigs
-from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer, SerializationContext
-
-from huggingface_hub import hf_hub_download
-
-from langchain.llms import LlamaCpp
-from langchain.prompts import load_prompt
-from langchain.chains import ConversationChain
-from langchain_experimental.chat_models import Llama2Chat
-from langchain.memory import ConversationTokenBufferMemory
-
-AGENT_ROLE = "agent"
-role = AGENT_ROLE
-
-model_name = "llama-2-7b-chat.Q4_K_M.gguf"
-model_path = "./state/{}".format(model_name)
-
-if not Path(model_path).exists():
-    print("The model path does not exist in state. Downloading model...")
-    hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
-else:
-    print("Loading model from state...")
-
-llm = LlamaCpp(
-    model_path=model_path,
-    max_tokens=250,
-    top_p=0.95,
-    top_k=150,
-    temperature=0.7,
-    repeat_penalty=1.2,
-    n_ctx=2048,
-    streaming=False
+r = redis.Redis(
+  host=os.environ["redis_host"],
+  port=int(os.environ["redis_port"]),
+  password=os.environ["redis_pwd"]
 )
 
-model = Llama2Chat(llm=llm)
+key_prefix = os.environ["Quix__Workspace__Id"] + ":"
 
-memory = ConversationTokenBufferMemory(
-    llm=llm,
-    max_token_limit=300,
-    ai_prefix= "AGENT",
-    human_prefix= "CUSTOMER",
-    return_messages=True
+st.set_page_config(
+    page_title="LLM Customer Support",
+    page_icon="favicon.ico",
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
-chain = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
+cols = st.columns([0.25, 0.25, 0.25, 0.25])
 
-app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
-input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
-output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
+for col in cols:
+    col = st.empty()
 
-sdf = app.dataframe(topic=input_topic)
+while True:
+    chats = []
 
-def agents_init():
-    out = []
+    for key in r.scan_iter() :
+        if key.decode().starswith(key_prefix):
+            chats.append(r.json().get(key))
 
-    with open("agents.txt", "r") as fd:
-        for a in fd:
-            if a:
-                out.append(a.strip())
-    return out
+    for i, chat in enumerate(chats):
+        last = chat[-1]
+        mood_avg = ""
+        
+        if last["average_sentiment"] > 0:
+            mood_avg = "Good"
+        elif last["average_sentiment"] < 0:
+            mood_avg = "Bad"
+        else:
+            mood_avg = "Neutral"
 
-agents = agents_init()
+        with cols[i % 3].container():
+            st.subheader("Conversation #{}".format(i + 1))
+            st.text("Agent ID: {} ({})".format(last["agent_id"], last["agent_name"]))
+            st.text("Customer ID: {} ({})".format(last["customer_id"], last["customer_name"]))
+            st.text("Average Sentiment: " + mood_avg)
 
-def chat_init():
-    chat_id = str(uuid.uuid4())
-    agent_id = random.getrandbits(16)
-    agent_name = random.choice(agents)
-    first_name = agent_name.split(' ')[0]
+    time.sleep(1)
 
-    greet = """Hello, welcome to ACME Electronics support, my name is {}. 
-               How can I help you today?""".format(first_name)
-
-    cfg_builder = QuixKafkaConfigsBuilder()
-    cfgs, topics, _ = cfg_builder.get_confluent_client_configs([os.environ["topic"]])
-    cfg_builder.create_topics([TopicCreationConfigs(name=topics[0])])
-    serializer = QuixTimeseriesSerializer()
-    
-    headers = {**serializer.extra_headers, "uuid": chat_id}
-    
-    value = {
-        "role": role,
-        "text": greet,
-        "agent_id": agent_id,
-        "agent_name": agent_name,
-        "conversation_id": chat_id,
-        "Timestamp": time.time_ns(),
-    }
-
-    with Producer(broker_address=cfgs.pop("bootstrap.servers"), extra_config=cfgs) as producer:
-        producer.produce(
-            topic=topics[0],
-            headers=headers,
-            key=str(uuid.uuid4()),
-            value=serializer(value=value, ctx=SerializationContext(topic=topics[0], headers=headers)),
-        )
-    
-    print("Started chat")
-
-chat_init()
-
-def reply(row: dict):
-    print("Replying to: {}".format(row["text"]))
-    
-    if "good bye" in row["text"].lower():
-        print("Initializing a new conversation...")
-        memory.clear()
-        chat_init()
-        return
-
-    print("Generating response...")
-    msg = chain.run(row["text"])
-    print("{}: {}\n".format(role.upper(), msg))
-    
-    row["role"] = role
-    row["text"] = msg
-    return row
-
-sdf = sdf[sdf["role"] != role]
-sdf = sdf.apply(reply, stateful=False)
-sdf = sdf[sdf.apply(lambda row: row is not None)]
-
-sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
-
-sdf = sdf.to_topic(output_topic)
-
-if __name__ == "__main__":
-    app.run(sdf)
