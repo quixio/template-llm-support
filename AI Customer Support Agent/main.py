@@ -56,11 +56,6 @@ app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
 
-cfg_builder = QuixKafkaConfigsBuilder()
-cfgs, topics, _ = cfg_builder.get_confluent_client_configs([os.environ["topic"]])
-cfg_builder.create_topics([TopicCreationConfigs(name=topics[0])])
-serializer = QuixTimeseriesSerializer()
-
 sdf = app.dataframe(topic=input_topic)
 
 def agents_init():
@@ -79,10 +74,17 @@ def chat_init():
     agent_id = random.getrandbits(16)
     agent_name = random.choice(agents)
     first_name = agent_name.split(' ')[0]
+
     greet = """Hello, welcome to ACME Electronics support, my name is {}. 
                How can I help you today?""".format(first_name)
+
+    cfg_builder = QuixKafkaConfigsBuilder()
+    cfgs, topics, _ = cfg_builder.get_confluent_client_configs([os.environ["topic"]])
+    cfg_builder.create_topics([TopicCreationConfigs(name=topics[0])])
+    serializer = QuixTimeseriesSerializer()
     
     headers = {**serializer.extra_headers, "uuid": chat_id}
+    
     value = {
         "role": role,
         "text": greet,
@@ -92,7 +94,7 @@ def chat_init():
         "Timestamp": time.time_ns(),
     }
 
-    with Producer(broker_address=cfgs["bootstrap.servers"], extra_config=cfgs) as producer:
+    with Producer(broker_address=cfgs.pop("bootstrap.servers"), extra_config=cfgs) as producer:
         producer.produce(
             topic=topics[0],
             headers=headers,
