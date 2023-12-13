@@ -27,7 +27,7 @@ while True:
     chats = []
 
     for key in r.scan_iter() :
-        if key.decode().starswith(key_prefix):
+        if key.decode().startswith(key_prefix):
             chats.append(r.json().get(key))
 
     for i, chat in enumerate(chats):
