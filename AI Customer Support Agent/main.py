@@ -98,7 +98,7 @@ def chat_init():
         producer.produce(
             topic=topics[0],
             headers=headers,
-            key=str(uuid.uuid4()),
+            key=chat_id,
             value=serializer(value=value, ctx=SerializationContext(topic=topics[0], headers=headers)),
         )
     
