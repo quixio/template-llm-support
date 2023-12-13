@@ -58,7 +58,7 @@ while True:
             with c[0].container():
                 st.subheader(f"Conversation #{i + 1}")
                 st.text(f"Agent ID: {msg_latest['agent_id']:.0f} ({msg_latest['agent_name']})")
-                st.text(f"Customer ID: {msg_latest['customer_id']:.0f} ({msg_latest['customer_name']}")
+                st.text(f"Customer ID: {msg_latest['customer_id']:.0f} ({msg_latest['customer_name']})")
                 st.text("Average Sentiment: " + mood_avg)
             
             with c[1].container(border=True):
