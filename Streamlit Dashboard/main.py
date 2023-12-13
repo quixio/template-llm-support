@@ -35,7 +35,7 @@ while True:
         if key.decode().startswith(key_prefix):
             chat = r.json().get(key)
             # customer_id is not available until the customer responds to agent
-            if chat and "customer_id" in chat[-1]:
+            if chat and "customer_name" in chat[-1] and chat[-1]["customer_name"]:
                 chats.append(chat)
                 count += 1
                 # limit the number of chats displayed
