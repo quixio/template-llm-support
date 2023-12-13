@@ -97,7 +97,7 @@ def reply(row: dict, state: State):
         state.set(chatlen_key, 0)
 
     chatlen = state.get(chatlen_key)
-    print("Debug: chat length = {}".format(chatlen))
+    print("Chat length = {}".format(chatlen))
     
     if chatlen >= chat_maxlen:
         print("Maximum conversation length reached, ending conversation...")
@@ -117,7 +117,7 @@ def reply(row: dict, state: State):
 
     chatlen += 1
     state.set(chatlen_key, chatlen)
-    print("Updated chat length to " + chatlen)
+    print("Updated chat length to " + str(chatlen))
 
     return row
 
