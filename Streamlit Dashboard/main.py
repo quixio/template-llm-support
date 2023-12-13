@@ -15,7 +15,8 @@ st.set_page_config(
     page_title="LLM Customer Support",
     page_icon="favicon.ico",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="collapsed",
+    menu_items=None
 )
 
 maxlen = 12
