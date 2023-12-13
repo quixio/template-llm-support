@@ -102,7 +102,7 @@ def reply(row: dict, state: State):
     if chatlen >= chat_maxlen:
         print("Maximum conversation length reached, ending conversation...")
         chain = chain_init()
-        state.set(chatlen_key, 0)
+        state.delete(chatlen_key)
 
         row["text"] = "Noted, I think I have enough information. Thank you for your assistance. Good bye!"
         return row
@@ -114,7 +114,7 @@ def reply(row: dict, state: State):
     print("{}: {}\n".format(role.upper(), msg))
 
     row["text"] = msg
-    
+
     chatlen += 1
     state.set(chatlen_key, chatlen)
     print("Updated chat length to " + chatlen)
