@@ -52,9 +52,9 @@ while True:
                 mood_avg = "Neutral"
 
             with c.container():
-                st.subheader("Conversation #{}".format(i + 1))
-                st.text("Agent ID: {} ({})".format(msg["agent_id"], msg["agent_name"]))
-                st.text("Customer ID: {} ({})".format(msg["customer_id"], msg["customer_name"]))
+                st.subheader(f"Conversation #{i + 1}")
+                st.text(f"Agent ID: {msg['agent_id']:.0f} ({msg['agent_name']})")
+                st.text(f"Customer ID: {msg['customer_id']:.0f} ({msg['customer_name']}")
                 st.text("Average Sentiment: " + mood_avg)
 
     time.sleep(1)
