@@ -85,7 +85,7 @@ def reply(row: dict, state: State):
     global chain, customer_id, customer_name
 
     if not "customer_name" in row:
-        customer_id = random.getrandbits(32)
+        customer_id = random.getrandbits(16)
         customer_name = random.choice(names)
         row["customer_id"] = customer_id
         row["customer_name"] = customer_name
