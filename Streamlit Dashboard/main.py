@@ -24,7 +24,7 @@ cols = st.columns([0.25, 0.25, 0.25, 0.25])
 
 for i in range(maxlen):
     with cols[i % 3]:
-        containers.append(st.empty())
+        containers.append((st.empty(), st.empty()))
 
 while True:
     count = 0
@@ -42,23 +42,29 @@ while True:
                     break
 
     for i, c in enumerate(containers):
-        c.empty()
+        c[0].empty()
+        c[1].empty()
+
         if i < len(chats):
-            msg = chats[i][-1]
+            msg_latest = chats[i][-1]
             mood_avg = ""
-        
-            if msg["average_sentiment"] > 0:
+            if msg_latest["average_sentiment"] > 0:
                 mood_avg = "Good"
-            elif msg["average_sentiment"] < 0:
+            elif msg_latest["average_sentiment"] < 0:
                 mood_avg = "Bad"
             else:
                 mood_avg = "Neutral"
 
-            with c.container():
+            with c[0].container():
                 st.subheader(f"Conversation #{i + 1}")
-                st.text(f"Agent ID: {msg['agent_id']:.0f} ({msg['agent_name']})")
-                st.text(f"Customer ID: {msg['customer_id']:.0f} ({msg['customer_name']}")
+                st.text(f"Agent ID: {msg_latest['agent_id']:.0f} ({msg_latest['agent_name']})")
+                st.text(f"Customer ID: {msg_latest['customer_id']:.0f} ({msg_latest['customer_name']}")
                 st.text("Average Sentiment: " + mood_avg)
+            
+            with c[1].container(border=True):
+                for msg in chats[i]:
+                    with st.chat_message(msg["role"]):
+                        st.markdown(msg["text"])
 
     time.sleep(1)
 
