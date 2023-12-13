@@ -91,17 +91,18 @@ def reply(row: dict, state: State):
         row["customer_name"] = customer_name
 
     row["role"] = role
+    chatlen_key = row["conversation_id"] + ":" + "chatlen"
 
-    if not state.exists("chatlen"):
-        state.set("chatlen", 0)
+    if not state.exists(chatlen_key):
+        state.set(chatlen_key, 0)
 
-    chatlen = state.get("chatlen")
+    chatlen = state.get(chatlen_key)
     print("Debug: chat length = {}".format(chatlen))
     
     if chatlen >= chat_maxlen:
         print("Maximum conversation length reached, ending conversation...")
         chain = chain_init()
-        state.set("chatlen", 0)
+        state.set(chatlen_key, 0)
 
         row["text"] = "Noted, I think I have enough information. Thank you for your assistance. Good bye!"
         return row
@@ -113,9 +114,11 @@ def reply(row: dict, state: State):
     print("{}: {}\n".format(role.upper(), msg))
 
     row["text"] = msg
+    
     chatlen += 1
-    state.set("chatlen", chatlen)
+    state.set(chatlen_key, chatlen)
     print("Updated chat length to " + chatlen)
+
     return row
 
 sdf = sdf[sdf["role"] != role]
