@@ -76,14 +76,18 @@ agents = agents_init()
 
 def chat_init():
     chat_id = str(uuid.uuid4())
-    agent = random.choice(agents)
+    agent_id = random.getrandbits(16)
+    agent_name = random.choice(agents)
+    first_name = agent_name.split(' ')[0]
     greet = """Hello, welcome to ACME Electronics support, my name is {}. 
-               How can I help you today?""".format(agent)
+               How can I help you today?""".format(first_name)
     
     headers = {**serializer.extra_headers, "uuid": chat_id}
     value = {
         "role": role,
         "text": greet,
+        "agent_id": agent_id,
+        "agent_name": agent_name,
         "conversation_id": chat_id,
         "Timestamp": time.time_ns(),
     }
