@@ -92,7 +92,7 @@ def chat_init():
         "Timestamp": time.time_ns(),
     }
 
-    with Producer(broker_address=cfgs.pop("bootstrap.servers"), extra_config=cfgs) as producer:
+    with Producer(broker_address=cfgs["bootstrap.servers"], extra_config=cfgs) as producer:
         producer.produce(
             topic=topics[0],
             headers=headers,
