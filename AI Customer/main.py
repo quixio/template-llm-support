@@ -91,7 +91,7 @@ def reply(row: dict, state: State):
         row["customer_name"] = customer_name
 
     row["role"] = role
-    chatlen_key = row["conversation_id"] + ":" + "chatlen"
+    chatlen_key = "chatlen"
 
     if not state.exists(chatlen_key):
         state.set(chatlen_key, 0)
