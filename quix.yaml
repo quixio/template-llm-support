@@ -23,7 +23,7 @@ deployments:
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: chat-1
+        value: chat-2
       - name: conversation_length
         inputType: FreeText
         description: Maximum conversation length, after which the conversation resets.
