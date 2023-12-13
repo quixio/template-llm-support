@@ -18,34 +18,44 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+maxlen = 12
+containers = []
 cols = st.columns([0.25, 0.25, 0.25, 0.25])
 
-for col in cols:
-    col = st.empty()
+for i in range(maxlen):
+    with cols[i % 3]:
+        containers.append(st.empty())
 
 while True:
+    count = 0
     chats = []
 
     for key in r.scan_iter() :
         if key.decode().startswith(key_prefix):
             chats.append(r.json().get(key))
+            count += 1
+            # limit the number of chats displayed
+            if count >= maxlen:
+                break
 
-    for i, chat in enumerate(chats):
-        last = chat[-1]
-        mood_avg = ""
+    for i, c in enumerate(containers):
+        c.empty()
+        if i < len(chats):
+            msg = chats[i][-1]
+            mood_avg = ""
         
-        if last["average_sentiment"] > 0:
-            mood_avg = "Good"
-        elif last["average_sentiment"] < 0:
-            mood_avg = "Bad"
-        else:
-            mood_avg = "Neutral"
+            if msg["average_sentiment"] > 0:
+                mood_avg = "Good"
+            elif msg["average_sentiment"] < 0:
+                mood_avg = "Bad"
+            else:
+                mood_avg = "Neutral"
 
-        with cols[i % 3].container():
-            st.subheader("Conversation #{}".format(i + 1))
-            st.text("Agent ID: {} ({})".format(last["agent_id"], last["agent_name"]))
-            st.text("Customer ID: {} ({})".format(last["customer_id"], last["customer_name"]))
-            st.text("Average Sentiment: " + mood_avg)
+            with c.container():
+                st.subheader("Conversation #{}".format(i + 1))
+                st.text("Agent ID: {} ({})".format(msg["agent_id"], msg["agent_name"]))
+                st.text("Customer ID: {} ({})".format(msg["customer_id"], msg["customer_name"]))
+                st.text("Average Sentiment: " + mood_avg)
 
     time.sleep(1)
 
