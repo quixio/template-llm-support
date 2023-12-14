@@ -20,6 +20,10 @@ st.set_page_config(
     menu_items=None
 )
 
+# apply custom css
+with open("Streamlit Dashboard/style.css") as f:
+    st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)
+
 maxlen = 12
 containers = []
 cols = st.columns([0.25, 0.25, 0.25, 0.25])
