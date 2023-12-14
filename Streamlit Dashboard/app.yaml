@@ -7,19 +7,14 @@ variables:
     defaultValue: redis_host
     required: true
   - name: redis_port
-    inputType: FreeText
+    inputType: Secret
     description: Redis server port.
-    defaultValue: 12393
+    defaultValue: redis_port
     required: true
   - name: redis_pwd
     inputType: Secret
     description: Redis password.
     defaultValue: redis_pwd
-    required: true
-  - name: style_sheet
-    inputType: FreeText
-    description: Custom style sheet.
-    defaultValue: style.css
     required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
