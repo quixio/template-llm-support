@@ -85,8 +85,10 @@ while True:
                 sentiment_data[col_name].append(msg["sentiment"])                
 
     with chart.container():
-        st.subheader("Customer Success Team\nSENTIMENT DASHBOARD")
-        st.markdown("Sentiment History")
+        st.subheader("Customer Success Team")
+        st.text("SENTIMENT DASHBOARD")
+        st.markdown("#")
+        st.text("Sentiment History")
 
         chart_data = pd.DataFrame.from_dict(sentiment_data, orient="index").T
         st.line_chart(chart_data)
