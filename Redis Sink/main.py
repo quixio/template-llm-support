@@ -19,6 +19,11 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
     
     def on_data_recv_handler(stream_consumer: qx.StreamConsumer, data: qx.TimeseriesData):
         for ts in data.timestamps:
+            if "good bye" in ts.parameters["text"].string_value.lower():
+                r.delete(key)
+                print(f"Deleted key {key} from redis")
+                return
+
             entry = {
                 "timestamp": ts.timestamp_milliseconds,
                 "text": ts.parameters["text"].string_value,
@@ -43,13 +48,8 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
             r.expire(key, timedelta(minutes=float(os.environ["expire_after"])))
 
             print("updated key: {}".format(key))
-
-    def stream_closed_handler(_: qx.StreamConsumer, end: qx.StreamEndType):
-        r.delete(key)
-        print("Removed conversation {} from cache", sc.stream_id)
     
     sc.timeseries.on_data_received = on_data_recv_handler
-    sc.on_stream_closed = stream_closed_handler
 
 topic_consumer.on_stream_received = on_stream_recv_handler
 
