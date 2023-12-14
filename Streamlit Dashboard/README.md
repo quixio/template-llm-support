@@ -1,20 +1,14 @@
-# Python hello world
+# Streamlit
 
-[This project](https://github.com/quixio/quix-samples/tree/main/python/destinations/Empty-Template) is most basic and essential "Hello World" sample. 
-
-The sample contained in this folder gives an example of how to connect to Kafka and detect the arrival of a new stream and read 'HelloWorld' parameter.
+[This project](https://github.com/quixio/quix-samples/tree/main/python/destinations/streamlit) is an example of how to run a real time Streamlit dashboard within Quix
 
 ## How to run
 
 Create a [Quix](https://portal.platform.quix.ai/self-sign-up?xlink=github) account or log-in and visit the Samples to use this project.
 
+Clicking `Deploy` on the Sample, deploys a pre-built container in Quix. Complete the environment variables to configure the container.
+
 Clicking `Edit code` on the Sample, forks the project to your own Git repo so you can customize it before deploying.
-
-## Environment variables
-
-The code sample uses the following environment variables:
-
-- **input**: This is the input topic for demo data.
 
 ## Contribute
 
