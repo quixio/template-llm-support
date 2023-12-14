@@ -90,23 +90,24 @@ while True:
             col_name = get_column_name(i)
             for msg in chats[i]:
                 sentiment_data[col_name].append(msg["sentiment"])                
+                
+    if sentiment_data:
+        with chart_title.container():
+            st.subheader("Customer Success Team")
+            st.text("SENTIMENT DASHBOARD")
+            st.markdown("#")
+            st.text("Sentiment History")
 
-    with chart_title.container():
-        st.subheader("Customer Success Team")
-        st.text("SENTIMENT DASHBOARD")
-        st.markdown("#")
-        st.text("Sentiment History")
+        with chart.container(border=True):
+            chart_data = pd.DataFrame.from_dict(sentiment_data, orient="index").T
+            chart_data = chart_data.melt(var_name="conversation", value_name="sentiment")
+            chart_data = chart_data.reset_index()
 
-    with chart.container(border=True):
-        chart_data = pd.DataFrame.from_dict(sentiment_data, orient="index").T
-        chart_data = chart_data.melt(var_name="conversation", value_name="sentiment")
-        chart_data = chart_data.reset_index()
+            alt_chart = alt.Chart(chart_data) \
+                    .mark_line() \
+                    .encode(x=alt_x, y=alt_y, color=alt_color) \
 
-        alt_chart = alt.Chart(chart_data) \
-                .mark_line() \
-                .encode(x=alt_x, y=alt_y, color=alt_color) \
-
-        st.altair_chart(alt_chart, use_container_width=True)
+            st.altair_chart(alt_chart, use_container_width=True)
 
     time.sleep(1)
 
