@@ -12,9 +12,9 @@ variables:
     defaultValue: redis_host
     required: true
   - name: redis_port
-    inputType: FreeText
+    inputType: Secret
     description: Redis port.
-    defaultValue: 15737
+    defaultValue: redis_port
     required: true
   - name: redis_pwd
     inputType: Secret
