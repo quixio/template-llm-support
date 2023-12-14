@@ -3,6 +3,9 @@ import time
 import redis
 import streamlit as st
 
+import pandas as pd
+import numpy as np
+
 r = redis.Redis(
   host=os.environ["redis_host"],
   port=int(os.environ["redis_port"]),
@@ -22,6 +25,9 @@ st.set_page_config(
 maxlen = 12
 containers = []
 cols = st.columns([0.25, 0.25, 0.25, 0.25])
+
+with cols[3]:
+    chart = st.empty()
 
 for i in range(maxlen):
     with cols[i % 3]:
@@ -66,6 +72,14 @@ while True:
                 for msg in chats[i]:
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["text"])
+
+    with chart.container():
+        st.subheader("Customer Success Team")
+        st.subheader("SENTIMENT DASHBOARD")
+        st.markdown("Sentiment History")
+
+        chart_data = pd.DataFrame(np.random.randn(20, 3), columns=["a", "b", "c"])
+        st.line_chart(chart_data)
 
     time.sleep(1)
 
