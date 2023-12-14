@@ -110,7 +110,7 @@ deployments:
   - name: Streamlit Dashboard
     application: Streamlit Dashboard
     deploymentType: Service
-    version: 5e833a135dc20024ff2394d847e0175d5d9cb2b8
+    version: 0ba6b59351bc7daeec196c6f0eade9fbc60a971d
     resources:
       cpu: 200
       memory: 500
@@ -140,6 +140,11 @@ deployments:
         description: Maximum number of chats to display on the dashboard.
         required: true
         value: 12
+      - name: style_sheet
+        inputType: FreeText
+        description: Custom style sheet for Streamlit.
+        required: false
+        value: style.css
 
 # This section describes the Topics of the data pipeline
 topics:
