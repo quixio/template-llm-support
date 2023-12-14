@@ -25,7 +25,7 @@ st.set_page_config(
 with open(os.environ["style_sheet"]) as f:
     st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)
 
-maxlen = 12
+maxlen = int(os.environ["chat_count"])
 containers = []
 cols = st.columns([0.25, 0.25, 0.25, 0.25])
 
