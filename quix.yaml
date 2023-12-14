@@ -11,12 +11,12 @@ deployments:
     deploymentType: Service
     version: 62a72bbf61d1420fb25fb6a8993132344eede947
     resources:
-      cpu: 4000
-      memory: 8000
-      replicas: 5
+      cpu: {{ ai_customer_cpu }}
+      memory: {{ ai_customer_memory }}
+      replicas: {{ ai_customer_replicas }}
     state:
       enabled: true
-      size: 6
+      size: {{ ai_customer_state_size }}
     desiredStatus: Running
     variables:
       - name: topic
@@ -34,12 +34,12 @@ deployments:
     deploymentType: Service
     version: 252d3170e03973d0d9aff4bac177172e845c8b3e
     resources:
-      cpu: 4000
-      memory: 8000
-      replicas: 5
+      cpu: {{ ai_agent_cpu }}
+      memory: {{ ai_agent_memory }}
+      replicas: {{ ai_agent_replicas }}
     state:
       enabled: true
-      size: 6
+      size: {{ ai_agent_state_size }}
     desiredStatus: Running
     variables:
       - name: topic
