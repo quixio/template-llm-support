@@ -31,9 +31,13 @@ for i in range(maxlen):
     with cols[i % 3]:
         containers.append((st.empty(), st.empty()))
 
+def get_column_name(i: int):
+    return f"Conversation #{i + 1}"
+
 while True:
     count = 0
     chats = []
+    sentiment_data = {}
 
     for key in r.scan_iter() :
         if key.decode().startswith(key_prefix):
@@ -41,11 +45,12 @@ while True:
             # customer_id is not available until the customer responds to agent
             if chat and "customer_name" in chat[-1] and chat[-1]["customer_name"]:
                 chats.append(chat)
+                sentiment_data[get_column_name(count)] = []
                 count += 1
                 # limit the number of chats displayed
                 if count >= maxlen:
                     break
-
+    
     for i, c in enumerate(containers):
         c[0].empty()
         c[1].empty()
@@ -71,14 +76,15 @@ while True:
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["text"])
 
+            col_name = get_column_name(i)
+            for msg in chats[i]:
+                sentiment_data[col_name].append(msg["sentiment"])                
+
     with chart.container():
         st.subheader("Customer Success Team\nSENTIMENT DASHBOARD")
         st.markdown("Sentiment History")
 
-        columns = ["conversation 1", "conversation 2", "conversation 3"]
-        rows = [(0.78, 0.56, 0.45), (1.2, 2.0, 0.89), (3.2, 3.0, 0.12)]
-
-        chart_data = pd.DataFrame(rows, columns=columns)
+        chart_data = pd.DataFrame.from_dict(sentiment_data, orient="index").T
         st.line_chart(chart_data)
 
     time.sleep(1)
