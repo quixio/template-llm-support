@@ -1,10 +1,8 @@
 import os
 import time
 import redis
-import streamlit as st
-
 import pandas as pd
-import numpy as np
+import streamlit as st
 
 r = redis.Redis(
   host=os.environ["redis_host"],
@@ -74,11 +72,13 @@ while True:
                         st.markdown(msg["text"])
 
     with chart.container():
-        st.subheader("Customer Success Team")
-        st.subheader("SENTIMENT DASHBOARD")
+        st.subheader("Customer Success Team\nSENTIMENT DASHBOARD")
         st.markdown("Sentiment History")
 
-        chart_data = pd.DataFrame(np.random.randn(20, 3), columns=["a", "b", "c"])
+        columns = ["conversation 1", "conversation 2", "conversation 3"]
+        rows = [(0.78, 0.56, 0.45), (1.2, 2.0, 0.89), (3.2, 3.0, 0.12)]
+
+        chart_data = pd.DataFrame(rows, columns=columns)
         st.line_chart(chart_data)
 
     time.sleep(1)
