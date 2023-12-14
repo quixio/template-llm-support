@@ -21,6 +21,11 @@ variables:
     description: Maximum number of chats to display on the dashboard.
     defaultValue: 12
     required: true
+  - name: style_sheet
+    inputType: FreeText
+    description: Custom style sheet for Streamlit.
+    defaultValue: style.css
+    required: false
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
