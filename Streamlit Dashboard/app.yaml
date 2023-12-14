@@ -16,6 +16,11 @@ variables:
     description: Redis password.
     defaultValue: redis_pwd
     required: true
+  - name: style_sheet
+    inputType: FreeText
+    description: Custom style sheet.
+    defaultValue: style.css
+    required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
