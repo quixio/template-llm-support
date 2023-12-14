@@ -30,6 +30,7 @@ containers = []
 cols = st.columns([0.25, 0.25, 0.25, 0.25])
 
 with cols[3]:
+    chart_title = st.empty()
     chart = st.empty()
 
 for i in range(maxlen):
@@ -90,12 +91,13 @@ while True:
             for msg in chats[i]:
                 sentiment_data[col_name].append(msg["sentiment"])                
 
-    with chart.container():
+    with chart_title.container():
         st.subheader("Customer Success Team")
         st.text("SENTIMENT DASHBOARD")
         st.markdown("#")
         st.text("Sentiment History")
 
+    with chart.container(border=True):
         chart_data = pd.DataFrame.from_dict(sentiment_data, orient="index").T
         chart_data = chart_data.melt(var_name="conversation", value_name="sentiment")
         chart_data = chart_data.reset_index()
@@ -104,7 +106,7 @@ while True:
                 .mark_line() \
                 .encode(x=alt_x, y=alt_y, color=alt_color) \
 
-        st.altair_chart(alt_chart)
+        st.altair_chart(alt_chart, use_container_width=True)
 
     time.sleep(1)
 
