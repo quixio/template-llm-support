@@ -2,6 +2,7 @@ import os
 import time
 import redis
 import pandas as pd
+import altair as alt
 import streamlit as st
 
 r = redis.Redis(
@@ -37,6 +38,11 @@ for i in range(maxlen):
 
 def get_column_name(i: int):
     return f"Conversation #{i + 1}"
+
+alt_x = alt.X("index", axis=None)
+alt_y = alt.Y("sentiment", axis=None)
+alt_legend = alt.Legend(title=None, orient="bottom", direction="vertical")
+alt_color = alt.Color("conversation", legend=alt_legend)
 
 while True:
     count = 0
@@ -91,7 +97,14 @@ while True:
         st.text("Sentiment History")
 
         chart_data = pd.DataFrame.from_dict(sentiment_data, orient="index").T
-        st.line_chart(chart_data)
+        chart_data = chart_data.melt(var_name="conversation", value_name="sentiment")
+        chart_data = chart_data.reset_index()
+
+        alt_chart = alt.Chart(chart_data) \
+                .mark_line() \
+                .encode(x=alt_x, y=alt_y, color=alt_color) \
+
+        st.altair_chart(alt_chart)
 
     time.sleep(1)
 
