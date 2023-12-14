@@ -37,10 +37,10 @@ for i in range(maxlen):
     with cols[i % 3]:
         containers.append((st.empty(), st.empty()))
 
-def get_column_name(i: int):
+def get_chat_name(i: int):
     return f"Conversation #{i + 1}"
 
-alt_x = alt.X("index", axis=None)
+alt_x = alt.X("timestamp", axis=None)
 alt_y = alt.Y("sentiment", axis=None)
 alt_legend = alt.Legend(title=None, orient="bottom", direction="vertical")
 alt_color = alt.Color("conversation", legend=alt_legend)
@@ -56,7 +56,9 @@ while True:
             # customer_id is not available until the customer responds to agent
             if chat and "customer_name" in chat[-1] and chat[-1]["customer_name"]:
                 chats.append(chat)
-                sentiment_data[get_column_name(count)] = []
+                sentiment_data["timestamp"] = []
+                sentiment_data["sentiment"] = []
+                sentiment_data["conversation"] = []
                 count += 1
                 # limit the number of chats displayed
                 if count >= maxlen:
@@ -87,11 +89,13 @@ while True:
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["text"])
 
-            col_name = get_column_name(i)
+            chat_name = get_chat_name(i)
             for msg in chats[i]:
-                sentiment_data[col_name].append(msg["sentiment"])                
-                
-    if sentiment_data:
+                sentiment_data["timestamp"].append(msg["timestamp"])                
+                sentiment_data["sentiment"].append(msg["sentiment"])                
+                sentiment_data["conversation"].append(get_chat_name(i))                
+
+    if "timestamp" in sentiment_data and len(sentiment_data["timestamp"]) > 0:
         with chart_title.container():
             st.subheader("Customer Success Team")
             st.text("SENTIMENT DASHBOARD")
@@ -100,9 +104,7 @@ while True:
 
         with chart.container(border=True):
             chart_data = pd.DataFrame.from_dict(sentiment_data, orient="index").T
-            chart_data = chart_data.melt(var_name="conversation", value_name="sentiment")
-            chart_data = chart_data.reset_index()
-
+            chart_data.sort_values("timestamp", inplace=True)
             alt_chart = alt.Chart(chart_data) \
                     .mark_line() \
                     .encode(x=alt_x, y=alt_y, color=alt_color) \
