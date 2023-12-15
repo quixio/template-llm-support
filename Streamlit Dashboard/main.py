@@ -70,9 +70,9 @@ while True:
         if i < len(chats):
             msg_latest = chats[i][-1]
             mood_avg = ""
-            if msg_latest["average_sentiment"] > 0:
+            if msg_latest["average_sentiment"] > os.environ["threshold_good"]:
                 mood_avg = "**:green[Good]**"
-            elif msg_latest["average_sentiment"] < 0:
+            elif msg_latest["average_sentiment"] < os.environ["threshold_bad"]:
                 mood_avg = "**:red[Bad]**"
             else:
                 mood_avg = "**:yellow[Neutral]**"
