@@ -25,12 +25,12 @@ class QuixFunction:
             for i, row in df.iterrows():
 
                 # Calculate "sentiment" feature using label for sign and score for magnitude
-                df.loc[i, "sentiment"] = row["score"] if row["label"] == "POSITIVE" else - row["score"]
+                df.loc[i, "sentiment"] = 1 if row["label"] == "POSITIVE" else -1
 
                 # Add average sentiment (and update memory)
                 self.count = self.count + 1
                 self.sum = self.sum + df.loc[i, "sentiment"]
-                df.loc[i, "average_sentiment"] = self.sum/self.count
+                df.loc[i, "average_sentiment"] = float(self.sum) / self.count
 
             # Output data with new features
             print(df)
