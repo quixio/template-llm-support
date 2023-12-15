@@ -50,7 +50,7 @@ while True:
     chats = []
     sentiment_data = {}
 
-    for key in r.scan_iter(key_prefix) :
+    for key in r.scan_iter(key_prefix + "*") :
         chat = r.json().get(key)
         # customer_id is not available until the customer responds to agent
         if chat and "customer_name" in chat[-1] and chat[-1]["customer_name"]:
@@ -85,7 +85,7 @@ while True:
             
             with c[1].container(border=True):
                 for msg in chats[i]:
-                    with st.chat_message(msg["role"]):
+                    with st.chat_message("human" if msg["role"] == "customer" else "assistant"):
                         st.markdown(msg["text"])
 
             chat_name = get_chat_name(i)
