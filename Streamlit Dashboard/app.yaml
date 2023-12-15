@@ -28,7 +28,7 @@ variables:
     required: false
   - name: threshold_good
     inputType: FreeText
-    description: Sentiment threshold equal to or greater than of which are considered 'Good'.
+    description: Sentiment values greater than this value are considered 'Good'.
     defaultValue: 0
     required: true
   - name: threshold_bad
