@@ -66,8 +66,7 @@ while True:
 
     for key in r.scan_iter(key_prefix + "*") :
         chat = r.json().get(key)
-        # customer_id is not available until the customer responds to agent
-        if chat and "customer_name" in chat[-1] and chat[-1]["customer_name"]:
+        if chat and "customer_name" in chat[-1]:
             chats.append(chat)
             sentiment_data["timestamp"] = []
             sentiment_data["sentiment"] = []
