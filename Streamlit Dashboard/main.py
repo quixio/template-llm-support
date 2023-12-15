@@ -66,7 +66,7 @@ while True:
 
     for key in r.scan_iter(key_prefix + "*") :
         chat = r.json().get(key)
-        if chat and "customer_name" in chat[-1]:
+        if chat:
             chats.append(chat)
             sentiment_data["timestamp"] = []
             sentiment_data["sentiment"] = []
