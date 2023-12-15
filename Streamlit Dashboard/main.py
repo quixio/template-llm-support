@@ -93,7 +93,8 @@ while True:
             with c[1].container(border=True):
                 for msg in chats[i]:
                     with st.chat_message("human" if msg["role"] == "customer" else "assistant"):
-                        st.markdown(f"{msg['text']} :{get_text_color(msg['sentiment'])}[[{msg['sentiment']:.2f}]]")
+                        st.markdown(f"{msg['text']} <div style='text-align: right; color: {get_text_color(msg['sentiment'])}'>[{msg['sentiment']:.2f}]</div>", unsafe_allow_html=True)
+                        #st.markdown(f"{msg['text']} :{get_text_color(msg['sentiment'])}[[{msg['sentiment']:.2f}]]")
 
             chat_name = get_chat_name(i)
             for msg in chats[i]:
