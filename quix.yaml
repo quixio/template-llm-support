@@ -50,7 +50,7 @@ deployments:
   - name: Sentiment Analyzer
     application: Sentiment Analyzer
     deploymentType: Service
-    version: 60f533418c5d83d619562bc5a346c40e3f340612
+    version: 70b9e90f917710b1d8e711ec66cd9a1e97681800
     resources:
       cpu: 2000
       memory: 4000
@@ -110,7 +110,7 @@ deployments:
   - name: Streamlit Dashboard
     application: Streamlit Dashboard
     deploymentType: Service
-    version: aee116d76f152f8d0836477742f809d7e95b095b
+    version: d489ea438e1b80b838075ff4448629d67eee3f78
     resources:
       cpu: 200
       memory: 500

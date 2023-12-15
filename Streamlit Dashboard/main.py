@@ -46,18 +46,17 @@ alt_legend = alt.Legend(title=None, orient="bottom", direction="vertical")
 alt_color = alt.Color("conversation", legend=alt_legend)
 
 def get_emoji(sentiment: float):
-    if sentiment < 0:
-        return "😀"
     if sentiment > 0:
+        return "😀"
+    if sentiment < 0:
         return "😡"
     return "😐"
 
-def confidence_to_sentiment(confidence: float):
-    if confidence < 0:
-        return -1
-    if confidence > 0:
-        return 1
-    return 0
+def get_customer_info(msg):
+    # first message does not have customer information
+    if "customer_id" in msg:
+        return f"{msg['customer_id']:.0f} ({msg['customer_name']}"
+    return ""
 
 while True:
     count = 0
@@ -66,8 +65,7 @@ while True:
 
     for key in r.scan_iter(key_prefix + "*") :
         chat = r.json().get(key)
-        # customer_id is not available until the customer responds to agent
-        if chat and "customer_name" in chat[-1] and chat[-1]["customer_name"]:
+        if chat:
             chats.append(chat)
             sentiment_data["timestamp"] = []
             sentiment_data["sentiment"] = []
@@ -94,7 +92,7 @@ while True:
             with c[0].container():
                 st.subheader(f"Conversation #{i + 1}")
                 st.markdown(f"**Agent ID:** {msg_latest['agent_id']:.0f} ({msg_latest['agent_name']})")
-                st.markdown(f"**Customer ID:** {msg_latest['customer_id']:.0f} ({msg_latest['customer_name']})")
+                st.markdown(f"**Customer ID:** {get_customer_info(msg_latest)})")
                 st.markdown(f"**Average Sentiment:** {mood_avg}")
             
             with c[1].container(border=True):
@@ -105,7 +103,7 @@ while True:
             chat_name = get_chat_name(i)
             for msg in chats[i]:
                 sentiment_data["timestamp"].append(msg["timestamp"])                
-                sentiment_data["sentiment"].append(confidence_to_sentiment(msg["sentiment"]))
+                sentiment_data["sentiment"].append(msg["sentiment"])
                 sentiment_data["conversation"].append(get_chat_name(i))                
 
     if "timestamp" in sentiment_data and len(sentiment_data["timestamp"]) > 0:
