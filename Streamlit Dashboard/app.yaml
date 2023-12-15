@@ -26,6 +26,11 @@ variables:
     description: Custom style sheet for Streamlit.
     defaultValue: style.css
     required: false
+  - name: threshold_good
+    inputType: FreeText
+    description: Sentiment threshold equal to or greater than of which are considered 'Good'.
+    defaultValue: 0
+    required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
