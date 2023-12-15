@@ -50,19 +50,18 @@ while True:
     chats = []
     sentiment_data = {}
 
-    for key in r.scan_iter() :
-        if key.decode().startswith(key_prefix):
-            chat = r.json().get(key)
-            # customer_id is not available until the customer responds to agent
-            if chat and "customer_name" in chat[-1] and chat[-1]["customer_name"]:
-                chats.append(chat)
-                sentiment_data["timestamp"] = []
-                sentiment_data["sentiment"] = []
-                sentiment_data["conversation"] = []
-                count += 1
-                # limit the number of chats displayed
-                if count >= maxlen:
-                    break
+    for key in r.scan_iter(key_prefix) :
+        chat = r.json().get(key)
+        # customer_id is not available until the customer responds to agent
+        if chat and "customer_name" in chat[-1] and chat[-1]["customer_name"]:
+            chats.append(chat)
+            sentiment_data["timestamp"] = []
+            sentiment_data["sentiment"] = []
+            sentiment_data["conversation"] = []
+            count += 1
+            # limit the number of chats displayed
+            if count >= maxlen:
+                break
     
     for i, c in enumerate(containers):
         c[0].empty()
