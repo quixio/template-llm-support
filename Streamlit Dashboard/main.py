@@ -45,12 +45,12 @@ alt_y = alt.Y("sentiment", axis=None)
 alt_legend = alt.Legend(title=None, orient="bottom", direction="vertical")
 alt_color = alt.Color("conversation", legend=alt_legend)
 
-def get_text_color(sentiment: float):
+def get_emoji(sentiment: float):
     if sentiment < 0:
-        return "red"
+        return "😀"
     if sentiment > 0:
-        return "green"
-    return "yellow"
+        return "😡"
+    return "😐"
 
 while True:
     count = 0
@@ -93,7 +93,7 @@ while True:
             with c[1].container(border=True):
                 for msg in chats[i]:
                     with st.chat_message("human" if msg["role"] == "customer" else "assistant"):
-                        st.markdown(f"{msg['text']} <div style='text-align: right; color: {get_text_color(msg['sentiment'])}'>[{abs(msg['sentiment']) * 100:.0f}%]</div>", unsafe_allow_html=True)
+                        st.markdown(f"{msg['text']} <div style='text-align: right'>{get_emoji(msg['sentiment'])}</div>", unsafe_allow_html=True)
 
             chat_name = get_chat_name(i)
             for msg in chats[i]:
