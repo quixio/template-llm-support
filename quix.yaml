@@ -9,21 +9,21 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: 03d2ad6d2d6763e160bb305638310e4c69cdcfaa
+    version: 62a72bbf61d1420fb25fb6a8993132344eede947
     resources:
-      cpu: 4000
-      memory: 8000
-      replicas: 1
+      cpu: {{ ai_customer_cpu }}
+      memory: {{ ai_customer_memory }}
+      replicas: {{ ai_customer_replicas }}
     state:
       enabled: true
-      size: 6
+      size: {{ ai_customer_state_size }}
     desiredStatus: Running
     variables:
       - name: topic
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: ai-chat-history
+        value: chat-2
       - name: conversation_length
         inputType: FreeText
         description: Maximum conversation length, after which the conversation resets.
@@ -32,25 +32,25 @@ deployments:
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
-    version: 877d21d8efd63b16068fb8113fc30be61cc17bd0
+    version: 252d3170e03973d0d9aff4bac177172e845c8b3e
     resources:
-      cpu: 4000
-      memory: 8000
-      replicas: 1
+      cpu: {{ ai_agent_cpu }}
+      memory: {{ ai_agent_memory }}
+      replicas: {{ ai_agent_replicas }}
     state:
       enabled: true
-      size: 6
+      size: {{ ai_agent_state_size }}
     desiredStatus: Running
     variables:
       - name: topic
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: ai-chat-history
+        value: chat-2
   - name: Sentiment Analyzer
     application: Sentiment Analyzer
     deploymentType: Service
-    version: d6627cff53e8e5af236a45b10e2dacc00069cdbc
+    version: 60f533418c5d83d619562bc5a346c40e3f340612
     resources:
       cpu: 2000
       memory: 4000
@@ -61,7 +61,7 @@ deployments:
         inputType: InputTopic
         description: Name of the input topic to listen to.
         required: false
-        value: ai-chat-history
+        value: chat-2
       - name: output
         inputType: OutputTopic
         description: Name of the output topic to write to.
@@ -75,7 +75,7 @@ deployments:
   - name: Redis Sink
     application: Redis Sink
     deploymentType: Service
-    version: 87454d851ab870c6c6696e915adbc16a36c27634
+    version: 15868c707883b630530728e11ce344b31b2530d5
     resources:
       cpu: 200
       memory: 500
@@ -96,7 +96,7 @@ deployments:
         inputType: FreeText
         description: Redis port.
         required: true
-        value: 15737
+        value: 12393
       - name: redis_pwd
         inputType: Secret
         description: Redis password.
@@ -107,27 +107,58 @@ deployments:
         description: Conversation storage duration in minutes.
         required: true
         value: 1440
+  - name: Streamlit Dashboard
+    application: Streamlit Dashboard
+    deploymentType: Service
+    version: 0ba6b59351bc7daeec196c6f0eade9fbc60a971d
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: dashboard
+    desiredStatus: Running
+    variables:
+      - name: redis_host
+        inputType: Secret
+        description: Redis server.
+        required: true
+        secretKey: redis_host
+      - name: redis_port
+        inputType: Secret
+        description: Redis server port.
+        required: true
+        secretKey: redis_port
+      - name: redis_pwd
+        inputType: Secret
+        description: Redis password.
+        required: true
+        secretKey: redis_pwd
+      - name: chat_count
+        inputType: FreeText
+        description: Maximum number of chats to display on the dashboard.
+        required: true
+        value: 12
+      - name: style_sheet
+        inputType: FreeText
+        description: Custom style sheet for Streamlit.
+        required: false
+        value: style.css
 
 # This section describes the Topics of the data pipeline
 topics:
-  - name: ai-chat-messages
-    persisted: true
-    configuration:
-      partitions: 2
-      replicationFactor: 2
-      retentionInMinutes: 240
-      retentionInBytes: 52428800
-  - name: ai-chat-history
-    persisted: true
-    configuration:
-      partitions: 2
-      replicationFactor: 2
-      retentionInMinutes: 60
-      retentionInBytes: 52428800
   - name: ai-chat-history-with-sentiment
     persisted: true
     configuration:
       partitions: 1
+      replicationFactor: 2
+      retentionInMinutes: 1440
+      retentionInBytes: 52428800
+  - name: chat-2
+    persisted: false
+    configuration:
+      partitions: 10
       replicationFactor: 2
       retentionInMinutes: 1440
       retentionInBytes: 52428800

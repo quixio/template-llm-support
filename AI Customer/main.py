@@ -17,6 +17,8 @@ from langchain.memory import ConversationTokenBufferMemory
 CUSTOMER_ROLE = "customer"
 
 role = CUSTOMER_ROLE
+customer_id = 0
+customer_name = ""
 chat_maxlen = int(os.environ["conversation_length"]) // 2
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
@@ -37,6 +39,7 @@ def get_list(file: str):
                 list.append(p.strip())
     return list
 
+names = get_list("names.txt")
 moods = get_list("moods.txt")
 products = get_list("products.txt")
 
@@ -79,30 +82,40 @@ output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSer
 sdf = app.dataframe(input_topic)
 
 def reply(row: dict, state: State):
-    global chain
+    global chain, customer_id, customer_name
+
+    if not "customer_name" in row:
+        customer_id = random.getrandbits(16)
+        customer_name = random.choice(names)
+        row["customer_id"] = customer_id
+        row["customer_name"] = customer_name
 
     row["role"] = role
+    chatlen_key = "chatlen"
 
-    if not state.exists("chatlen"):
-        state.set("chatlen", 0)
+    if not state.exists(chatlen_key):
+        state.set(chatlen_key, 0)
 
-    chatlen = state.get("chatlen")
+    chatlen = state.get(chatlen_key)
+    print("Chat length = {}".format(chatlen))
     
     if chatlen >= chat_maxlen:
         print("Maximum conversation length reached, ending conversation...")
         chain = chain_init()
-        state.set("chatlen", 0)
+        state.delete(chatlen_key)
 
         row["text"] = "Noted, I think I have enough information. Thank you for your assistance. Good bye!"
         return row
 
-    print("Replying to: {}".format(row["text"]))
-    print("Generating response...")
+    print("Replying to: {}\n".format(row["text"]))
+    
+    print("Generating response...\n")
     msg = chain.run(row["text"])
     print("{}: {}\n".format(role.upper(), msg))
 
     row["text"] = msg
-    state.set("count", chatlen + 1)
+    state.set(chatlen_key, chatlen + 1)
+
     return row
 
 sdf = sdf[sdf["role"] != role]

@@ -1,19 +1,14 @@
-name: Redis Sink
+name: Streamlit Dashboard
 language: python
 variables:
-  - name: input
-    inputType: InputTopic
-    description: This is the input topic for demo data
-    defaultValue: ai-chat-history-with-sentiment
-    required: true
   - name: redis_host
     inputType: Secret
-    description: Redis host.
+    description: Redis server.
     defaultValue: redis_host
     required: true
   - name: redis_port
     inputType: Secret
-    description: Redis port.
+    description: Redis server port.
     defaultValue: redis_port
     required: true
   - name: redis_pwd
@@ -21,11 +16,16 @@ variables:
     description: Redis password.
     defaultValue: redis_pwd
     required: true
-  - name: expire_after
+  - name: chat_count
     inputType: FreeText
-    description: Conversation storage duration in minutes.
-    defaultValue: 1440
+    description: Maximum number of chats to display on the dashboard.
+    defaultValue: 12
     required: true
+  - name: style_sheet
+    inputType: FreeText
+    description: Custom style sheet for Streamlit.
+    defaultValue: style.css
+    required: false
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
