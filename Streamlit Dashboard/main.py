@@ -78,11 +78,11 @@ while True:
             msg_latest = chats[i][-1]
             mood_avg = ""
             if msg_latest["average_sentiment"] > 0:
-                mood_avg = f"**:green[Good ({abs(msg_latest['average_sentiment']) * 100:.0f}%)]**"
+                mood_avg = f"**:green[Good]**"
             elif msg_latest["average_sentiment"] < 0:
-                mood_avg = f"**:red[Bad ({abs(msg_latest['average_sentiment']) * 100:.0f}%)]**"
+                mood_avg = f"**:red[Bad]**"
             else:
-                mood_avg = f"**:orange[Neutral ({abs(msg_latest['average_sentiment']) * 100:.0f}%)]**"
+                mood_avg = f"**:orange[Neutral]**"
 
             with c[0].container():
                 st.subheader(f"Conversation #{i + 1}")
