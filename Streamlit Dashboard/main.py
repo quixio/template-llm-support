@@ -82,7 +82,7 @@ while True:
             elif msg_latest["average_sentiment"] < float(os.environ["threshold_bad"]):
                 mood_avg = "**:red[Bad]**"
             else:
-                mood_avg = "**:yellow[Neutral]**"
+                mood_avg = "**:orange[Neutral]**"
 
             with c[0].container():
                 st.subheader(f"Conversation #{i + 1}")
