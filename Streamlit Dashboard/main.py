@@ -80,11 +80,11 @@ while True:
             msg_latest = chats[i][-1]
             mood_avg = ""
             if msg_latest["average_sentiment"] > float(os.environ["threshold_good"]):
-                mood_avg = "**:green[Good]**"
+                mood_avg = f"**:green[Good ({msg_latest['average_sentiment']:.2f})]**"
             elif msg_latest["average_sentiment"] < float(os.environ["threshold_bad"]):
-                mood_avg = "**:red[Bad]**"
+                mood_avg = f"**:red[Bad ({msg_latest['average_sentiment']:.2f})]**"
             else:
-                mood_avg = "**:orange[Neutral]**"
+                mood_avg = f"**:orange[Neutral ({msg_latest['average_sentiment']:.2f})]**"
 
             with c[0].container():
                 st.subheader(f"Conversation #{i + 1}")
