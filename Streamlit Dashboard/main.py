@@ -59,6 +59,12 @@ def confidence_to_sentiment(confidence: float):
         return 1
     return 0
 
+def get_customer_info(msg):
+    # first message does not have customer information
+    if "customer_id" in msg:
+        return f"{msg['customer_id']:.0f} ({msg['customer_name']}"
+    return ""
+
 while True:
     count = 0
     chats = []
@@ -93,7 +99,7 @@ while True:
             with c[0].container():
                 st.subheader(f"Conversation #{i + 1}")
                 st.markdown(f"**Agent ID:** {msg_latest['agent_id']:.0f} ({msg_latest['agent_name']})")
-                st.markdown(f"**Customer ID:** {msg_latest['customer_id']:.0f} ({msg_latest['customer_name']})")
+                st.markdown(f"**Customer ID:** {get_customer_info(msg_latest)})")
                 st.markdown(f"**Average Sentiment:** {mood_avg}")
             
             with c[1].container(border=True):
