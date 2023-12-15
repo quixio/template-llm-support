@@ -70,8 +70,6 @@ while True:
             if count >= maxlen:
                 break
     
-    print(f"Discovered keys={count}, prefix={key_prefix}")
-    
     for i, c in enumerate(containers):
         c[0].empty()
         c[1].empty()
