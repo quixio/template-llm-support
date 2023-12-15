@@ -26,11 +26,6 @@ variables:
     description: Custom style sheet for Streamlit.
     defaultValue: style.css
     required: false
-  - name: threshold_good
-    inputType: FreeText
-    description: Sentiment values greater than this value are considered 'Good'.
-    defaultValue: 0.25
-    required: true
   - name: threshold_bad
     inputType: FreeText
     description: Sentiment values below which are considered 'Bad'.
