@@ -46,9 +46,9 @@ alt_legend = alt.Legend(title=None, orient="bottom", direction="vertical")
 alt_color = alt.Color("conversation", legend=alt_legend)
 
 def get_emoji(sentiment: float):
-    if sentiment < 0:
-        return "😀"
     if sentiment > 0:
+        return "😀"
+    if sentiment < 0:
         return "😡"
     return "😐"
 
