@@ -52,13 +52,6 @@ def get_emoji(sentiment: float):
         return "😡"
     return "😐"
 
-def confidence_to_sentiment(confidence: float):
-    if confidence < 0:
-        return -1
-    if confidence > 0:
-        return 1
-    return 0
-
 def get_customer_info(msg):
     # first message does not have customer information
     if "customer_id" in msg:
@@ -110,7 +103,7 @@ while True:
             chat_name = get_chat_name(i)
             for msg in chats[i]:
                 sentiment_data["timestamp"].append(msg["timestamp"])                
-                sentiment_data["sentiment"].append(confidence_to_sentiment(msg["sentiment"]))
+                sentiment_data["sentiment"].append(msg["sentiment"])
                 sentiment_data["conversation"].append(get_chat_name(i))                
 
     if "timestamp" in sentiment_data and len(sentiment_data["timestamp"]) > 0:
