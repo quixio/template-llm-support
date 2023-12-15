@@ -31,6 +31,11 @@ variables:
     description: Sentiment threshold equal to or greater than of which are considered 'Good'.
     defaultValue: 0
     required: true
+  - name: threshold_bad
+    inputType: FreeText
+    description: Sentiment values below which are considered 'Bad'.
+    defaultValue: 0
+    required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
