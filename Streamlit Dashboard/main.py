@@ -45,6 +45,13 @@ alt_y = alt.Y("sentiment", axis=None)
 alt_legend = alt.Legend(title=None, orient="bottom", direction="vertical")
 alt_color = alt.Color("conversation", legend=alt_legend)
 
+def get_text_color(sentiment: float):
+    if sentiment < float(os.environ["threshold_bad"]):
+        return "red"
+    if sentiment > float(os.environ["threshold_good"]):
+        return "green"
+    return "yellow"
+
 while True:
     count = 0
     chats = []
@@ -86,7 +93,7 @@ while True:
             with c[1].container(border=True):
                 for msg in chats[i]:
                     with st.chat_message("human" if msg["role"] == "customer" else "assistant"):
-                        st.markdown(msg["text"] + "")
+                        st.markdown(f"{msg['text']} :{get_text_color(msg['sentiment'])}[[{msg['sentiment']:.2f}]]")
 
             chat_name = get_chat_name(i)
             for msg in chats[i]:
