@@ -119,7 +119,7 @@ while True:
             chart_data = pd.DataFrame.from_dict(sentiment_data, orient="index").T
             chart_data.sort_values("timestamp", inplace=True)
             alt_chart = alt.Chart(chart_data) \
-                    .mark_line() \
+                    .mark_line(interpolate='step-after') \
                     .encode(x=alt_x, y=alt_y, color=alt_color) \
 
             st.altair_chart(alt_chart, use_container_width=True)
