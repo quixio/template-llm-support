@@ -70,23 +70,23 @@ while True:
         if i < len(chats):
             msg_latest = chats[i][-1]
             mood_avg = ""
-            if msg_latest["average_sentiment"] > os.environ["threshold_good"]:
+            if msg_latest["average_sentiment"] > float(os.environ["threshold_good"]):
                 mood_avg = "**:green[Good]**"
-            elif msg_latest["average_sentiment"] < os.environ["threshold_bad"]:
+            elif msg_latest["average_sentiment"] < float(os.environ["threshold_bad"]):
                 mood_avg = "**:red[Bad]**"
             else:
                 mood_avg = "**:yellow[Neutral]**"
 
             with c[0].container():
                 st.subheader(f"Conversation #{i + 1}")
-                st.text(f"Agent ID: {msg_latest['agent_id']:.0f} ({msg_latest['agent_name']})")
-                st.text(f"Customer ID: {msg_latest['customer_id']:.0f} ({msg_latest['customer_name']})")
-                st.markdown("Average Sentiment: " + mood_avg)
+                st.markdown(f"**Agent ID:** {msg_latest['agent_id']:.0f} ({msg_latest['agent_name']})")
+                st.markdown(f"**Customer ID:** {msg_latest['customer_id']:.0f} ({msg_latest['customer_name']})")
+                st.markdown(f"**Average Sentiment:** {mood_avg}")
             
             with c[1].container(border=True):
                 for msg in chats[i]:
                     with st.chat_message("human" if msg["role"] == "customer" else "assistant"):
-                        st.markdown(msg["text"])
+                        st.markdown(msg["text"] + "")
 
             chat_name = get_chat_name(i)
             for msg in chats[i]:
