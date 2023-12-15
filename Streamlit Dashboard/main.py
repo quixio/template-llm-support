@@ -71,17 +71,17 @@ while True:
             msg_latest = chats[i][-1]
             mood_avg = ""
             if msg_latest["average_sentiment"] > 0:
-                mood_avg = "Good"
+                mood_avg = "**:green[Good]**"
             elif msg_latest["average_sentiment"] < 0:
-                mood_avg = "Bad"
+                mood_avg = "**:red[Bad]**"
             else:
-                mood_avg = "Neutral"
+                mood_avg = "**:yellow[Neutral]**"
 
             with c[0].container():
                 st.subheader(f"Conversation #{i + 1}")
                 st.text(f"Agent ID: {msg_latest['agent_id']:.0f} ({msg_latest['agent_name']})")
                 st.text(f"Customer ID: {msg_latest['customer_id']:.0f} ({msg_latest['customer_name']})")
-                st.text("Average Sentiment: " + mood_avg)
+                st.markdown("Average Sentiment: " + mood_avg)
             
             with c[1].container(border=True):
                 for msg in chats[i]:
