@@ -78,11 +78,11 @@ while True:
             msg_latest = chats[i][-1]
             mood_avg = ""
             if msg_latest["average_sentiment"] > 0:
-                mood_avg = "**:green[Good]**"
+                mood_avg = f"**:green[Good ({abs(msg_latest['average_sentiment']) * 100:.0f}%)]**"
             elif msg_latest["average_sentiment"] < 0:
-                mood_avg = "**:red[Bad]**"
+                mood_avg = f"**:red[Bad ({abs(msg_latest['average_sentiment']) * 100:.0f}%)]**"
             else:
-                mood_avg = "**:orange[Neutral]**"
+                mood_avg = f"**:orange[Neutral ({abs(msg_latest['average_sentiment']) * 100:.0f}%)]**"
 
             with c[0].container():
                 st.subheader(f"Conversation #{i + 1}")
@@ -93,8 +93,7 @@ while True:
             with c[1].container(border=True):
                 for msg in chats[i]:
                     with st.chat_message("human" if msg["role"] == "customer" else "assistant"):
-                        st.markdown(f"{msg['text']} <div style='text-align: right; color: {get_text_color(msg['sentiment'])}'>[{msg['sentiment']:.2f}]</div>", unsafe_allow_html=True)
-                        #st.markdown(f"{msg['text']} :{get_text_color(msg['sentiment'])}[[{msg['sentiment']:.2f}]]")
+                        st.markdown(f"{msg['text']} <div style='text-align: right; color: {get_text_color(msg['sentiment'])}'>[{abs(msg['sentiment']) * 100:.0f}%]</div>", unsafe_allow_html=True)
 
             chat_name = get_chat_name(i)
             for msg in chats[i]:
