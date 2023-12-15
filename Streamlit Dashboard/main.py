@@ -97,9 +97,9 @@ while True:
     if "timestamp" in sentiment_data and len(sentiment_data["timestamp"]) > 0:
         with chart_title.container():
             st.subheader("Customer Success Team")
-            st.text("SENTIMENT DASHBOARD")
+            st.markdown("SENTIMENT DASHBOARD")
             st.markdown("#")
-            st.text("Sentiment History")
+            st.markdown("Sentiment History")
 
         with chart.container(border=True):
             chart_data = pd.DataFrame.from_dict(sentiment_data, orient="index").T
