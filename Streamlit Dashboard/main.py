@@ -45,24 +45,37 @@ alt_y = alt.Y("sentiment", axis=None)
 alt_legend = alt.Legend(title=None, orient="bottom", direction="vertical")
 alt_color = alt.Color("conversation", legend=alt_legend)
 
+def get_emoji(sentiment: float):
+    if sentiment < 0:
+        return "😀"
+    if sentiment > 0:
+        return "😡"
+    return "😐"
+
+def confidence_to_sentiment(confidence: float):
+    if confidence < 0:
+        return -1
+    if confidence > 0:
+        return 1
+    return 0
+
 while True:
     count = 0
     chats = []
     sentiment_data = {}
 
-    for key in r.scan_iter() :
-        if key.decode().startswith(key_prefix):
-            chat = r.json().get(key)
-            # customer_id is not available until the customer responds to agent
-            if chat and "customer_name" in chat[-1] and chat[-1]["customer_name"]:
-                chats.append(chat)
-                sentiment_data["timestamp"] = []
-                sentiment_data["sentiment"] = []
-                sentiment_data["conversation"] = []
-                count += 1
-                # limit the number of chats displayed
-                if count >= maxlen:
-                    break
+    for key in r.scan_iter(key_prefix + "*") :
+        chat = r.json().get(key)
+        # customer_id is not available until the customer responds to agent
+        if chat and "customer_name" in chat[-1] and chat[-1]["customer_name"]:
+            chats.append(chat)
+            sentiment_data["timestamp"] = []
+            sentiment_data["sentiment"] = []
+            sentiment_data["conversation"] = []
+            count += 1
+            # limit the number of chats displayed
+            if count >= maxlen:
+                break
     
     for i, c in enumerate(containers):
         c[0].empty()
@@ -72,41 +85,41 @@ while True:
             msg_latest = chats[i][-1]
             mood_avg = ""
             if msg_latest["average_sentiment"] > 0:
-                mood_avg = "Good"
+                mood_avg = f"**:green[Good ({msg_latest['average_sentiment']:.2f})]**"
             elif msg_latest["average_sentiment"] < 0:
-                mood_avg = "Bad"
+                mood_avg = f"**:red[Bad ({msg_latest['average_sentiment']:.2f})]**"
             else:
-                mood_avg = "Neutral"
+                mood_avg = f"**:orange[Neutral ({msg_latest['average_sentiment']:.2f})]**"
 
             with c[0].container():
                 st.subheader(f"Conversation #{i + 1}")
-                st.text(f"Agent ID: {msg_latest['agent_id']:.0f} ({msg_latest['agent_name']})")
-                st.text(f"Customer ID: {msg_latest['customer_id']:.0f} ({msg_latest['customer_name']})")
-                st.text("Average Sentiment: " + mood_avg)
+                st.markdown(f"**Agent ID:** {msg_latest['agent_id']:.0f} ({msg_latest['agent_name']})")
+                st.markdown(f"**Customer ID:** {msg_latest['customer_id']:.0f} ({msg_latest['customer_name']})")
+                st.markdown(f"**Average Sentiment:** {mood_avg}")
             
             with c[1].container(border=True):
                 for msg in chats[i]:
-                    with st.chat_message(msg["role"]):
-                        st.markdown(msg["text"])
+                    with st.chat_message("human" if msg["role"] == "customer" else "assistant"):
+                        st.markdown(f"{msg['text']} <div style='text-align: right'>{get_emoji(msg['sentiment'])}</div>", unsafe_allow_html=True)
 
             chat_name = get_chat_name(i)
             for msg in chats[i]:
                 sentiment_data["timestamp"].append(msg["timestamp"])                
-                sentiment_data["sentiment"].append(msg["sentiment"])                
+                sentiment_data["sentiment"].append(confidence_to_sentiment(msg["sentiment"]))
                 sentiment_data["conversation"].append(get_chat_name(i))                
 
     if "timestamp" in sentiment_data and len(sentiment_data["timestamp"]) > 0:
         with chart_title.container():
             st.subheader("Customer Success Team")
-            st.text("SENTIMENT DASHBOARD")
+            st.markdown("SENTIMENT DASHBOARD")
             st.markdown("#")
-            st.text("Sentiment History")
+            st.markdown("Sentiment History")
 
         with chart.container(border=True):
             chart_data = pd.DataFrame.from_dict(sentiment_data, orient="index").T
             chart_data.sort_values("timestamp", inplace=True)
             alt_chart = alt.Chart(chart_data) \
-                    .mark_line() \
+                    .mark_line(interpolate='step-after') \
                     .encode(x=alt_x, y=alt_y, color=alt_color) \
 
             st.altair_chart(alt_chart, use_container_width=True)
