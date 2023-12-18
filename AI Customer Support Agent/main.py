@@ -114,7 +114,7 @@ def reply(row: dict):
     
     if "good bye" in row["text"].lower():
         print("Initializing a new conversation...")
-        memory.clear()
+        chain.memory.clear()
         chat_init()
         return
 
