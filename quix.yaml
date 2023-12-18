@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: 14c4f02c86fef0c3b5cd0009dd87b4d319335f72
+    version: af30f613a81169c050685f496e813f56b086a50d
     resources:
       cpu: {{ ai_customer_cpu }}
       memory: {{ ai_customer_memory }}
@@ -23,7 +23,7 @@ deployments:
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: chat-2
+        value: chat
       - name: conversation_length
         inputType: FreeText
         description: Maximum conversation length, after which the conversation resets.
