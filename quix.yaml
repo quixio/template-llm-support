@@ -61,7 +61,7 @@ deployments:
         inputType: InputTopic
         description: Name of the input topic to listen to.
         required: false
-        value: chat-2
+        value: chat
       - name: output
         inputType: OutputTopic
         description: Name of the output topic to write to.
