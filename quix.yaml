@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: 62a72bbf61d1420fb25fb6a8993132344eede947
+    version: 14c4f02c86fef0c3b5cd0009dd87b4d319335f72
     resources:
       cpu: {{ ai_customer_cpu }}
       memory: {{ ai_customer_memory }}
