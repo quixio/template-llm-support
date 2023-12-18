@@ -29,28 +29,31 @@ if not Path(model_path).exists():
 else:
     print("Loading model from state...")
 
-llm = LlamaCpp(
-    model_path=model_path,
-    max_tokens=250,
-    top_p=0.95,
-    top_k=150,
-    temperature=0.7,
-    repeat_penalty=1.2,
-    n_ctx=2048,
-    streaming=False
-)
+def chain_init():
+    llm = LlamaCpp(
+        model_path=model_path,
+        max_tokens=250,
+        top_p=0.95,
+        top_k=150,
+        temperature=0.7,
+        repeat_penalty=1.2,
+        n_ctx=2048,
+        streaming=False
+    )
 
-model = Llama2Chat(llm=llm)
+    model = Llama2Chat(llm=llm)
 
-memory = ConversationTokenBufferMemory(
-    llm=llm,
-    max_token_limit=300,
-    ai_prefix= "AGENT",
-    human_prefix= "CUSTOMER",
-    return_messages=True
-)
+    memory = ConversationTokenBufferMemory(
+        llm=llm,
+        max_token_limit=300,
+        ai_prefix= "AGENT",
+        human_prefix= "CUSTOMER",
+        return_messages=True
+    )
 
-chain = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
+    return ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
+
+chain = chain_init()
 
 app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
