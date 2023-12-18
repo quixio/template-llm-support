@@ -19,6 +19,7 @@ from langchain.memory import ConversationTokenBufferMemory
 
 AGENT_ROLE = "agent"
 role = AGENT_ROLE
+chat_id = ""
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
@@ -53,7 +54,7 @@ def chain_init():
 
     return ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
 
-chain = chain_init()
+chains = {}
 
 app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
@@ -73,10 +74,13 @@ def agents_init():
 agents = agents_init()
 
 def chat_init():
+    global chat_id
+
     chat_id = str(uuid.uuid4())
     agent_id = random.getrandbits(16)
     agent_name = random.choice(agents)
     first_name = agent_name.split(' ')[0]
+    chains[chat_id] = chain_init()
 
     greet = """Hello, welcome to ACME Electronics support, my name is {}. 
                How can I help you today?""".format(first_name)
@@ -110,16 +114,21 @@ def chat_init():
 chat_init()
 
 def reply(row: dict):
+    if row["conversation_id"] != chat_id:
+        print(f"WARN: responding to chat {chat_id} belonging to another support agent")
+        if row["conversation_id"] not in chains:
+            chains[row["conversation_id"]]= chain_init()
+
     print("Replying to: {}".format(row["text"]))
     
     if "good bye" in row["text"].lower():
         print("Initializing a new conversation...")
-        chain.memory.clear()
+        del chains[row["conversation_id"]]
         chat_init()
         return
 
     print("Generating response...")
-    msg = chain.run(row["text"])
+    msg = chains[row["conversation_id"]].run(row["text"])
     print("{}: {}\n".format(role.upper(), msg))
     
     row["role"] = role
