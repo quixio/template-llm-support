@@ -43,6 +43,8 @@ names = get_list("names.txt")
 moods = get_list("moods.txt")
 products = get_list("products.txt")
 
+chains = {}
+
 def chain_init():
     prompt = load_prompt("prompt.yaml")
     prompt.partial_variables["mood"] = random.choice(moods)
@@ -73,8 +75,6 @@ def chain_init():
 
     return ConversationChain(llm=model, prompt=prompt, memory=memory)
 
-chain = chain_init()
-
 app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
@@ -82,7 +82,10 @@ output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSer
 sdf = app.dataframe(input_topic)
 
 def reply(row: dict, state: State):
-    global chain, customer_id, customer_name
+    global customer_id, customer_name
+
+    if row["conversation_id"] not in chains:
+        chains[row["conversation_id"]] = chain_init()
 
     if not "customer_name" in row:
         customer_id = random.getrandbits(16)
@@ -101,7 +104,7 @@ def reply(row: dict, state: State):
     
     if chatlen >= chat_maxlen:
         print("Maximum conversation length reached, ending conversation...")
-        chain = chain_init()
+        del chains[row["conversation_id"]]
         state.delete(chatlen_key)
 
         row["text"] = "Noted, I think I have enough information. Thank you for your assistance. Good bye!"
@@ -110,7 +113,7 @@ def reply(row: dict, state: State):
     print("Replying to: {}\n".format(row["text"]))
     
     print("Generating response...\n")
-    msg = chain.run(row["text"])
+    msg = chains[row["conversation_id"]].run(row["text"])
     print("{}: {}\n".format(role.upper(), msg))
 
     row["text"] = msg
