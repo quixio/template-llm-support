@@ -32,7 +32,7 @@ deployments:
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
-    version: 35702258e203df77777b4cdeeb52404cd4486d3b
+    version: 252d3170e03973d0d9aff4bac177172e845c8b3e
     resources:
       cpu: {{ ai_agent_cpu }}
       memory: {{ ai_agent_memory }}
@@ -40,7 +40,7 @@ deployments:
     state:
       enabled: true
       size: {{ ai_agent_state_size }}
-    desiredStatus: Running
+    desiredStatus: Stopped
     variables:
       - name: topic
         inputType: OutputTopic
