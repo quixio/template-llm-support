@@ -32,7 +32,7 @@ deployments:
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
-    version: 35702258e203df77777b4cdeeb52404cd4486d3b
+    version: b89c6a8f29f9bb87fe192ae4dd43ec9175d44f85
     resources:
       cpu: {{ ai_agent_cpu }}
       memory: {{ ai_agent_memory }}
@@ -46,7 +46,7 @@ deployments:
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: chat-2
+        value: chat
   - name: Sentiment Analyzer
     application: Sentiment Analyzer
     deploymentType: Service
