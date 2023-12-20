@@ -44,6 +44,7 @@ def chain_init():
 
     model = Llama2Chat(llm=llm)
 
+    # conversation token buffer memory to hold the conversation context.
     memory = ConversationTokenBufferMemory(
         llm=llm,
         max_token_limit=300,
@@ -54,8 +55,11 @@ def chain_init():
 
     return ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
 
+# maintain separate conversation chains for separate conversations (based on the conversation id)
 chains = {}
 
+# initialize the conversation topic as input and output to receive messages from the agent
+# and reply to them.
 app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
@@ -76,7 +80,10 @@ agents = agents_init()
 def chat_init():
     global chat_id
 
+    # conversation id, also used as the Kafka message key.
     chat_id = str(uuid.uuid4())
+
+    # generate customer information randomly.
     agent_id = random.getrandbits(16)
     agent_name = random.choice(agents)
     first_name = agent_name.split(' ')[0]
@@ -85,6 +92,7 @@ def chat_init():
     greet = """Hello, welcome to ACME Electronics support, my name is {}. 
                How can I help you today?""".format(first_name)
 
+    # initiate conversation by publishing the first message.
     cfg_builder = QuixKafkaConfigsBuilder()
     cfgs, topics, _ = cfg_builder.get_confluent_client_configs([os.environ["topic"]])
     cfg_builder.create_topics([TopicCreationConfigs(name=topics[0])])
@@ -121,6 +129,7 @@ def reply(row: dict):
 
     print("Replying to: {}".format(row["text"]))
     
+    # if the customer ended the conversation, reset conversation memory and initiate a new one.
     if "good bye" in row["text"].lower():
         print("Initializing a new conversation...")
         del chains[row["conversation_id"]]
@@ -128,6 +137,7 @@ def reply(row: dict):
         return
 
     print("Generating response...")
+    # use the correct langchain to produce the reply based on the conversation id.
     msg = chains[row["conversation_id"]].run(row["text"])
     print("{}: {}\n".format(role.upper(), msg))
     
@@ -135,12 +145,19 @@ def reply(row: dict):
     row["text"] = msg
     return row
 
+# filter out messages from self.
 sdf = sdf[sdf["role"] != role]
+
+# generate reply using LLM.
 sdf = sdf.apply(reply, stateful=False)
+
+# filter out rows with no content (reply function can in theory return None)
 sdf = sdf[sdf.apply(lambda row: row is not None)]
 
+# set the timestamp.
 sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 
+# publish reply to the output topic.
 sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
