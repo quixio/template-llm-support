@@ -1,6 +1,6 @@
 # Redis Sink
 
-Caches conversation history and the result of sentiment analysis in Redis.
+Stores conversation history and the result of sentiment analysis in Redis.
 
 ## How to run
 
@@ -16,7 +16,7 @@ The code sample uses the following environment variables:
 - **redis_host**: Redis host information.
 - **redis_port**: Redis server port.
 - **redis_pwd**: Redis password.
-- **expire_after**: Cnversation cache TTL.
+- **expire_after**: Conversation cache TTL.
 
 ## Contribute
 
