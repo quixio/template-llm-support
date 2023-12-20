@@ -48,7 +48,7 @@ moods = get_list("moods.txt")
 # update the products.txt file to add/remove defective appliances.
 products = get_list("products.txt")
 
-# maintain separate conversation chains for separate conversations (based on the message key)
+# maintain separate conversation chains for separate conversations (based on conversation id)
 chains = {}
 
 def chain_init():
