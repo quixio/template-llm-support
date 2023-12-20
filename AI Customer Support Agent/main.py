@@ -60,7 +60,7 @@ chains = {}
 
 # initialize the conversation topic as input and output to receive messages from the agent
 # and reply to them.
-app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
+app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest", loglevel='DEBUG')
 input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
 
