@@ -169,3 +169,10 @@ topics:
       replicationFactor: 2
       retentionInMinutes: 1440
       retentionInBytes: 52428800
+  - name: test-topic
+    persisted: false
+    configuration:
+      partitions: 16
+      replicationFactor: 2
+      retentionInMinutes: 1440
+      retentionInBytes: 52428800
