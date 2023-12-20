@@ -5,12 +5,15 @@ import pandas as pd
 import altair as alt
 import streamlit as st
 
+# redis connection
 r = redis.Redis(
   host=os.environ["redis_host"],
   port=int(os.environ["redis_port"]),
   password=os.environ["redis_pwd"]
 )
 
+# redis keys for conversations are namespaced using project id to avoid collisions
+# between conversations from different projects
 key_prefix = os.environ["Quix__Workspace__Id"] + ":"
 
 st.set_page_config(
@@ -21,7 +24,7 @@ st.set_page_config(
     menu_items=None
 )
 
-# apply custom css
+# apply custom css (optional)
 with open(os.environ["style_sheet"]) as f:
     st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)
 
@@ -33,6 +36,7 @@ with cols[3]:
     chart_title = st.empty()
     chart = st.empty()
 
+# two containers per conversation: one for the titles and stats, and the other for the messages
 for i in range(maxlen):
     with cols[i % 3]:
         containers.append((st.empty(), st.empty()))
@@ -40,11 +44,13 @@ for i in range(maxlen):
 def get_chat_name(i: int):
     return f"Conversation #{i + 1}"
 
+# customize Altair chart
 alt_x = alt.X("timestamp", axis=None)
 alt_y = alt.Y("sentiment", axis=None)
 alt_legend = alt.Legend(title=None, orient="bottom", direction="vertical")
 alt_color = alt.Color("conversation", legend=alt_legend)
 
+# emoji based on the sentiment
 def get_emoji(sentiment: float):
     if sentiment > 0:
         return "😀"
@@ -53,16 +59,18 @@ def get_emoji(sentiment: float):
     return "😐"
 
 def get_customer_info(msg):
-    # first message does not have customer information
+    # first message sent by the support agent does not have customer information
     if "customer_id" in msg:
         return f"{msg['customer_id']:.0f} ({msg['customer_name']}"
     return ""
 
+# main loop to poll redis for conversation updates and update the dashboard
 while True:
     count = 0
     chats = []
     sentiment_data = {}
 
+    # fetch keys for conversations from the current project from redis
     for key in r.scan_iter(key_prefix + "*") :
         chat = r.json().get(key)
         if chat:
@@ -76,6 +84,7 @@ while True:
                 break
     
     for i, c in enumerate(containers):
+        # clear old contents from containers
         c[0].empty()
         c[1].empty()
 
@@ -89,6 +98,7 @@ while True:
             else:
                 mood_avg = f"**:orange[Neutral ({msg_latest['average_sentiment']:.2f})]**"
 
+            # chat title and sentiment stats
             with c[0].container():
                 st.subheader(f"Conversation #{i + 1}")
                 st.markdown(f"**Agent ID:** {msg_latest['agent_id']:.0f} ({msg_latest['agent_name']})")
@@ -98,6 +108,7 @@ while True:
             with c[1].container(border=True):
                 for msg in chats[i]:
                     with st.chat_message("human" if msg["role"] == "customer" else "assistant"):
+                        # a bit of custom html and css to align the sentiment nicely
                         st.markdown(f"{msg['text']} <div style='text-align: right'>{get_emoji(msg['sentiment'])}</div>", unsafe_allow_html=True)
 
             chat_name = get_chat_name(i)
@@ -106,6 +117,7 @@ while True:
                 sentiment_data["sentiment"].append(msg["sentiment"])
                 sentiment_data["conversation"].append(get_chat_name(i))                
 
+    # sentiment dashboard
     if "timestamp" in sentiment_data and len(sentiment_data["timestamp"]) > 0:
         with chart_title.container():
             st.subheader("Customer Success Team")
