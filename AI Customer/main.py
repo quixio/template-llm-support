@@ -39,13 +39,20 @@ def get_list(file: str):
                 list.append(p.strip())
     return list
 
+# update the names.txt file to add/remove customer names
 names = get_list("names.txt")
+
+# update the moods.txt file to affect the tone of the conversation.
 moods = get_list("moods.txt")
+
+# update the products.txt file to add/remove defective appliances.
 products = get_list("products.txt")
 
+# maintain separate conversation chains for separate conversations (based on the message key)
 chains = {}
 
 def chain_init():
+    # load and prepare the prompt from template
     prompt = load_prompt("prompt.yaml")
     prompt.partial_variables["mood"] = random.choice(moods)
     prompt.partial_variables["product"] = random.choice(products)
@@ -65,6 +72,7 @@ def chain_init():
 
     model = Llama2Chat(llm=llm)
 
+    # conversation token buffer memory to hold the conversation context
     memory = ConversationTokenBufferMemory(
         llm=llm,
         max_token_limit=300,
@@ -75,6 +83,8 @@ def chain_init():
 
     return ConversationChain(llm=model, prompt=prompt, memory=memory)
 
+# initialize the conversation topic as input and output to receive messages from the agent
+# and reply to them.
 app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
@@ -88,14 +98,18 @@ def reply(row: dict, state: State):
         chains[row["conversation_id"]] = chain_init()
 
     if not "customer_name" in row:
+        # generate customer information randomly.
         customer_id = random.getrandbits(16)
         customer_name = random.choice(names)
         row["customer_id"] = customer_id
         row["customer_name"] = customer_name
 
+    # change role to your own and preserve rest of the columns in the row
     row["role"] = role
     chatlen_key = "chatlen"
 
+    # Quix state is partitioned by message key. Since the message key is conversation id,
+    # conversation lengths for separate conversations are safely managed by QuixStreams.
     if not state.exists(chatlen_key):
         state.set(chatlen_key, 0)
 
@@ -103,6 +117,7 @@ def reply(row: dict, state: State):
     print("Chat length = {}".format(chatlen))
     
     if chatlen >= chat_maxlen:
+        # if the lenth of conversation exceeds the limit, terminate it and dispose the conversation chain.
         print("Maximum conversation length reached, ending conversation...")
         del chains[row["conversation_id"]]
         state.delete(chatlen_key)
@@ -113,6 +128,7 @@ def reply(row: dict, state: State):
     print("Replying to: {}\n".format(row["text"]))
     
     print("Generating response...\n")
+    # use the correct langchain to produce the reply based on the conversation id.
     msg = chains[row["conversation_id"]].run(row["text"])
     print("{}: {}\n".format(role.upper(), msg))
 
@@ -121,12 +137,19 @@ def reply(row: dict, state: State):
 
     return row
 
+# filter out messages from self.
 sdf = sdf[sdf["role"] != role]
+
+# generate reply, stateful=True to keep track of conversation length.
 sdf = sdf.apply(reply, stateful=True)
+
+# filter out rows with no content (reply function can in theory return Nones)
 sdf = sdf[sdf.apply(lambda row: row is not None)]
 
+# set the timestamp.
 sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 
+# publish reply to the output topic.
 sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
