@@ -1,4 +1,4 @@
-# LLM Powered Customer Success Dashboard with Sentiment Analysis
+# LLM-powered customer success dashboard
 
 This template uses Quix and Llama 2 to create a Customer Success Dashboard with Sentiment Analysis.
 
