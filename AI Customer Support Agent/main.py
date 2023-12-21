@@ -19,6 +19,7 @@ from langchain.memory import ConversationTokenBufferMemory
 
 AGENT_ROLE = "agent"
 role = AGENT_ROLE
+chat_id = ""
 
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
@@ -29,30 +30,37 @@ if not Path(model_path).exists():
 else:
     print("Loading model from state...")
 
-llm = LlamaCpp(
-    model_path=model_path,
-    max_tokens=250,
-    top_p=0.95,
-    top_k=150,
-    temperature=0.7,
-    repeat_penalty=1.2,
-    n_ctx=2048,
-    streaming=False
-)
+def chain_init():
+    llm = LlamaCpp(
+        model_path=model_path,
+        max_tokens=250,
+        top_p=0.95,
+        top_k=150,
+        temperature=0.7,
+        repeat_penalty=1.2,
+        n_ctx=2048,
+        streaming=False
+    )
 
-model = Llama2Chat(llm=llm)
+    model = Llama2Chat(llm=llm)
 
-memory = ConversationTokenBufferMemory(
-    llm=llm,
-    max_token_limit=300,
-    ai_prefix= "AGENT",
-    human_prefix= "CUSTOMER",
-    return_messages=True
-)
+    # conversation token buffer memory to hold the conversation context.
+    memory = ConversationTokenBufferMemory(
+        llm=llm,
+        max_token_limit=300,
+        ai_prefix= "AGENT",
+        human_prefix= "CUSTOMER",
+        return_messages=True
+    )
 
-chain = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
+    return ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
 
-app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
+# maintain separate conversation chains for separate conversations (based on the conversation id)
+chains = {}
+
+# initialize the conversation topic as input and output to receive messages from the agent
+# and reply to them.
+app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest", loglevel='DEBUG')
 input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
 
@@ -70,14 +78,21 @@ def agents_init():
 agents = agents_init()
 
 def chat_init():
+    global chat_id
+
+    # conversation id, also used as the Kafka message key.
     chat_id = str(uuid.uuid4())
+
+    # generate customer information randomly.
     agent_id = random.getrandbits(16)
     agent_name = random.choice(agents)
     first_name = agent_name.split(' ')[0]
+    chains[chat_id] = chain_init()
 
     greet = """Hello, welcome to ACME Electronics support, my name is {}. 
                How can I help you today?""".format(first_name)
 
+    # initiate conversation by publishing the first message.
     cfg_builder = QuixKafkaConfigsBuilder()
     cfgs, topics, _ = cfg_builder.get_confluent_client_configs([os.environ["topic"]])
     cfg_builder.create_topics([TopicCreationConfigs(name=topics[0])])
@@ -107,28 +122,42 @@ def chat_init():
 chat_init()
 
 def reply(row: dict):
+    if row["conversation_id"] != chat_id:
+        print(f"WARN: responding to chat {chat_id} belonging to another support agent")
+        if row["conversation_id"] not in chains:
+            chains[row["conversation_id"]]= chain_init()
+
     print("Replying to: {}".format(row["text"]))
     
+    # if the customer ended the conversation, reset conversation memory and initiate a new one.
     if "good bye" in row["text"].lower():
         print("Initializing a new conversation...")
-        memory.clear()
+        del chains[row["conversation_id"]]
         chat_init()
         return
 
     print("Generating response...")
-    msg = chain.run(row["text"])
+    # use the correct langchain to produce the reply based on the conversation id.
+    msg = chains[row["conversation_id"]].run(row["text"])
     print("{}: {}\n".format(role.upper(), msg))
     
     row["role"] = role
     row["text"] = msg
     return row
 
+# filter out messages from self.
 sdf = sdf[sdf["role"] != role]
+
+# generate reply using LLM.
 sdf = sdf.apply(reply, stateful=False)
+
+# filter out rows with no content (reply function can in theory return None)
 sdf = sdf[sdf.apply(lambda row: row is not None)]
 
+# set the timestamp.
 sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 
+# publish reply to the output topic.
 sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
