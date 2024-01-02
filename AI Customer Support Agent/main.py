@@ -4,23 +4,33 @@ import uuid
 import random
 from pathlib import Path
 
+# Import the main Quix Streams module for data processing and transformation:
 from quixstreams import Application
+
+# Import the supplimentary Quix Streams modules for interacting with Kafka: 
 from quixstreams.kafka import Producer
 from quixstreams.platforms.quix import QuixKafkaConfigsBuilder, TopicCreationConfigs
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer, SerializationContext
+# (see https://quix.io/docs/quix-streams/v2-0-latest/api-reference/quixstreams.html for more details)
 
+# Import a Hugging Face utility to download models directly from Hugging Face hub:
 from huggingface_hub import hf_hub_download
 
+# Imports Langchain modules for managing prompts and conversation chains:
 from langchain.llms import LlamaCpp
 from langchain.prompts import load_prompt
 from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
 
+# Create a constant that defines the role of the bot:
 AGENT_ROLE = "agent"
+
+# Set the current role to the role constant:
 role = AGENT_ROLE
 chat_id = ""
 
+# Download the model and save it to the service's state directory if it is not already there:
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
 
@@ -30,42 +40,49 @@ if not Path(model_path).exists():
 else:
     print("Loading model from state...")
 
-def chain_init():
-    llm = LlamaCpp(
-        model_path=model_path,
-        max_tokens=250,
-        top_p=0.95,
-        top_k=150,
-        temperature=0.7,
-        repeat_penalty=1.2,
-        n_ctx=2048,
-        streaming=False
-    )
+# Load the model with the apporiate parameters:
+llm = LlamaCpp(
+    model_path=model_path,
+    max_tokens=250,
+    top_p=0.95,
+    top_k=150,
+    temperature=0.7,
+    repeat_penalty=1.2,
+    n_ctx=2048,
+    streaming=False
+)
 
-    model = Llama2Chat(llm=llm)
+model = Llama2Chat(llm=llm)
 
-    # conversation token buffer memory to hold the conversation context.
-    memory = ConversationTokenBufferMemory(
-        llm=llm,
-        max_token_limit=300,
-        ai_prefix= "AGENT",
-        human_prefix= "CUSTOMER",
-        return_messages=True
-    )
+# Defines how much of the conversation history to give to the model
+# during each exchange (300 tokens, or a little over 300 words)
+# Function automatically prunes the oldest messages from conversation history that fall outside the token range.
+memory = ConversationTokenBufferMemory(
+    llm=llm,
+    max_token_limit=300,
+    ai_prefix= "AGENT",
+    human_prefix= "CUSTOMER",
+    return_messages=True
+)
 
-    return ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
+# Initializes a conversation chain and loads the prompt template from a YAML file 
+# i.e "You are a support agent and need to answer the customer...".
+chain = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
 
-# maintain separate conversation chains for separate conversations (based on the conversation id)
-chains = {}
+# Initializes a Quix Kafka consumer with a consumer group based on the role
+# and configured to read the latest message if no offset was previously registered for the consumer group
+app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 
-# initialize the conversation topic as input and output to receive messages from the agent
-# and reply to them.
-app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest", loglevel='DEBUG')
+# Defines the input and output topics with the relevant deserialization and serialization methods (and get the topic names from enviroiment variables)
+
 input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
 
+# Initialize a streaming dataframe based on the stream of messages from the input topic:
 sdf = app.dataframe(topic=input_topic)
 
+
+# Load a list of possible agent names from a text file:
 def agents_init():
     out = []
 
@@ -77,29 +94,36 @@ def agents_init():
 
 agents = agents_init()
 
+# Initialize the chat conversation with the customer agent
 def chat_init():
-    global chat_id
+    chat_id = str(uuid.uuid4()) # Give the conversation an ID for effective message keying
+    agent_id = random.getrandbits(16) # Give the agent a random ID to display in the dashboard
+    agent_name = random.choice(agents) # Randomly select a name from the list of agent names
+    first_name = agent_name.split(' ')[0] # Extract just the first name for the initial greeting
 
-    # conversation id, also used as the Kafka message key.
-    chat_id = str(uuid.uuid4())
+    # Use a standard greeting rather than an AI generated one to kick off the conversation
+    greet = f"""Hello, welcome to ACME Electronics support, my name is {first_name}. 
+               How can I help you today?"""
 
-    # generate customer information randomly.
-    agent_id = random.getrandbits(16)
-    agent_name = random.choice(agents)
-    first_name = agent_name.split(' ')[0]
-    chains[chat_id] = chain_init()
-
-    greet = """Hello, welcome to ACME Electronics support, my name is {}. 
-               How can I help you today?""".format(first_name)
-
-    # initiate conversation by publishing the first message.
+    # Load the relevant configurations from environment variables
+    ### In Quix Cloud, These variables are already preconfigured with defaults
+    ### When running locally, you need to define 'Quix__Sdk__Token' as an environment variable
+    ### Defining 'Quix__Workspace__Id' is also preferable, but often the workspace ID can be inferred.
     cfg_builder = QuixKafkaConfigsBuilder()
+
+    # Get the input topic name from an environment variable
     cfgs, topics, _ = cfg_builder.get_confluent_client_configs([os.environ["topic"]])
+
+    # Create the topic if it doesn't yet exist
     cfg_builder.create_topics([TopicCreationConfigs(name=topics[0])])
+
+    # Define a serializer for adding the extra headers
     serializer = QuixTimeseriesSerializer()
-    
+
+    # Add the chat_id as an extra header so that we can use to partition the different conversation streams
     headers = {**serializer.extra_headers, "uuid": chat_id}
-    
+
+    # Define a dictionary for the message values
     value = {
         "role": role,
         "text": greet,
@@ -109,6 +133,7 @@ def chat_init():
         "Timestamp": time.time_ns(),
     }
 
+    # Initialize a Kafka Producer using the chat ID as the message key
     with Producer(broker_address=cfgs.pop("bootstrap.servers"), extra_config=cfgs) as producer:
         producer.produce(
             topic=topics[0],
@@ -116,48 +141,43 @@ def chat_init():
             key=chat_id,
             value=serializer(value=value, ctx=SerializationContext(topic=topics[0], headers=headers)),
         )
-    
+
     print("Started chat")
 
 chat_init()
 
+
+# Define a function to reply to the customer's messages
 def reply(row: dict):
-    if row["conversation_id"] != chat_id:
-        print(f"WARN: responding to chat {chat_id} belonging to another support agent")
-        if row["conversation_id"] not in chains:
-            chains[row["conversation_id"]]= chain_init()
+    print(f"Replying to: {row['text']}")
 
-    print("Replying to: {}".format(row["text"]))
-    
-    # if the customer ended the conversation, reset conversation memory and initiate a new one.
-    if "good bye" in row["text"].lower():
-        print("Initializing a new conversation...")
-        del chains[row["conversation_id"]]
-        chat_init()
-        return
+    # The customer bot is primed to say "good bye" if the conversation has lasted too long
+    # message limit defined in "conversation_length" environment variable
+    # The agent looks for this "good bye" so it knows to restart too.
 
-    print("Generating response...")
-    # use the correct langchain to produce the reply based on the conversation id.
-    msg = chains[row["conversation_id"]].run(row["text"])
-    print("{}: {}\n".format(role.upper(), msg))
-    
-    row["role"] = role
-    row["text"] = msg
-    return row
+    # Send the customers response to the conversation chain so that the agent LLM can generate a reply
+    # and store that reply in the msg variable
+    msg = chain.run(row["text"])
 
-# filter out messages from self.
+    print(f"{role.upper()}: {msg}\n")
+
+    # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
+    # containing the agents role and reply 
+
+# Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
+# So that it doesn't reply to its own messages
 sdf = sdf[sdf["role"] != role]
 
-# generate reply using LLM.
+# Trigger the reply function for any new messages(rows) detected in the filtered SDF
 sdf = sdf.apply(reply, stateful=False)
 
-# filter out rows with no content (reply function can in theory return None)
+# Check the SDF again and filter out any empty rows
 sdf = sdf[sdf.apply(lambda row: row is not None)]
 
-# set the timestamp.
+# Update the timestamp column to the current time in nanoseconds
 sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 
-# publish reply to the output topic.
+# Publish the processed SDF to a Kafka topic specified by the output_topic object. 
 sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
