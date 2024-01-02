@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: 057f3e74d664b52f6e2854097a49d7d7fe3b61dc
+    version: ebfa44f8ac9ea4560e00a4587f5724d893c31acf
     resources:
       cpu: {{ ai_customer_cpu }}
       memory: {{ ai_customer_memory }}
@@ -32,7 +32,7 @@ deployments:
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
-    version: 3c8a3d333e016883c634dd86c32e91a76d6b5cc4
+    version: ebfa44f8ac9ea4560e00a4587f5724d893c31acf
     resources:
       cpu: {{ ai_agent_cpu }}
       memory: {{ ai_agent_memory }}
