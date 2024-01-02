@@ -2,7 +2,7 @@ import os
 import time
 import random
 from pathlib import Path
-
+from dotenv import load_dotenv
 from quixstreams import Application, State
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
 
@@ -14,6 +14,13 @@ from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
 
+#### START TEMP ENV VARS ####
+os.environ["conversation_length"] = "15"
+os.environ["topic"] = "test topic"
+#### END TEMP ENV VARS ####
+
+load_dotenv("./env_vars.env")
+
 CUSTOMER_ROLE = "customer"
 
 role = CUSTOMER_ROLE
@@ -21,12 +28,12 @@ customer_id = 0
 customer_name = ""
 chat_maxlen = int(os.environ["conversation_length"]) // 2
 
-model_name = "llama-2-7b-chat.Q4_K_M.gguf"
-model_path = "./state/{}".format(model_name)
+model_name = "mistral-7b-instruct-v0.2.Q4_K_M.gguf"
+model_path = f"./state/{model_name}"
 
 if not Path(model_path).exists():
     print("The model path does not exist in state. Downloading model...")
-    hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
+    hf_hub_download("TheBloke/Mistral-7B-Instruct-v0.2-GGUF", model_name, local_dir="state")
 else:
     print("Loading model from state...")
 
@@ -70,7 +77,10 @@ def chain_init():
         streaming=False
     )
 
-    model = Llama2Chat(llm=llm)
+    model = Llama2Chat(
+        llm=llm,
+        system_message="You are a customer support agent who works for a large electronics retailer called 'ACME electronics'."
+    )
 
     # conversation token buffer memory to hold the conversation context
     memory = ConversationTokenBufferMemory(
