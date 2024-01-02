@@ -2,7 +2,6 @@ import os
 import time
 import random
 from pathlib import Path
-from dotenv import load_dotenv
 from quixstreams import Application, State
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
 
@@ -13,13 +12,6 @@ from langchain.prompts import load_prompt
 from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
-
-#### START TEMP ENV VARS ####
-os.environ["conversation_length"] = "15"
-os.environ["topic"] = "test topic"
-#### END TEMP ENV VARS ####
-
-load_dotenv("./env_vars.env")
 
 CUSTOMER_ROLE = "customer"
 
