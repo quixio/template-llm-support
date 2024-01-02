@@ -5,8 +5,7 @@ partial_variables:
     product: place_holder
     mood: place_holder
 template: >
-    The following transcript represents a conversation between you, a {mood} customer of a large 
-    electronics retailer called 'ACME electronics', and a support agent who you are contacting 
-    to resolve an issue with a defective {product} you purchased. Your goal is try and 
-    understand what your options are for resolving the issue. Please continue the conversation.\n\n
-    Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER:
+  The following transcript represents a conversation between you and a support agent who you are contacting 
+  to resolve an issue with your defective {product}. Your goal is try and 
+  understand what your options are for resolving the issue. Please continue the conversation in a {mood} tone of voice.\n\n
+  Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER:
