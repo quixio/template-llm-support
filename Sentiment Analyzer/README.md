@@ -1,10 +1,6 @@
-# Starter transformation
+# Sentiment Analyzer
 
-[This project](https://github.com/quixio/quix-samples/tree/main/python/transformations/empty-template) is an example of how to transform data on the fly between source and destination.
-
-The default implementation subscribes to data from the source and publishes to the destination as-well-as printing content to console output. 
-
-Modify the Python code to transform your data on the fly.
+Performs sentiment analysis on messages between the customer and the customer support agent.
 
 ## How to run
 
@@ -18,6 +14,7 @@ The code sample uses the following environment variables:
 
 - **input**: Name of the input topic to listen to.
 - **output**: Name of the output topic to write to.
+- **buffer_delay**: Input buffer configuration (timeout and timespan in milliseconds).
 
 ## Contribute
 

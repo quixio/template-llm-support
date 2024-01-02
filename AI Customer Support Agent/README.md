@@ -1,6 +1,6 @@
-# Sample template
+# AI Customer Support Agent
 
-[This project](https://github.com/quixio/quix-samples/tree/main/python/empty) is a template for developing Quix Code Samples with Python.
+This service converses with a customer using LLMs, providing support regarding a defect of an appliance they purchased.
 
 ## How to run
 
@@ -12,13 +12,7 @@ Clicking `Edit code` on the Sample, forks the project to your own Git repo so yo
 
 This code sample uses the following environment variables:
 
-- **VariableName**: {Description of the variable}
-- **input**: {Description of the variable}
-- **output**: {Description of the variable}
-
-## Requirements/prerequisites (optional)
-
-{This will contain any external resource needed to run this sample and the instructions to get them.}
+- **topic**: Kafka topic to publish messages to.
 
 ## Contribute
 

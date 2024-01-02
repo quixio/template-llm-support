@@ -5,6 +5,7 @@ from datetime import timedelta
 import redis
 from redis.commands.json.path import Path
 
+# redis connection
 r = redis.Redis(
   host=os.environ["redis_host"],
   port=int(os.environ["redis_port"]),
@@ -15,10 +16,12 @@ client = qx.QuixStreamingClient()
 topic_consumer = client.get_topic_consumer(topic_id_or_name = os.environ["input"])
 
 def on_stream_recv_handler(sc: qx.StreamConsumer):
+    # prefix key with project id to avoid collisions between projects.
     key = os.environ["Quix__Workspace__Id"] + ":" + sc.stream_id
     
     def on_data_recv_handler(stream_consumer: qx.StreamConsumer, data: qx.TimeseriesData):
         for ts in data.timestamps:
+            # delete conversation from redis when the customer terminates the conversation.
             if "good bye" in ts.parameters["text"].string_value.lower():
                 r.delete(key)
                 print(f"Deleted key {key} from redis")
@@ -43,6 +46,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
                 cached = []
                 print("New key = {}".format(key))
 
+            # store messages in the conversation as a list of json objects
             cached.append(entry)
             r.json().set(key, Path.root_path(), cached)
             r.expire(key, timedelta(minutes=float(os.environ["expire_after"])))

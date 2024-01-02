@@ -9,7 +9,7 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: 62a72bbf61d1420fb25fb6a8993132344eede947
+    version: 057f3e74d664b52f6e2854097a49d7d7fe3b61dc
     resources:
       cpu: {{ ai_customer_cpu }}
       memory: {{ ai_customer_memory }}
@@ -23,7 +23,7 @@ deployments:
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: chat-2
+        value: test-topic
       - name: conversation_length
         inputType: FreeText
         description: Maximum conversation length, after which the conversation resets.
@@ -32,7 +32,7 @@ deployments:
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
-    version: 252d3170e03973d0d9aff4bac177172e845c8b3e
+    version: 3c8a3d333e016883c634dd86c32e91a76d6b5cc4
     resources:
       cpu: {{ ai_agent_cpu }}
       memory: {{ ai_agent_memory }}
@@ -46,11 +46,11 @@ deployments:
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: chat-2
+        value: test-topic
   - name: Sentiment Analyzer
     application: Sentiment Analyzer
     deploymentType: Service
-    version: 70b9e90f917710b1d8e711ec66cd9a1e97681800
+    version: 8f2333b811f63dbcba559ac3425a44000dd44eda
     resources:
       cpu: 2000
       memory: 4000
@@ -61,7 +61,7 @@ deployments:
         inputType: InputTopic
         description: Name of the input topic to listen to.
         required: false
-        value: chat-2
+        value: test-topic
       - name: output
         inputType: OutputTopic
         description: Name of the output topic to write to.
@@ -155,10 +155,24 @@ topics:
       replicationFactor: 2
       retentionInMinutes: 1440
       retentionInBytes: 52428800
-  - name: chat-2
+  - name: chat
     persisted: false
     configuration:
-      partitions: 10
+      partitions: 16
+      replicationFactor: 2
+      retentionInMinutes: 1440
+      retentionInBytes: 52428800
+  - name: ai-chat-history
+    persisted: false
+    configuration:
+      partitions: 16
+      replicationFactor: 2
+      retentionInMinutes: 1440
+      retentionInBytes: 52428800
+  - name: test-topic
+    persisted: false
+    configuration:
+      partitions: 16
       replicationFactor: 2
       retentionInMinutes: 1440
       retentionInBytes: 52428800

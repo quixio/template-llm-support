@@ -57,7 +57,11 @@ def get_list(file: str):
 # Loads a list of possible names, products and moods 
 # from their respective text files for random selection later on
 names = get_list("names.txt")
+
+# update the moods.txt file to affect the tone of the conversation.
 moods = get_list("moods.txt")
+
+# update the products.txt file to add/remove defective appliances.
 products = get_list("products.txt")
 
 # Initialize the chat conversation with the support agent
@@ -117,9 +121,13 @@ sdf = app.dataframe(input_topic)
 
 # Define a function to reply to the agent's messages
 def reply(row: dict, state: State):
-    global chain, customer_id, customer_name
+    global customer_id, customer_name
+
+    if row["conversation_id"] not in chains:
+        chains[row["conversation_id"]] = chain_init()
 
     if not "customer_name" in row:
+        # generate customer information randomly.
         customer_id = random.getrandbits(16)
         customer_name = random.choice(names)
         row["customer_id"] = customer_id
@@ -144,8 +152,9 @@ def reply(row: dict, state: State):
     # End the conversation if it has gone on too long using the chat_maxlen limit defined
     # at the start of the file
     if chatlen >= chat_maxlen:
+        # if the lenth of conversation exceeds the limit, terminate it and dispose the conversation chain.
         print("Maximum conversation length reached, ending conversation...")
-        chain = chain_init()
+        del chains[row["conversation_id"]]
         state.delete(chatlen_key)
 
         # Send a message to the agent with the special termination signal "Good bye"
@@ -178,7 +187,7 @@ sdf = sdf[sdf.apply(lambda row: row is not None)]
 # Update the timestamp column to the current time in nanoseconds
 sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 
-# Send the processed SDF to a Kafka topic specified by the output_topic object.
+# Publish the processed SDF to a Kafka topic specified by the output_topic object.
 sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":

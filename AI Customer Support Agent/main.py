@@ -28,6 +28,7 @@ AGENT_ROLE = "agent"
 
 # Set the current role to the role constant:
 role = AGENT_ROLE
+chat_id = ""
 
 # Download the model and save it to the service's state directory if it is not already there:
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
@@ -73,6 +74,7 @@ chain = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=m
 app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 
 # Defines the input and output topics with the relevant deserialization and serialization methods (and get the topic names from enviroiment variables)
+
 input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
 
@@ -152,13 +154,6 @@ def reply(row: dict):
     # The customer bot is primed to say "good bye" if the conversation has lasted too long
     # message limit defined in "conversation_length" environment variable
     # The agent looks for this "good bye" so it knows to restart too.
-    if "good bye" in row["text"].lower():
-        print("Initializing a new conversation...")
-        memory.clear()
-        chat_init()
-        return
-
-    print("Generating response...")
 
     # Send the customers response to the conversation chain so that the agent LLM can generate a reply
     # and store that reply in the msg variable
@@ -168,9 +163,6 @@ def reply(row: dict):
 
     # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
     # containing the agents role and reply 
-    row["role"] = role
-    row["text"] = msg
-    return row
 
 # Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
 # So that it doesn't reply to its own messages
@@ -185,7 +177,7 @@ sdf = sdf[sdf.apply(lambda row: row is not None)]
 # Update the timestamp column to the current time in nanoseconds
 sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 
-# Send the processed SDF to a Kafka topic specified by the output_topic object. 
+# Publish the processed SDF to a Kafka topic specified by the output_topic object. 
 sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
