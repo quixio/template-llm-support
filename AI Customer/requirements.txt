@@ -1,5 +1,5 @@
 quixstreams==2.1.2a
 langchain==0.0.340
 huggingface_hub==0.19.4
-llama-cpp-python==0.2.19
+llama-cpp-python==0.2.26
 langchain-experimental==0.0.42 
