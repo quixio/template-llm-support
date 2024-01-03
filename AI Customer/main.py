@@ -106,7 +106,8 @@ def chain_init():
 
     return ConversationChain(llm=model, prompt=prompt, memory=memory)
 
-chain = chain_init()
+# hold the conversation chains
+chains = {}
 
 # Initialize a Quix Kafka consumer with a consumer group based on the role
 # and configured to read the latest message if no offset was previously registered for the consumer group
