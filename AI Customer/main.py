@@ -166,7 +166,7 @@ def reply(row: dict, state: State):
     print(f"Replying to: {row['text']}\n")
     
     print("Generating response...\n")
-    msg = chain.run(row["text"])
+    msg = chains[row["conversation_id"]].run(row["text"])
     print(f"{role.upper()}: {msg}\n")
 
     row["text"] = msg
