@@ -60,8 +60,7 @@ model = Llama2Chat(
 
 model = Llama2Chat(llm=llm,
                 system_message=SystemMessage(
-                    content=system_message_content)
-)
+                    content=system_message_content))
 
 # Defines how much of the conversation history to give to the model
 # during each exchange (300 tokens, or a little over 300 words)
