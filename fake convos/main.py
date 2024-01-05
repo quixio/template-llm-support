@@ -20,6 +20,7 @@ stream.timeseries \
     .add_timestamp(datetime.datetime.utcnow()) \
     .add_value("text", "hi i'm Steve") \
     .add_value("conversation_id", "abc123") \
+    .add_value("role", "customer") \
     .publish()
 
 print("Closing stream")
