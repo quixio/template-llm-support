@@ -102,7 +102,7 @@ output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSer
 # Initialize a streaming dataframe based on the stream of messages from the input topic:
 sdf = app.dataframe(input_topic)
 
-# Define a function to reply to the agent's messages
+# Define a function to reply to the messages
 def reply(row: dict, state: State):
     global customer_id, customer_name
 
