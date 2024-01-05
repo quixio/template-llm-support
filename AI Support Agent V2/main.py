@@ -62,6 +62,9 @@ def chain_init():
     # (for variation in sentiment analysis)
     prompt.partial_variables["mood"] = random.choice(moods)
 
+    # randomly select the AI agents name
+    prompt.partial_variables["name"] = random.choice(names)
+
     # For debugging, print the prompt with the populated mood and product variables.
     print("Prompt:\n{}".format(prompt.to_json()))
 
