@@ -15,12 +15,21 @@ topic_producer = client.get_topic_producer(topic_id_or_name = os.environ["output
 # Set stream ID or leave parameters empty to get stream ID generated.
 stream = topic_producer.create_stream()
 
+    #  "role": role,
+    #     "text": greet,
+    #     "agent_id": agent_id,
+    #     "agent_name": agent_name,
+    #     "conversation_id": chat_id,
+    #     "Timestamp": time.time_ns(),
+
 stream.timeseries \
     .buffer \
     .add_timestamp(datetime.datetime.utcnow()) \
     .add_value("text", "hi i'm Steve") \
     .add_value("conversation_id", "abc123") \
     .add_value("role", "customer") \
+    .add_value("customer_name", "James") \
+    .add_value("customer_id", "123456789") \
     .publish()
 
 print("Closing stream")
