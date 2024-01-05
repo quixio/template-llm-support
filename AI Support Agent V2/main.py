@@ -58,10 +58,6 @@ def chain_init():
     # i.e "You are a customer support agent interacting with a customer..."
     prompt = load_prompt("prompt.yaml")
 
-    # randomly select the tone of voice that the AI agent speaks with
-    # (for variation in sentiment analysis)
-    prompt.partial_variables["mood"] = random.choice(moods)
-
     # randomly select the AI agents name
     prompt.partial_variables["name"] = random.choice(names)
 
