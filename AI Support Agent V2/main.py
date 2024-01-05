@@ -103,7 +103,7 @@ output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSer
 sdf = app.dataframe(input_topic)
 
 # Define a function to reply to the messages
-def reply(row: dict, state: State):
+def reply(row: dict):
     global customer_id, customer_name
 
     if row["conversation_id"] not in chains:
@@ -128,7 +128,7 @@ sdf = sdf[sdf["role"] != role]
 
 # Trigger the reply function for any new messages(rows) detected in the filtered SDF
 # while enabling stateful storage (required for tracking conversation length)
-sdf = sdf.apply(reply, stateful=True)
+sdf = sdf.apply(reply)
 
 # Check the SDF again and filter out any empty rows
 sdf = sdf[sdf.apply(lambda row: row is not None)]
