@@ -52,20 +52,15 @@ names = get_list("names.txt")
 # update the moods.txt file to affect the tone of the conversation.
 moods = get_list("moods.txt")
 
-# update the products.txt file to add/remove defective appliances.
-products = get_list("products.txt")
-
 # Initialize the chat conversation with the support agent
 def chain_init():
     # Loads the prompt template from a YAML file 
-    # i.e "You are a customer interacting with a support agent..."
+    # i.e "You are a customer support agent interacting with a customer..."
     prompt = load_prompt("prompt.yaml")
 
-    # randomly select the tone of voice that the customer speaks with
+    # randomly select the tone of voice that the AI agent speaks with
     # (for variation in sentiment analysis)
-    # and the specific product that they are calling about
     prompt.partial_variables["mood"] = random.choice(moods)
-    prompt.partial_variables["product"] = random.choice(products)
 
     # For debugging, print the prompt with the populated mood and product variables.
     print("Prompt:\n{}".format(prompt.to_json()))
