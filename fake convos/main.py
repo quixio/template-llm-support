@@ -22,10 +22,12 @@ stream = topic_producer.create_stream()
     #     "conversation_id": chat_id,
     #     "Timestamp": time.time_ns(),
 
+#Yes it's a smart toilet purchased from the Beyond Insanity bathroom appliances store
+
 stream.timeseries \
     .buffer \
     .add_timestamp(datetime.datetime.utcnow()) \
-    .add_value("text", "Yes it's a smart toilet purchased from the Beyond Insanity bathroom appliances store") \
+    .add_value("text", "Yes I have the invoice. I will email it to you. The problem is, when I flush goldfish and carp, I expect the toilet to cook them to perfection before flushing them to our dining table. Instead they are being flushed to the bedroom closet.") \
     .add_value("conversation_id", "abc123") \
     .add_value("role", "customer") \
     .add_value("customer_name", "James") \
