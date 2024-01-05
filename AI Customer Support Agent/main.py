@@ -54,7 +54,7 @@ llm = LlamaCpp(
 )
 
 system_message_content = ""
-if role == "CUSTOMER":
+if role == "customer":
     system_message_content = "You are a customer of a large electronics retailer called 'ACME electronics' who is trying to resolve an issue with a defective product that you purchased."
 else: 
     system_message_content = ""
