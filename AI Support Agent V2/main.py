@@ -49,9 +49,6 @@ def get_list(file: str):
 # from their respective text files for random selection later on
 names = get_list("names.txt")
 
-# update the moods.txt file to affect the tone of the conversation.
-moods = get_list("moods.txt")
-
 # Initialize the chat conversation with the support agent
 def chain_init():
     # Loads the prompt template from a YAML file 
