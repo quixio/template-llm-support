@@ -109,13 +109,6 @@ def reply(row: dict, state: State):
     if row["conversation_id"] not in chains:
         chains[row["conversation_id"]] = chain_init()
 
-    if not "customer_name" in row:
-        # generate customer information randomly.
-        customer_id = random.getrandbits(16)
-        customer_name = random.choice(names)
-        row["customer_id"] = customer_id
-        row["customer_name"] = customer_name
-
     # Replace previous role with the new role
     row["role"] = role
 
