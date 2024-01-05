@@ -56,7 +56,7 @@ def chain_init():
     prompt = load_prompt("prompt.yaml")
 
     # randomly select the AI agents name
-    #prompt.partial_variables["name"] = random.choice(names)
+    prompt.partial_variables["name"] = random.choice(names)
 
     # For debugging, print the prompt with the populated mood and product variables.
     print("Prompt:\n{}".format(prompt.to_json()))
