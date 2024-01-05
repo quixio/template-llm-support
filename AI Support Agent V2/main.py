@@ -85,8 +85,8 @@ def chain_init():
     memory = ConversationTokenBufferMemory(
         llm=llm,
         max_token_limit=300,
-        ai_prefix= "CUSTOMER",
-        human_prefix= "AGENT",
+        ai_prefix="AGENT",
+        human_prefix="CUSTOMER",
         return_messages=True
     )
 
