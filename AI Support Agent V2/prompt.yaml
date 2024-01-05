@@ -1,9 +1,6 @@
 _type: prompt
 input_variables:
     ["history", "input"]
-partial_variables:
-    product: place_holder
-    mood: place_holder
 template: >
     The following transcript represents a converstation between you, a customer 
     support agent who works for a large electronics retailer called 'ACME electronics', 
