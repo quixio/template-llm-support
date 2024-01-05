@@ -20,11 +20,8 @@ from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
 
-# Create a constant that defines the role of the bot.
-CUSTOMER_ROLE = "customer"
-
-# # Set the current role to the role constant and initialite variables for supplementary customer metadata:
-role = CUSTOMER_ROLE
+# Initialite variables for supplementary customer metadata:
+role = "agent"
 customer_id = 0
 customer_name = ""
 
