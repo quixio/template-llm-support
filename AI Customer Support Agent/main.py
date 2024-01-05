@@ -22,6 +22,7 @@ from langchain.prompts import load_prompt
 from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
+from langchain.schema import SystemMessage
 
 # Create a constant that defines the role of the bot:
 AGENT_ROLE = "agent"
@@ -52,7 +53,12 @@ llm = LlamaCpp(
     streaming=False
 )
 
-model = Llama2Chat(llm=llm)
+system_message_content = "You are a customer of a large electronics retailer called 'ACME electronics' who is trying to resolve an issue with a defective product that you purchased."
+
+model = Llama2Chat(llm=llm,
+                system_message=SystemMessage(
+                    content=system_message_content)
+)
 
 # Defines how much of the conversation history to give to the model
 # during each exchange (300 tokens, or a little over 300 words)
