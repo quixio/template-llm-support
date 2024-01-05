@@ -25,12 +25,6 @@ role = "agent"
 customer_id = 0
 customer_name = ""
 
-# Define the maxiumum number of exchanges so that we can end the conversation if it has gone on too long
-# This maximum is defined in an environment variable
-# The maxium is divided by two because we are only accounting for the
-# customer's side of the conversation
-chat_maxlen = int(os.environ["conversation_length"]) // 2
-
 # Download the model and save it to the service's state directory if it is not already there:
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
@@ -134,32 +128,6 @@ def reply(row: dict, state: State):
     # Replace previous role with the new role
     row["role"] = role
 
-    # create a new key to store the length of the conversation 
-    # as the number of chat messages
-    chatlen_key = "chatlen"
-
-    # If the key doesnt already exist in state, use the Quix state function
-    # to add it (so we can keep track of the number of chat exchanges) 
-    if not state.exists(chatlen_key):
-        state.set(chatlen_key, 0)
-
-    # for debugging, print the current contents of the chatlen_key from state:
-    chatlen = state.get(chatlen_key)
-    print(f"Chat length = {chatlen}")
-    
-    # End the conversation if it has gone on too long using the chat_maxlen limit defined
-    # at the start of the file
-    if chatlen >= chat_maxlen:
-        # if the lenth of conversation exceeds the limit, terminate it and dispose the conversation chain.
-        print("Maximum conversation length reached, ending conversation...")
-        del chains[row["conversation_id"]]
-        state.delete(chatlen_key)
-
-        # Send a message to the agent with the special termination signal "Good bye"
-        # so that the agent knows to "hang up" too
-        row["text"] = "Noted, I think I have enough information. Thank you for your assistance. Good bye!"
-        return row
-
     print(f"Replying to: {row['text']}\n")
     
     print("Generating response...\n")
@@ -167,7 +135,6 @@ def reply(row: dict, state: State):
     print(f"{role.upper()}: {msg}\n")
 
     row["text"] = msg
-    state.set(chatlen_key, chatlen + 1)
 
     return row
 
