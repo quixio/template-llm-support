@@ -53,7 +53,11 @@ llm = LlamaCpp(
     streaming=False
 )
 
-system_message_content = "You are a customer of a large electronics retailer called 'ACME electronics' who is trying to resolve an issue with a defective product that you purchased."
+system_message_content = ""
+if role == "CUSTOMER":
+    system_message_content = "You are a customer of a large electronics retailer called 'ACME electronics' who is trying to resolve an issue with a defective product that you purchased."
+else: 
+    system_message_content = ""
 
 model = Llama2Chat(llm=llm,
                 system_message=SystemMessage(
