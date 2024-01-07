@@ -56,7 +56,7 @@ llm = LlamaCpp(
 
 model = Llama2Chat(
     llm=llm,
-    system_message=SystemMessage(content="You are a customer of a large electronics retailer called 'ACME electronics' who is trying to resolve an issue with a defective product that you purchased.")
+    system_message=SystemMessage(content="You are a customer support agent for a large electronics retailer called 'ACME electronics'."))
 )
 
 # Defines how much of the conversation history to give to the model
