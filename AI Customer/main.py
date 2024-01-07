@@ -95,7 +95,7 @@ def chain_init():
 
     model = Llama2Chat(
         llm=llm,
-        system_message=SystemMessage(content="You are a customer support agent for a large electronics retailer called 'ACME electronics'."))
+        system_message=SystemMessage(content="You are a customer of a large electronics retailer called 'ACME electronics' who is trying to resolve an issue with a defective product that you purchased."))
 
     # Defines how much of the conversation history to give to the model
     # during each exchange (300 tokens, or a little over 300 words)
