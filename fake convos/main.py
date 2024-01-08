@@ -27,7 +27,7 @@ stream = topic_producer.create_stream()
 stream.timeseries \
     .buffer \
     .add_timestamp(datetime.datetime.utcnow()) \
-    .add_value("text", "Hello I am Steve") \
+    .add_value("text", "Hello I am Steve and I am extremely angry about my dishwasher!") \
     .add_value("conversation_id", "abc123") \
     .add_value("role", "customer") \
     .add_value("customer_name", "James") \
