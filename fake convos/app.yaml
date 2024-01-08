@@ -4,7 +4,7 @@ variables:
   - name: output
     inputType: OutputTopic
     description: This is the output topic for hello world data
-    defaultValue: chat
+    defaultValue: ai-chat-history
     required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py
