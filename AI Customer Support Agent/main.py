@@ -73,7 +73,7 @@ memory = ConversationTokenBufferMemory(
 # i.e "You are a support agent and need to answer the customer...".
 chain = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
 
-print(f"Prompt={chain.prompt}")
+print(f"Prompt={chain.prompt}, \nParameters={prompt.parameters}")
 
 
 # Initializes a Quix Kafka consumer with a consumer group based on the role
