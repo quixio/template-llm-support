@@ -2,6 +2,7 @@ import os
 import time
 import uuid
 import random
+import re
 from pathlib import Path
 
 # Import the main Quix Streams module for data processing and transformation:
@@ -22,6 +23,7 @@ from langchain.prompts import load_prompt
 from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
+from langchain.schema import SystemMessage
 
 # Create a constant that defines the role of the bot:
 AGENT_ROLE = "agent"
@@ -32,7 +34,7 @@ chat_id = ""
 
 # Download the model and save it to the service's state directory if it is not already there:
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
-model_path = "./state/{}".format(model_name)
+model_path = f"./state/{model_name}"
 
 if not Path(model_path).exists():
     print("The model path does not exist in state. Downloading model...")
@@ -52,7 +54,10 @@ llm = LlamaCpp(
     streaming=False
 )
 
-model = Llama2Chat(llm=llm)
+model = Llama2Chat(
+    llm=llm,
+    system_message=SystemMessage(content="You are a customer support agent for a large electronics retailer called 'ACME electronics'."))
+)
 
 # Defines how much of the conversation history to give to the model
 # during each exchange (300 tokens, or a little over 300 words)
@@ -147,6 +152,12 @@ def chat_init():
 chat_init()
 
 
+# Detect and remove any common text issues from the models response
+def clean_text(msg):
+    msg = re.sub(r'^[^:]+: ', '', msg)  # Remove annoying extra "User:" prefixes that sometimes sneak in.
+    msg = msg.strip('"')  # Strip out any speech marks that the LLM tends to add.
+    return msg
+
 # Define a function to reply to the customer's messages
 def reply(row: dict):
     print(f"Replying to: {row['text']}")
@@ -158,7 +169,7 @@ def reply(row: dict):
     # Send the customers response to the conversation chain so that the agent LLM can generate a reply
     # and store that reply in the msg variable
     msg = chain.run(row["text"])
-
+    msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
     print(f"{role.upper()}: {msg}\n")
 
     # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
