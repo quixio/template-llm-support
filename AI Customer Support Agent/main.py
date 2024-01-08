@@ -73,6 +73,9 @@ memory = ConversationTokenBufferMemory(
 # i.e "You are a support agent and need to answer the customer...".
 chain = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
 
+print(f"Prompt={chain.prompt}")
+
+
 # Initializes a Quix Kafka consumer with a consumer group based on the role
 # and configured to read the latest message if no offset was previously registered for the consumer group
 app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
