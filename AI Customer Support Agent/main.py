@@ -81,7 +81,7 @@ print("--------------------------------------------")
 
 # Initializes a Quix Kafka consumer with a consumer group based on the role
 # and configured to read the latest message if no offset was previously registered for the consumer group
-app = Application.Quix("transformation-v11-"+role, auto_offset_reset="latest")
+app = Application.Quix("transformation-v12-"+role, auto_offset_reset="latest")
 
 # Defines the input and output topics with the relevant deserialization and serialization methods (and get the topic names from enviroiment variables)
 
@@ -185,7 +185,7 @@ def reply(row: dict):
 
 
 #sdf = sdf.apply(lambda row: print(row))
-sdf = sdf.apply(lambda row: print("Row received"))
+#sdf = sdf.apply(lambda row: print("Row received"))
 
 # Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
 # So that it doesn't reply to its own messages
