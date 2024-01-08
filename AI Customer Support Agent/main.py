@@ -2,6 +2,7 @@ import os
 import time
 import uuid
 import random
+import re
 from pathlib import Path
 
 # Import the main Quix Streams module for data processing and transformation:
@@ -33,7 +34,7 @@ chat_id = ""
 
 # Download the model and save it to the service's state directory if it is not already there:
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
-model_path = "./state/{}".format(model_name)
+model_path = f"./state/{model_name}"
 
 if not Path(model_path).exists():
     print("The model path does not exist in state. Downloading model...")
@@ -72,6 +73,11 @@ memory = ConversationTokenBufferMemory(
 # Initializes a conversation chain and loads the prompt template from a YAML file 
 # i.e "You are a support agent and need to answer the customer...".
 chain = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
+
+print("--------------------------------------------")
+print(f"Prompt={chain.prompt}")
+print("--------------------------------------------")
+
 
 # Initializes a Quix Kafka consumer with a consumer group based on the role
 # and configured to read the latest message if no offset was previously registered for the consumer group
@@ -147,9 +153,18 @@ def chat_init():
         )
 
     print("Started chat")
+    print("--------------------------------------------")
+    print(value)
+    print("--------------------------------------------")
 
 chat_init()
 
+
+# Detect and remove any common text issues from the models response
+def clean_text(msg):
+    msg = re.sub(r'^[^:]+: ', '', msg)  # Remove annoying extra "User:" prefixes that sometimes sneak in.
+    msg = msg.strip('"')  # Strip out any speech marks that the LLM tends to add.
+    return msg
 
 # Define a function to reply to the customer's messages
 def reply(row: dict):
@@ -162,11 +177,14 @@ def reply(row: dict):
     # Send the customers response to the conversation chain so that the agent LLM can generate a reply
     # and store that reply in the msg variable
     msg = chain.run(row["text"])
-
+    msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
     print(f"{role.upper()}: {msg}\n")
 
     # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
     # containing the agents role and reply 
+
+
+sdf = sdf.apply(lambda row: print(row))
 
 # Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
 # So that it doesn't reply to its own messages
