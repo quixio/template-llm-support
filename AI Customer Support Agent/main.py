@@ -182,6 +182,9 @@ def reply(row: dict):
     # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
     # containing the agents role and reply 
 
+
+sdf = sdf.apply(lambda row: print(row))
+
 # Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
 # So that it doesn't reply to its own messages
 sdf = sdf[sdf["role"] != role]
