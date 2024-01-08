@@ -148,7 +148,7 @@ deployments:
   - name: AI Support Agent V2
     application: AI Support Agent V2
     deploymentType: Service
-    version: aa3598037da2ab67cfd53b17b71895316f1bd28e
+    version: d72a87e0d6f5213a93cf10489597345e0163c8e9
     resources:
       cpu: 8000
       memory: 16384
