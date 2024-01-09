@@ -126,7 +126,7 @@ deployments:
     resources:
       cpu: 5000
       memory: 15000
-      replicas: 5
+      replicas: 1
     desiredStatus: Stopped
     variables:
       - name: topic
