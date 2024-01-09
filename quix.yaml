@@ -29,24 +29,6 @@ deployments:
         description: Maximum conversation length, after which the conversation resets.
         required: true
         value: 15
-  - name: AI Support Agent
-    application: AI Customer Support Agent
-    deploymentType: Service
-    version: d16cf0d605b20c599467131201a20052c8801331
-    resources:
-      cpu: {{ ai_agent_cpu }}
-      memory: {{ ai_agent_memory }}
-      replicas: {{ ai_agent_replicas }}
-    state:
-      enabled: true
-      size: {{ ai_agent_state_size }}
-    desiredStatus: Running
-    variables:
-      - name: topic
-        inputType: OutputTopic
-        description: This is the output topic to write data to
-        required: true
-        value: ai-chat-history
   - name: Sentiment Analyzer
     application: Sentiment Analyzer
     deploymentType: Service
