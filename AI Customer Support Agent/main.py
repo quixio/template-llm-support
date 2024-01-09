@@ -183,9 +183,12 @@ def reply(row: dict):
     msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
     print(f"{role.upper()} replying with: {msg}\n")
 
+    row["role"] = role
+    row["text"] = msg
+
     # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
     # containing the agents role and reply 
-
+    return row
 
 # sdf = sdf.apply(lambda row: print(row))
 
