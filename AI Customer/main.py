@@ -90,7 +90,7 @@ def chain_init():
         temperature=0.7,
         repeat_penalty=1.2,
         n_ctx=2048,
-        streaming=False
+        streaming=True
     )
 
     model = Llama2Chat(
