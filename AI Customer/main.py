@@ -195,15 +195,26 @@ sdf = sdf.update(lambda row: print(row))
 # So that it doesn't reply to its own messages
 sdf = sdf[sdf["role"] != role]
 
+sdf = sdf.update(lambda row: print(f"1:: {row['role']}"))
+
+
 # Trigger the reply function for any new messages(rows) detected in the filtered SDF
 # while enabling stateful storage (required for tracking conversation length)
 sdf = sdf.apply(reply, stateful=True)
 
+sdf = sdf.update(lambda row: print(f"2::"))
+
+
 # Check the SDF again and filter out any empty rows
 sdf = sdf[sdf.apply(lambda row: row is not None)]
 
+sdf = sdf.update(lambda row: print(f"3::"))
+
 # Update the timestamp column to the current time in nanoseconds
 sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
+
+sdf = sdf.update(lambda row: print(f"4:: {sdf['Timestamp']}"))
+
 
 # Publish the processed SDF to a Kafka topic specified by the output_topic object.
 sdf = sdf.to_topic(output_topic)
