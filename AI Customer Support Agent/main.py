@@ -167,7 +167,11 @@ def clean_text(msg):
 
 # Define a function to reply to the customer's messages
 def reply(row: dict):
-    print(f"Replying to: {row['text']}")
+    print("-------------------------------")
+    print("Received:")
+    print(row)
+    print("-------------------------------")
+    print("Thinking about the reply...")
 
     # The customer bot is primed to say "good bye" if the conversation has lasted too long
     # message limit defined in "conversation_length" environment variable
@@ -177,7 +181,7 @@ def reply(row: dict):
     # and store that reply in the msg variable
     msg = chain.run(row["text"])
     msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
-    print(f"{role.upper()}: {msg}\n")
+    print(f"{role.upper()} replying with: {msg}\n")
 
     # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
     # containing the agents role and reply 
