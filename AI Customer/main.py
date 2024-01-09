@@ -213,7 +213,7 @@ sdf = sdf.update(lambda row: print(f"3::"))
 # Update the timestamp column to the current time in nanoseconds
 sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 
-sdf = sdf.update(lambda row: print(f"4:: {sdf['Timestamp']}"))
+sdf = sdf.update(lambda row: print(f"4:: {row['Timestamp']}"))
 
 
 # Publish the processed SDF to a Kafka topic specified by the output_topic object.
