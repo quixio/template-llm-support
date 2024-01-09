@@ -171,7 +171,7 @@ def reply(row: dict):
     print("Received:")
     print(row)
     print("-------------------------------")
-    print("Replying...")
+    print("Thinking about the reply...")
 
     # The customer bot is primed to say "good bye" if the conversation has lasted too long
     # message limit defined in "conversation_length" environment variable
