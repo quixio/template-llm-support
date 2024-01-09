@@ -17,7 +17,7 @@ deployments:
     state:
       enabled: true
       size: {{ ai_customer_state_size }}
-    desiredStatus: Running
+    desiredStatus: Stopped
     variables:
       - name: topic
         inputType: OutputTopic
