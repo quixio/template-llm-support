@@ -24,6 +24,29 @@ stream = topic_producer.create_stream()
 
 #Yes it's a smart toilet purchased from the Beyond Insanity bathroom appliances store
 
+## customer
+
+# stream.timeseries \
+#     .buffer \
+#     .add_timestamp(datetime.datetime.utcnow()) \
+#     .add_value("text", "Hi I'm Steve, I have a problem with my air conditioning that im very frustrated about") \
+#     .add_value("conversation_id", "abc123") \
+#     .add_value("role", "customer") \
+#     .add_value("customer_name", "James") \
+#     .add_value("customer_id", "123456789") \
+#     .publish()
+
+
+## agent
+    # Define a dictionary for the message values
+value = {
+        "role": role,
+        "text": greet,
+        "agent_id": agent_id,
+        "agent_name": agent_name,
+        "conversation_id": chat_id,
+        "Timestamp": time.time_ns(),
+    }
 stream.timeseries \
     .buffer \
     .add_timestamp(datetime.datetime.utcnow()) \
@@ -33,6 +56,9 @@ stream.timeseries \
     .add_value("customer_name", "James") \
     .add_value("customer_id", "123456789") \
     .publish()
+
+
+
 
 print("Closing stream")
 stream.close()
