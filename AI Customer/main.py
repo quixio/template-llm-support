@@ -183,9 +183,7 @@ def reply(row: dict, state: State):
     print(f"Replying to: {row['text']}\n")
     
     print("Generating response...\n")
-    #msg = chains[row["conversation_id"]].run(row["text"])
-
-    msg = "JUST FIX MY MICROWAVE!"
+    msg = chains[row["conversation_id"]].run(row["text"])
     msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
     print(f"{role.upper()}: {msg}\n")
 
