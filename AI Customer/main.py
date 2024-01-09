@@ -134,8 +134,12 @@ def clean_text(msg):
 def reply(row: dict, state: State):
     global customer_id, customer_name
 
+    print("a")
+
     if row["conversation_id"] not in chains:
         chains[row["conversation_id"]] = chain_init()
+    
+    print("b")
 
     if not "customer_name" in row:
         # generate customer information randomly.
@@ -144,25 +148,41 @@ def reply(row: dict, state: State):
         row["customer_id"] = customer_id
         row["customer_name"] = customer_name
 
+    print("c")
+
     # Replace previous role with the new role
     row["role"] = role
+
+    print("d")
+
 
     # create a new key to store the length of the conversation 
     # as the number of chat messages
     chatlen_key = "chatlen"
+
+    print("e")
+
 
     # If the key doesnt already exist in state, use the Quix state function
     # to add it (so we can keep track of the number of chat exchanges) 
     if not state.exists(chatlen_key):
         state.set(chatlen_key, 0)
 
+    print("f")
+
+
     # for debugging, print the current contents of the chatlen_key from state:
     chatlen = state.get(chatlen_key)
     print(f"Chat length = {chatlen}")
     
+    print("g")
+
+
     # End the conversation if it has gone on too long using the chat_maxlen limit defined
     # at the start of the file
     if chatlen >= chat_maxlen:
+        print("g.1.")
+
         # if the lenth of conversation exceeds the limit, terminate it and dispose the conversation chain.
         print("Maximum conversation length reached, ending conversation...")
         del chains[row["conversation_id"]]
@@ -173,6 +193,8 @@ def reply(row: dict, state: State):
         row["text"] = "Noted, I think I have enough information. Thank you for your assistance. Good bye!"
         return row
 
+    print("h")
+
     print(f"Replying to: {row['text']}\n")
     
     print("Generating response...\n")
@@ -180,8 +202,18 @@ def reply(row: dict, state: State):
     msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
     print(f"{role.upper()}: {msg}\n")
 
+    print("i")
+
+
     row["text"] = msg
+
+    print("j")
+
+
     state.set(chatlen_key, chatlen + 1)
+
+    print("k")
+
 
     return row
 
