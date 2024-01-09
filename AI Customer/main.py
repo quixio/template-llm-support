@@ -134,6 +134,13 @@ def clean_text(msg):
 def reply(row: dict, state: State):
     global customer_id, customer_name
 
+    print("Processing reply")
+    print(f"Received a reply: {row['text']}")
+    print("------------------------------------------------")
+    print("Received row data is:")
+    print(row)
+    print("------------------------------------------------")
+
     if row["conversation_id"] not in chains:
         chains[row["conversation_id"]] = chain_init()
 
