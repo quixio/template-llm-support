@@ -6,29 +6,6 @@ metadata:
 
 # This section describes the Deployments of the data pipeline
 deployments:
-  - name: AI Customer
-    application: AI Customer
-    deploymentType: Service
-    version: b365efdf1f13ec2183f12e9e094dd76d139df6ac
-    resources:
-      cpu: {{ ai_customer_cpu }}
-      memory: {{ ai_customer_memory }}
-      replicas: {{ ai_customer_replicas }}
-    state:
-      enabled: true
-      size: {{ ai_customer_state_size }}
-    desiredStatus: Running
-    variables:
-      - name: topic
-        inputType: OutputTopic
-        description: This is the output topic to write data to
-        required: true
-        value: test-topic
-      - name: conversation_length
-        inputType: FreeText
-        description: Maximum conversation length, after which the conversation resets.
-        required: true
-        value: 15
   - name: Sentiment Analyzer
     application: Sentiment Analyzer
     deploymentType: Service
