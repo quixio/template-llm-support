@@ -84,7 +84,7 @@ def chain_init():
     # Load the model with the apporiate parameters
     llm = LlamaCpp(
         model_path=model_path,
-        max_tokens=250,
+        max_tokens=50,
         top_p=0.95,
         top_k=150,
         temperature=0.7,
@@ -102,7 +102,7 @@ def chain_init():
     # Function automatically prunes the oldest messages from conversation history that fall outside the token range.
     memory = ConversationTokenBufferMemory(
         llm=llm,
-        max_token_limit=300,
+        max_token_limit=50,
         ai_prefix= "CUSTOMER",
         human_prefix= "AGENT",
         return_messages=True
