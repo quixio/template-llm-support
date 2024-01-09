@@ -104,6 +104,21 @@ deployments:
         description: Custom style sheet for Streamlit.
         required: false
         value: style.css
+  - name: AI Support Agent
+    application: AI Customer Support Agent
+    deploymentType: Service
+    version: 4b64ddbbb87488965b07987322f5019c7195d1e3
+    resources:
+      cpu: 5000
+      memory: 15000
+      replicas: 1
+    desiredStatus: Running
+    variables:
+      - name: topic
+        inputType: OutputTopic
+        description: This is the output topic to write data to
+        required: true
+        value: test-topic
 
 # This section describes the Topics of the data pipeline
 topics:
