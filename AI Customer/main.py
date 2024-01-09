@@ -187,7 +187,7 @@ def reply(row: dict, state: State):
 
 
 
-sdf = sdf.update(lambda row: print(row))
+sdf = sdf.update(lambda row: print(f"0:: {row}"))
 
 
 
