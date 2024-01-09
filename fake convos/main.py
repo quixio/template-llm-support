@@ -38,23 +38,22 @@ stream = topic_producer.create_stream()
 
 
 ## agent
-    # Define a dictionary for the message values
-value = {
-        "role": role,
-        "text": greet,
-        "agent_id": agent_id,
-        "agent_name": agent_name,
-        "conversation_id": chat_id,
-        "Timestamp": time.time_ns(),
-    }
+# value = {
+#         "role": role,
+#         "text": greet,
+#         "agent_id": agent_id,
+#         "agent_name": agent_name,
+#         "conversation_id": chat_id,
+#         "Timestamp": time.time_ns(),
+#     }
 stream.timeseries \
     .buffer \
     .add_timestamp(datetime.datetime.utcnow()) \
     .add_value("text", "Hi Im Steve, your friendly ACME customer support agent, how may I serve you on this fine day?") \
-    .add_value("conversation_id", "abc123") \
-    .add_value("role", "customer") \
-    .add_value("customer_name", "James") \
-    .add_value("customer_id", "123456789") \
+    .add_value("conversation_id", "FOO_112") \
+    .add_value("role", "agent") \
+    .add_value("agent_name", "Steve") \
+    .add_value("agent_id", "999") \
     .publish()
 
 
