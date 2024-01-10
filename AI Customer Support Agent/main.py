@@ -89,6 +89,10 @@ print("--------------------------------------------")
 # Initializes a Quix Kafka consumer with a consumer group based on the role
 # and configured to read the latest message if no offset was previously registered for the consumer group
 app = Application.Quix("transformation-v15-"+role, auto_offset_reset="latest")
+foo_val = app._state_manager.stores.get("foo")
+print("_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-")
+print(foo_val)
+print("_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-")
 
 # Defines the input and output topics with the relevant deserialization and serialization methods (and get the topic names from enviroiment variables)
 
@@ -117,6 +121,36 @@ def chat_init():
     print("======================================")
     print(f"Generated CHAT_ID = {chat_id}")
     print("======================================")
+
+
+
+    print("==========================")
+    # REPLICA STATE HERE
+    # this is the first place we can access state.
+    # in v0.5.x we could use state almost anywhere
+
+    # get the value from state for this replica_id (if its there, if not default to "")
+    print(f"Getting {replica_id} from state")
+
+    state_rc_data = state.get(replica_id, "")
+    print(f"state is {state_rc_data}")
+
+    if state_rc_data == "":
+        print(f"Setting replica_id {replica_id} to {chat_id}")
+        state.set(replica_id, chat_id)
+    else:
+        # if the state for this replica does not hold the chat ID were currently handling:
+        if state_rc_data != chat_id:
+            print(f"{state_rc_data} IS NOT {chat_id}. Returning recieved row.")
+
+            # return without trying to add anything to the row
+            return {}
+        # else, handle the convo and reply with a message
+
+    print("==========================")
+
+
+
 
     agent_id = random.getrandbits(16) # Give the agent a random ID to display in the dashboard
     agent_name = random.choice(agents) # Randomly select a name from the list of agent names
