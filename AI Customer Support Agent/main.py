@@ -165,8 +165,11 @@ chat_init()
 
 # Detect and remove any common text issues from the models response
 def clean_text(msg):
-    msg = re.sub(r'^[^:]+: ', '', msg)  # Remove annoying extra "User:" prefixes that sometimes sneak in.
-    msg = msg.strip('"')  # Strip out any speech marks that the LLM tends to add.
+    print("Cleaning message...")
+    print(f"BEFORE:\n{msg}")
+    msg = re.sub(r'^.*?: ', '', msg, 1)  # Removing any extra "meta commentary" that the LLM sometime adds, followed by a colon.
+    msg = re.sub(r'"', '', msg)  # Strip out any speech marks that the LLM tends to add.
+    print(f"AFTER:\n{msg}")
     return msg
 
 # Define a function to reply to the customer's messages
