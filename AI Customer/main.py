@@ -107,7 +107,6 @@ model = Llama2Chat(
     system_message=SystemMessage(content="You are a customer of a large electronics retailer called 'ACME electronics' who is trying to resolve an issue with a defective product that you purchased."))
 
 
-
 # hold the conversation chains
 chains = {}
 
@@ -212,9 +211,7 @@ def reply(row: dict, state: State):
     row["text"] = msg
     state.set(chatlen_key, chatlen + 1)
 
-    print("Persisting conversation to state...")
-    print(conversation.to_json())
-    state.set("conversation", conversation.to_json())
+    print("Persisting conversation to state in a pickle file...")
 
     with open(pickle_file_path, "wb") as f:
         pickle.dump(conversation.memory, f)
