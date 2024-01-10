@@ -45,12 +45,12 @@ customer_name = ""
 chat_maxlen = int(os.environ["conversation_length"]) // 2
 
 # Download the model and save it to the service's state directory if it is not already there:
-model_name = "llama-2-7b-chat.Q4_K_M.gguf"
+model_name = "llama-2-7b-chat.Q2_K.gguf"
 model_path = f"./state/{model_name}"
 
 if not Path(model_path).exists():
     print("The model path does not exist in state. Downloading model...")
-    hf_hub_download("vikash06/llama-2-7b-small-model", model_name, local_dir="state")
+    hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
 else:
     print("Loading model from state...")
 
