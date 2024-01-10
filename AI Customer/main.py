@@ -151,8 +151,6 @@ def reply(row: dict, state: State):
             return_messages=True
         )
 
-    if converstaion_state is not None:
-        memory.
 
     conversation = ConversationChain(llm=model, prompt=prompt, memory=memory)
 
@@ -201,6 +199,8 @@ def reply(row: dict, state: State):
 
     row["text"] = msg
     state.set(chatlen_key, chatlen + 1)
+
+    print(chains[row["conversation_id"]])
 
     return row
 
