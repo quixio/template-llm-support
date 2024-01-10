@@ -199,7 +199,7 @@ def reply(row: dict, state: State):
     row["text"] = msg
     state.set(chatlen_key, chatlen + 1)
 
-    print(chains[row["conversation_id"]])
+    print(conversation.to_json())
 
     return row
 
