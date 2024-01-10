@@ -29,6 +29,9 @@ CUSTOMER_ROLE = "customer"
 # REPLICA STATE HERE
 # generate a random ID for this replica (this deployment of the code)
 replica_id = str(uuid.uuid4())
+print("==========================")
+print(f"RECPLICA_ID={replica_id}")
+print("==========================")
 
 # Set the current role to the role constant and initialite variables for supplementary customer metadata:
 role = CUSTOMER_ROLE
@@ -157,16 +160,22 @@ def reply(row: dict, state: State):
     chat_id = row["conversation_id"]
 
     # get the value from state for this replica_id (if its there, if not default to "")
+    print("==========================")
+    print(f"Getting state for {replica_id}")
     state_rc_data = state.get(replica_id, "")
+    print(f"State is [{state_rc_data}]")
     if state_rc_data == "":
+        print(f"Setting {replica_id} to {chat_id}")
         state.set(replica_id, chat_id)
     else:
         # if the state for this replica does not hold the chat ID were currently handling:
         if state_rc_data != chat_id:
+            print(f"{state_rc_data} IS NOT {chat_id}. Returning received row")
             # return without trying to add anything to the row
             return row
         # else, handle the convo normally and reply with a message
 
+    print("==========================")
 
 
     if row["conversation_id"] not in chains:
