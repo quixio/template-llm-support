@@ -11,6 +11,8 @@ r = redis.Redis(
   password=os.environ["redis_pwd"]
 )
 
+#r.delete()
+
 client = qx.QuixStreamingClient()
 topic_consumer = client.get_topic_consumer(topic_id_or_name = os.environ["input"])
 
