@@ -123,7 +123,7 @@ chains = {}
 
 # Initialize a Quix Kafka consumer with a consumer group based on the role
 # and configured to read the latest message if no offset was previously registered for the consumer group
-app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
+app = Application.Quix("transformation-v15-"+role, auto_offset_reset="latest")
 
 # Define the input and output topics with the relevant deserialization and serialization methods
 input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
