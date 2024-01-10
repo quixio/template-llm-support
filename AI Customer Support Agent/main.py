@@ -114,6 +114,10 @@ agents = agents_init()
 # Initialize the chat conversation with the customer agent
 def chat_init():
     chat_id = str(uuid.uuid4()) # Give the conversation an ID for effective message keying
+    print("======================================")
+    print(f"Generated CHAT_ID = {chat_id}")
+    print("======================================")
+
     agent_id = random.getrandbits(16) # Give the agent a random ID to display in the dashboard
     agent_name = random.choice(agents) # Randomly select a name from the list of agent names
     first_name = agent_name.split(' ')[0] # Extract just the first name for the initial greeting
