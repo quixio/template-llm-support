@@ -172,7 +172,7 @@ def reply(row: dict, state: State):
         if state_rc_data != chat_id:
             print(f"{state_rc_data} IS NOT {chat_id}. Returning received row")
             # return without trying to add anything to the row
-            return row
+            return {}
         # else, handle the convo normally and reply with a message
 
     print("==========================")
