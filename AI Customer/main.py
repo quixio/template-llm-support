@@ -149,7 +149,7 @@ def reply(row: dict, state: State):
             human_prefix= "AGENT",
             return_messages=True
         )
-
+    memory.
     conversation = ConversationChain(llm=model, prompt=prompt, memory=memory)
 
     if not "customer_name" in row:
