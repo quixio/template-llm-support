@@ -142,17 +142,19 @@ def reply(row: dict, state: State):
     print("------------------------------------------------")
 
     pickle_file_path = "./state/convo.pkl"
-
+    loaded_data = None
     # conversation_state = state.get("conversation", None)
     if os.path.exists(pickle_file_path):
+        print("Loading conversation from pickle file")
+
         with open(pickle_file_path, 'rb') as f:
             loaded_data = pickle.load(f)
     else:
         print("No conversation pickle file exists")
 
     # use convo state from mem, or create a new one
-    if conversation_state != None:
-        memory = conversation_state
+    if loaded_data != None:
+        memory = loaded_data
     else:
         memory = ConversationTokenBufferMemory(
                 llm=llm,
