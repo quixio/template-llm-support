@@ -1,6 +1,7 @@
 import os
 import time
 import random
+import uuid
 import re
 from pathlib import Path
 
@@ -25,7 +26,11 @@ from langchain.schema import SystemMessage
 # Create a constant that defines the role of the bot.
 CUSTOMER_ROLE = "customer"
 
-# # Set the current role to the role constant and initialite variables for supplementary customer metadata:
+# REPLICA STATE HERE
+# generate a random ID for this replica (this deployment of the code)
+replica_id = str(uuid.uuid4())
+
+# Set the current role to the role constant and initialite variables for supplementary customer metadata:
 role = CUSTOMER_ROLE
 customer_id = 0
 customer_name = ""
@@ -143,6 +148,26 @@ def reply(row: dict, state: State):
     print("Received row data is:")
     print(row)
     print("------------------------------------------------")
+
+    # REPLICA STATE HERE
+    # this is the first place we can access state.
+    # in v0.5.x we could use state almost anywhere
+
+    # get the conversation id (chat id) sent by the agent
+    chat_id = row["conversation_id"]
+
+    # get the value from state for this replica_id (if its there, if not default to "")
+    state_rc_data = state.get(replica_id, "")
+    if state_rc_data == "":
+        state.set(replica_id, chat_id)
+    else:
+        # if the state for this replica does not hold the chat ID were currently handling:
+        if state_rc_data != chat_id:
+            # return without trying to add anything to the row
+            return row
+        # else, handle the convo normally and reply with a message
+
+
 
     if row["conversation_id"] not in chains:
         chains[row["conversation_id"]] = chain_init()
