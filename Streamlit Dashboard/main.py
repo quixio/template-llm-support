@@ -12,6 +12,8 @@ r = redis.Redis(
   password=os.environ["redis_pwd"]
 )
 
+r.flushdb()
+
 # redis keys for conversations are namespaced using project id to avoid collisions
 # between conversations from different projects
 key_prefix = os.environ["Quix__Workspace__Id"] + ":"
