@@ -143,19 +143,16 @@ def reply(row: dict, state: State):
 
     converstaion_state = state.get("conversation", None)
 
-    if converstaion_state is None:
-        # Defines how much of the conversation history to give to the model
-        # during each exchange (300 tokens, or a little over 300 words)
-        # Function automatically prunes the oldest messages from conversation history that fall outside the token range.
-        memory = ConversationTokenBufferMemory(
+    memory = ConversationTokenBufferMemory(
             llm=llm,
             max_token_limit=50,
             ai_prefix= "CUSTOMER",
             human_prefix= "AGENT",
             return_messages=True
         )
-    else:
-        memory = BaseChatMessageHistory
+
+    if converstaion_state is not None:
+        memory.
 
     conversation = ConversationChain(llm=model, prompt=prompt, memory=memory)
 
