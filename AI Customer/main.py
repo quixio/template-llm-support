@@ -20,7 +20,7 @@ from langchain.llms import LlamaCpp
 from langchain.prompts import load_prompt
 from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
-from langchain.memory import ConversationTokenBufferMemory
+from langchain.memory import ConversationTokenBufferMemory, BaseChatMessageHistory
 from langchain.schema import SystemMessage
 
 # Create a constant that defines the role of the bot.
@@ -140,8 +140,23 @@ def reply(row: dict, state: State):
     print("------------------------------------------------")
 
 
-    if row["conversation_id"] not in chains:
-        chains[row["conversation_id"]] = chain_init()
+    converstaion_state = state.get("conversation", None)
+
+    if converstaion_state is None:
+        # Defines how much of the conversation history to give to the model
+        # during each exchange (300 tokens, or a little over 300 words)
+        # Function automatically prunes the oldest messages from conversation history that fall outside the token range.
+        memory = ConversationTokenBufferMemory(
+            llm=llm,
+            max_token_limit=50,
+            ai_prefix= "CUSTOMER",
+            human_prefix= "AGENT",
+            return_messages=True
+        )
+    else:
+        memory =  BaseChatMessageHistory
+
+    conversation = ConversationChain(llm=model, prompt=prompt, memory=memory)
 
     if not "customer_name" in row:
         # generate customer information randomly.
