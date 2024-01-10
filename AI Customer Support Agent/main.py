@@ -164,7 +164,7 @@ def clean_text(msg):
     print("Cleaning message...")
     print(f"BEFORE:\n{msg}")
     msg = re.sub(r'^.*?: ', '', msg, 1)  # Removing any extra "meta information" that sometimes gets added followed by a colon.
-    msg = msg.strip('"')  # Strip out any speech marks that the LLM tends to add.
+    msg = re.sub(r'"', '', msg)  # Strip out any speech marks that the LLM tends to add.
     print(f"AFTER:\n{msg}")
     return msg
 
