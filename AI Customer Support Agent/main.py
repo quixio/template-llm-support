@@ -66,36 +66,10 @@ model = Llama2Chat(
     llm=llm,
     system_message=SystemMessage(content="You are a customer support agent for a large electronics retailer called 'ACME electronics'."))
 
-# Defines how much of the conversation history to give to the model
-# during each exchange (300 tokens, or a little over 300 words)
-# Function automatically prunes the oldest messages from conversation history that fall outside the token range.
-memory = ConversationTokenBufferMemory(
-    llm=llm,
-    max_token_limit=300,
-    ai_prefix= "AGENT",
-    human_prefix= "CUSTOMER",
-    return_messages=True
-)
-
-# Initializes a conversation chain and loads the prompt template from a YAML file 
-# i.e "You are a support agent and need to answer the customer...".
-chain = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
-
-print("--------------------------------------------")
-print(f"Prompt={chain.prompt}")
-print("--------------------------------------------")
-
 
 # Initializes a Quix Kafka consumer with a consumer group based on the role
 # and configured to read the latest message if no offset was previously registered for the consumer group
 app = Application.Quix("transformation-v15-"+role, auto_offset_reset="latest")
-# foo_val = app._state_manager.stores.get("foo")
-# print("_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-")
-# print(foo_val)
-# app._state_manager.stores.setdefault("foo", "bar")
-# foo_val2 = app._state_manager.stores.get("foo")
-# print(foo_val2)
-# print("_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-")
 
 # Defines the input and output topics with the relevant deserialization and serialization methods (and get the topic names from enviroiment variables)
 
@@ -197,30 +171,24 @@ def reply(row: dict, state: State):
     print("Thinking about the reply...")
 
 
-    # print("==========================")
-    # REPLICA STATE HERE
-    # this is the first place we can access state.
-    # in v0.5.x we could use state almost anywhere
+    converstaion_state = state.get("conversation", None)
 
-    # get the value from state for this replica_id (if its there, if not default to "")
-    # print(f"Getting {replica_id} from state")
+    # Defines how much of the conversation history to give to the model
+    # during each exchange (300 tokens, or a little over 300 words)
+    # Function automatically prunes the oldest messages from conversation history that fall outside the token range.
+    memory = ConversationTokenBufferMemory(
+        llm=llm,
+        max_token_limit=300,
+        ai_prefix= "AGENT",
+        human_prefix= "CUSTOMER",
+        return_messages=True
+    )
 
-    # state_rc_data = state.get(replica_id, "")
-    # print(f"state is {state_rc_data}")
+    # Initializes a conversation chain and loads the prompt template from a YAML file 
+    # i.e "You are a support agent and need to answer the customer...".
+    conversation = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
 
-    # if state_rc_data == "":
-    #     print(f"Setting replica_id {replica_id} to {chat_id}")
-    #     state.set(replica_id, chat_id)
-    # else:
-    #     # if the state for this replica does not hold the chat ID were currently handling:
-    #     if state_rc_data != chat_id:
-    #         print(f"{state_rc_data} IS NOT {chat_id}. Returning recieved row.")
-
-    #         # return without trying to add anything to the row
-    #         return {}
-    #     # else, handle the convo and reply with a message
-
-    # print("==========================")
+    conversation.from_string
 
     # The customer bot is primed to say "good bye" if the conversation has lasted too long
     # message limit defined in "conversation_length" environment variable
@@ -228,12 +196,17 @@ def reply(row: dict, state: State):
 
     # Send the customers response to the conversation chain so that the agent LLM can generate a reply
     # and store that reply in the msg variable
-    msg = chain.run(row["text"])
+    msg = conversation.run(row["text"])
     msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
     print(f"{role.upper()} replying with: {msg}\n")
 
     row["role"] = role
     row["text"] = msg
+
+    print("Persisting conversation to state...")
+    print(conversation.to_json())
+    state.set("conversation", converstaion_state.to_json())
+    print("...done")
 
     # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
     # containing the agents role and reply 
