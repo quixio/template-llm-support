@@ -88,7 +88,7 @@ print("--------------------------------------------")
 
 # Initializes a Quix Kafka consumer with a consumer group based on the role
 # and configured to read the latest message if no offset was previously registered for the consumer group
-app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
+app = Application.Quix("transformation-v15-"+role, auto_offset_reset="latest")
 
 # Defines the input and output topics with the relevant deserialization and serialization methods (and get the topic names from enviroiment variables)
 
@@ -205,7 +205,7 @@ def reply(row: dict, state: State):
             print(f"{state_rc_data} IS NOT {chat_id}. Returning recieved row.")
 
             # return without trying to add anything to the row
-            return row
+            return {}
         # else, handle the convo and reply with a message
 
     print("==========================")
