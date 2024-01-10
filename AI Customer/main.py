@@ -21,7 +21,6 @@ from langchain.prompts import load_prompt
 from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
-from langchain_core.chat_history import BaseChatMessageHistory
 from langchain.schema import SystemMessage
 
 # Create a constant that defines the role of the bot.
