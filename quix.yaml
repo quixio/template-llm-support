@@ -112,6 +112,9 @@ deployments:
       cpu: 5000
       memory: 15000
       replicas: 1
+    state:
+      enabled: true
+      size: 6
     desiredStatus: Stopped
     variables:
       - name: topic
