@@ -199,7 +199,10 @@ def reply(row: dict, state: State):
     row["text"] = msg
     state.set(chatlen_key, chatlen + 1)
 
+    print("Persisting conversation to state...")
     print(conversation.to_json())
+    state.set("conversation", converstaion_state.to_json())
+    print("...done")
 
     return row
 
