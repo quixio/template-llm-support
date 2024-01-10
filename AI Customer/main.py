@@ -50,7 +50,7 @@ model_path = f"./state/{model_name}"
 
 if not Path(model_path).exists():
     print("The model path does not exist in state. Downloading model...")
-    hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
+    hf_hub_download("vikash06/llama-2-7b-small-model", model_name, local_dir="state")
 else:
     print("Loading model from state...")
 
