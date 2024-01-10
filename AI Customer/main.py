@@ -20,7 +20,8 @@ from langchain.llms import LlamaCpp
 from langchain.prompts import load_prompt
 from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
-from langchain.memory import ConversationTokenBufferMemory, BaseChatMessageHistory
+from langchain.memory import ConversationTokenBufferMemory
+from langchain_core.chat_history import BaseChatMessageHistory
 from langchain.schema import SystemMessage
 
 # Create a constant that defines the role of the bot.
@@ -154,7 +155,7 @@ def reply(row: dict, state: State):
             return_messages=True
         )
     else:
-        memory =  BaseChatMessageHistory
+        memory = BaseChatMessageHistory
 
     conversation = ConversationChain(llm=model, prompt=prompt, memory=memory)
 
