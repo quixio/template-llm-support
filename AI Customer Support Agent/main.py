@@ -28,6 +28,7 @@ from langchain.schema import SystemMessage
 # REPLICA STATE HERE
 # generate a random ID for this replica (this deployment of the code)
 replica_id = str(uuid.uuid4())
+replica-conversation-key = "replica-conversation-key"
 
 # Create a constant that defines the role of the bot:
 AGENT_ROLE = "agent"
@@ -184,8 +185,18 @@ def reply(row: dict, state: State):
     # REPLICA STATE HERE
     # this is the first place we can access state.
     # in v0.5.x we could use state almost anywhere
-    rcData = {"replica_id": replica_id, "conversation_id": chat_id}
-    state.set("replica-conversation-key", rcData)
+
+    # get the value from state for this replica_id (if its there, if not default to "")
+    state_rc_data = state.get(replica_id, "")
+    if state_rc_data == "":
+        state.set(replica_id, chat_id)
+    else:
+        # if the state for this replica does not hold the chat ID were currently handling:
+        if state_rc_data != chat_id:
+            # return without trying to add anything to the row
+            return row
+        # else, handle the convo and reply with a message
+
 
     # The customer bot is primed to say "good bye" if the conversation has lasted too long
     # message limit defined in "conversation_length" environment variable
