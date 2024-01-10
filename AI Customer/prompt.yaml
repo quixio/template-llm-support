@@ -9,4 +9,6 @@ template: >
   understand what your options are for resolving the issue. Acting as "CUSTOMER", please reply to the agent's most recent message 
   in a {mood} tone of voice.
   Do not include any unnecessary commentary or prefixes such as "Human:", "AI:", or "User:".\n\n
+  And do not include anything like "Sure! Here's my reply as the customer"
+  Just output the reply please.
   Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER:
