@@ -141,8 +141,14 @@ def reply(row: dict, state: State):
     print(row)
     print("------------------------------------------------")
 
+    pickle_file_path = "./state/convo.pkl"
 
-    conversation_state = state.get("conversation", None)
+    # conversation_state = state.get("conversation", None)
+    if os.path.exists(pickle_file_path):
+        with open(pickle_file_path, 'rb') as f:
+            loaded_data = pickle.load(f)
+    else:
+        print("No conversation pickle file exists")
 
     # use convo state from mem, or create a new one
     if conversation_state != None:
@@ -208,7 +214,7 @@ def reply(row: dict, state: State):
     print(conversation.to_json())
     state.set("conversation", conversation.to_json())
 
-    with open("./state/data.pkl", "wb") as f:
+    with open(pickle_file_path, "wb") as f:
         pickle.dump(conversation.memory, f)
 
     print("...done")
