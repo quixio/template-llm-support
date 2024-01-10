@@ -150,7 +150,6 @@ def reply(row: dict, state: State):
             return_messages=True
         )
 
-
     conversation = ConversationChain(llm=model, prompt=prompt, memory=memory)
 
     if not "customer_name" in row:
