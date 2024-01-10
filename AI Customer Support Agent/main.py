@@ -28,7 +28,7 @@ from langchain.schema import SystemMessage
 # REPLICA STATE HERE
 # generate a random ID for this replica (this deployment of the code)
 replica_id = str(uuid.uuid4())
-replica-conversation-key = "replica-conversation-key"
+#replica-conversation-key = "replica-conversation-key"
 
 # Create a constant that defines the role of the bot:
 AGENT_ROLE = "agent"
