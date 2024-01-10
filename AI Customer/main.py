@@ -4,6 +4,8 @@ import random
 import uuid
 import re
 from pathlib import Path
+import pickle
+
 
 # Import the main Quix Streams module for data processing and transformation
 from quixstreams import Application, State
@@ -37,7 +39,7 @@ print("==========================")
 role = CUSTOMER_ROLE
 customer_id = 0
 customer_name = ""
-
+pickle
 # Define the maxiumum number of exchanges so that we can end the conversation if it has gone on too long
 # This maximum is defined in an environment variable
 # The maxium is divided by two because we are only accounting for the
@@ -140,16 +142,20 @@ def reply(row: dict, state: State):
     print("------------------------------------------------")
 
 
-    converstaion_state = state.get("conversation", None)
+    conversation_state = state.get("conversation", None)
 
-    memory = ConversationTokenBufferMemory(
-            llm=llm,
-            max_token_limit=50,
-            ai_prefix= "CUSTOMER",
-            human_prefix= "AGENT",
-            return_messages=True
-        )
-    memory.
+    # use convo state from mem, or create a new one
+    if conversation_state != None:
+        memory = conversation_state
+    else:
+        memory = ConversationTokenBufferMemory(
+                llm=llm,
+                max_token_limit=50,
+                ai_prefix= "CUSTOMER",
+                human_prefix= "AGENT",
+                return_messages=True
+            )
+        
     conversation = ConversationChain(llm=model, prompt=prompt, memory=memory)
 
     if not "customer_name" in row:
@@ -200,7 +206,11 @@ def reply(row: dict, state: State):
 
     print("Persisting conversation to state...")
     print(conversation.to_json())
-    state.set("conversation", converstaion_state.to_json())
+    state.set("conversation", conversation.to_json())
+
+    with open("./state/data.pkl", "wb") as f:
+        pickle.dump(conversation.memory, f)
+
     print("...done")
 
     return row
