@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 # Import the main Quix Streams module for data processing and transformation:
-from quixstreams import Application
+from quixstreams import Application, State
 
 # Import the supplimentary Quix Streams modules for interacting with Kafka: 
 from quixstreams.kafka import Producer
@@ -24,6 +24,10 @@ from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
 from langchain.schema import SystemMessage
+
+# REPLICA STATE HERE
+# generate a random ID for this replica (this deployment of the code)
+replica_id = str(uuid.uuid4())
 
 # Create a constant that defines the role of the bot:
 AGENT_ROLE = "agent"
@@ -161,20 +165,24 @@ chat_init()
 
 # Detect and remove any common text issues from the models response
 def clean_text(msg):
-    print("Cleaning message...")
-    print(f"BEFORE:\n{msg}")
-    msg = re.sub(r'^.*?: ', '', msg, 1)  # Removing any extra "meta commentary" that the LLM sometime adds, followed by a colon.
-    msg = re.sub(r'"', '', msg)  # Strip out any speech marks that the LLM tends to add.
-    print(f"AFTER:\n{msg}")
+    msg = re.sub(r'^[^:]+: ', '', msg)  # Remove annoying extra "User:" prefixes that sometimes sneak in.
+    msg = msg.strip('"')  # Strip out any speech marks that the LLM tends to add.
     return msg
 
 # Define a function to reply to the customer's messages
-def reply(row: dict):
+def reply(row: dict, state: State):
     print("-------------------------------")
     print("Received:")
     print(row)
     print("-------------------------------")
     print("Thinking about the reply...")
+
+
+    # REPLICA STATE HERE
+    # this is the first place we can access state.
+    # in v0.5.x we could use state almost anywhere
+    rcData = {"replica_id": replica_id, "conversation_id": chat_id}
+    state.set("replica-conversation-key", rcData)
 
     # The customer bot is primed to say "good bye" if the conversation has lasted too long
     # message limit defined in "conversation_length" environment variable
@@ -200,7 +208,7 @@ def reply(row: dict):
 sdf = sdf[sdf["role"] != role]
 
 # Trigger the reply function for any new messages(rows) detected in the filtered SDF
-sdf = sdf.apply(reply, stateful=False)
+sdf = sdf.apply(reply, stateful=True)
 
 # Check the SDF again and filter out any empty rows
 sdf = sdf[sdf.apply(lambda row: row is not None)]
