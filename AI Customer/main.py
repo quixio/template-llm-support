@@ -74,49 +74,37 @@ moods = get_list("moods.txt")
 # update the products.txt file to add/remove defective appliances.
 products = get_list("products.txt")
 
-# Initialize the chat conversation with the support agent
-def chain_init():
-    # Loads the prompt template from a YAML file 
-    # i.e "You are a customer interacting with a support agent..."
-    prompt = load_prompt("prompt.yaml")
 
-    # randomly select the tone of voice that the customer speaks with
-    # (for variation in sentiment analysis)
-    # and the specific product that they are calling about
-    prompt.partial_variables["mood"] = random.choice(moods)
-    prompt.partial_variables["product"] = random.choice(products)
+# Loads the prompt template from a YAML file 
+# i.e "You are a customer interacting with a support agent..."
+prompt = load_prompt("prompt.yaml")
 
-    # For debugging, print the prompt with the populated mood and product variables.
-    print("Prompt:\n{}".format(prompt.to_json()))
+# randomly select the tone of voice that the customer speaks with
+# (for variation in sentiment analysis)
+# and the specific product that they are calling about
+prompt.partial_variables["mood"] = random.choice(moods)
+prompt.partial_variables["product"] = random.choice(products)
 
-    # Load the model with the apporiate parameters
-    llm = LlamaCpp(
-        model_path=model_path,
-        max_tokens=50,
-        top_p=0.95,
-        top_k=150,
-        temperature=0.7,
-        repeat_penalty=1.2,
-        n_ctx=2048,
-        streaming=True
-    )
+# For debugging, print the prompt with the populated mood and product variables.
+print("Prompt:\n{}".format(prompt.to_json()))
 
-    model = Llama2Chat(
-        llm=llm,
-        system_message=SystemMessage(content="You are a customer of a large electronics retailer called 'ACME electronics' who is trying to resolve an issue with a defective product that you purchased."))
+# Load the model with the apporiate parameters
+llm = LlamaCpp(
+    model_path=model_path,
+    max_tokens=50,
+    top_p=0.95,
+    top_k=150,
+    temperature=0.7,
+    repeat_penalty=1.2,
+    n_ctx=2048,
+    streaming=True
+)
 
-    # Defines how much of the conversation history to give to the model
-    # during each exchange (300 tokens, or a little over 300 words)
-    # Function automatically prunes the oldest messages from conversation history that fall outside the token range.
-    memory = ConversationTokenBufferMemory(
-        llm=llm,
-        max_token_limit=50,
-        ai_prefix= "CUSTOMER",
-        human_prefix= "AGENT",
-        return_messages=True
-    )
+model = Llama2Chat(
+    llm=llm,
+    system_message=SystemMessage(content="You are a customer of a large electronics retailer called 'ACME electronics' who is trying to resolve an issue with a defective product that you purchased."))
 
-    return ConversationChain(llm=model, prompt=prompt, memory=memory)
+
 
 # hold the conversation chains
 chains = {}
@@ -143,7 +131,6 @@ def clean_text(msg):
 
 # Define a function to reply to the agent's messages
 def reply(row: dict, state: State):
-    global customer_id, customer_name
 
     print("Processing reply")
     print(f"Received a reply: {row['text']}")
@@ -151,31 +138,6 @@ def reply(row: dict, state: State):
     print("Received row data is:")
     print(row)
     print("------------------------------------------------")
-
-    # REPLICA STATE HERE
-    # this is the first place we can access state.
-    # in v0.5.x we could use state almost anywhere
-
-    # get the conversation id (chat id) sent by the agent
-    chat_id = row["conversation_id"]
-
-    # get the value from state for this replica_id (if its there, if not default to "")
-    print("==========================")
-    print(f"Getting state for {replica_id}")
-    state_rc_data = state.get(replica_id, "")
-    print(f"State is [{state_rc_data}]")
-    if state_rc_data == "":
-        print(f"Setting {replica_id} to {chat_id}")
-        state.set(replica_id, chat_id)
-    else:
-        # if the state for this replica does not hold the chat ID were currently handling:
-        if state_rc_data != chat_id:
-            print(f"{state_rc_data} IS NOT {chat_id}. Returning received row")
-            # return without trying to add anything to the row
-            return {}
-        # else, handle the convo normally and reply with a message
-
-    print("==========================")
 
 
     if row["conversation_id"] not in chains:
