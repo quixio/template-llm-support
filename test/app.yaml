@@ -9,7 +9,12 @@ variables:
   - name: consumergroup
     inputType: FreeText
     description: ''
-    defaultValue: B
+    defaultValue: v2
+    required: false
+  - name: role
+    inputType: FreeText
+    description: ''
+    defaultValue: A
     required: false
 dockerfile: build/dockerfile
 runEntryPoint: main.py

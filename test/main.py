@@ -13,15 +13,12 @@ from quixstreams.platforms.quix import QuixKafkaConfigsBuilder, TopicCreationCon
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer, SerializationContext
 
 consumergroup = os.environ["consumergroup"]
+role = os.environ["role"]
 
-app = Application.Quix("transformation-v2-side-"+os.environ["consumergroup"], auto_offset_reset="latest")
+app = Application.Quix(f"transformation-{os.environ['consumergroup']}-{os.environ['role']}", auto_offset_reset="latest")
 
 input_topic = app.topic(os.environ["input"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["input"], value_serializer=QuixTimeseriesSerializer())
-
-
-
-role = consumergroup
 
 def init():
     chat_id = str(uuid.uuid4()) # Give the conversation an ID for effective message keying
