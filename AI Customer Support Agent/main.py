@@ -259,6 +259,9 @@ sdf = sdf.update(lambda row: print("-----------------------------------"))
 # So that it doesn't reply to its own messages
 sdf = sdf[sdf["role"] != role]
 
+sdf = sdf[sdf["role"] != "none"]
+
+
 # Trigger the reply function for any new messages(rows) detected in the filtered SDF
 sdf = sdf.apply(reply, stateful=True)
 
