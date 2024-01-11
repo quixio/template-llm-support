@@ -191,7 +191,7 @@ deployments:
         inputType: InputTopic
         description: Name of the input topic to listen to.
         required: false
-        value: test-topic
+        value: test-topic-2
       - name: consumergroup
         inputType: FreeText
         description: ''
@@ -244,6 +244,13 @@ topics:
     persisted: false
     configuration:
       partitions: 5
+      replicationFactor: 2
+      retentionInMinutes: 1440
+      retentionInBytes: 52428800
+  - name: test-topic-2
+    persisted: false
+    configuration:
+      partitions: 1
       replicationFactor: 2
       retentionInMinutes: 1440
       retentionInBytes: 52428800
