@@ -9,7 +9,7 @@ variables:
   - name: consumergroup
     inputType: FreeText
     description: ''
-    defaultValue: v20
+    defaultValue: v21
     required: false
   - name: role
     inputType: FreeText
