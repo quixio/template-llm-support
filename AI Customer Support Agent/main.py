@@ -259,6 +259,7 @@ sdf = sdf.update(lambda row: print("-----------------------------------"))
 # So that it doesn't reply to its own messages
 sdf = sdf[sdf["role"] != role]
 
+# exclude rows with none as the role. these are conversations that have ended.
 sdf = sdf[sdf["role"] != "none"]
 
 
