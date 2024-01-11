@@ -118,12 +118,12 @@ deployments:
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: ai-chat-history
+        value: agent-chat-2
       - name: output
         inputType: InputTopic
         description: ''
         required: false
-        value: ai-chat-history
+        value: agent-chat-2
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
