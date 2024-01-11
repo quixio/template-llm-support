@@ -251,7 +251,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: false
-        value: sdfdsfdsf
+        value: sdfdsfdsf2
   - name: Producer
     application: test
     deploymentType: Service
