@@ -1,7 +1,7 @@
 name: AI Customer
 language: python
 variables:
-  - name: topic
+  - name: input
     inputType: OutputTopic
     description: This is the output topic to write data to
     defaultValue: customer-topic
