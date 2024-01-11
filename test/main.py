@@ -65,6 +65,7 @@ if role == "A":
 
 def reply(row: dict, state: State):
 
+    print(row)
     chat_id = row['conversation_id']
 
     row["role"] = role,
