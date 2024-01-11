@@ -245,8 +245,9 @@ chat_init()
 #     # containing the agents role and reply 
 #     return row
 
-sdf = sdf.update(lambda row: print("GOT THIS NEW ROW!"))
+sdf = sdf.update(lambda row: print("-----------------------------------\n GOT THIS NEW ROW! \n------------------------------------------"))
 sdf = sdf.update(lambda row: print(row))
+sdf = sdf.update(lambda row: print("-----------------------------------"))
 
 # Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
 # So that it doesn't reply to its own messages
