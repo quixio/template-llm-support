@@ -15,7 +15,7 @@ from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseries
 consumergroup = os.environ["consumergroup"]
 role = os.environ["role"]
 
-app = Application.Quix(f"transformation-{os.environ['consumergroup']}-{os.environ['role']}", auto_offset_reset="latest")
+app = Application.Quix(f"transformation-{os.environ['consumergroup']}-{os.environ['role']}", auto_offset_reset="earliest")
 
 input_topic = app.topic(os.environ["input"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["input"], value_serializer=QuixTimeseriesSerializer())
