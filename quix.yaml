@@ -200,7 +200,7 @@ deployments:
   - name: A
     application: test
     deploymentType: Service
-    version: 54655fe35ce5469d4dc753dedc0223de52647c51
+    version: e38a78e80b6ba2bc5c039635de138498e46d506f
     resources:
       cpu: 200
       memory: 500
@@ -216,7 +216,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: false
-        value: v4
+        value: v5
       - name: role
         inputType: FreeText
         description: ''
