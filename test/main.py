@@ -71,6 +71,8 @@ def reply(row: dict, state: State):
     row["conversation_id"] = chat_id,
     row["Timestamp"] = time.time_ns(),
 
+    time.sleep(1)
+    
     return row
 
 sdf = app.dataframe(input_topic)
