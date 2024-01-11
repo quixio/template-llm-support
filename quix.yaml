@@ -226,7 +226,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: false
-        value: A
+        value: A2
   - name: consumer
     application: consumer
     deploymentType: Service
