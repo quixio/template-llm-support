@@ -161,21 +161,39 @@ def reply(row: dict, state: State):
     else:
         conversation_id = ""
 
-    pickle_file_path = f"./state/customer_convo-{conversation_id}.pkl"
-    loaded_data = None
-    # conversation_state = state.get("conversation", None)
-    if os.path.exists(pickle_file_path):
-        print("Loading conversation from pickle file")
+    # pickle_file_path = f"./state/customer_convo-{conversation_id}.pkl"
+    # loaded_data = None
+    # # conversation_state = state.get("conversation", None)
+    # if os.path.exists(pickle_file_path):
+    #     print("Loading conversation from pickle file")
 
-        with open(pickle_file_path, 'rb') as f:
-            loaded_data = pickle.load(f)
-    else:
-        print("No conversation pickle file exists")
+    #     with open(pickle_file_path, 'rb') as f:
+    #         loaded_data = pickle.load(f)
+    # else:
+    #     print("No conversation pickle file exists")
 
-    # use convo state from mem, or create a new one
-    if loaded_data != None:
-        memory = loaded_data
+    # # use convo state from mem, or create a new one
+    # if loaded_data != None:
+    #     memory = loaded_data
+    # else:
+    #     memory = ConversationTokenBufferMemory(
+    #             llm=llm,
+    #             max_token_limit=50,
+    #             ai_prefix= "CUSTOMER",
+    #             human_prefix= "AGENT",
+    #             return_messages=True
+    #         )
+
+    pickled_conversation_key = "pickled_conversation" + conversation_id
+    print("Getting pickled convo from shared state...")
+    pickled_convo_state = state.get(pickled_conversation_key, None)
+    if pickled_convo_state != None:
+        print("Convo found in shared state. Loading...")
+        unpickled_convo_state = pickle.loads(pickled_convo_state)
+        memory = unpickled_convo_state
+        print("Done loading")
     else:
+        print("No convo found in shared state")
         memory = ConversationTokenBufferMemory(
                 llm=llm,
                 max_token_limit=50,
@@ -183,7 +201,12 @@ def reply(row: dict, state: State):
                 human_prefix= "AGENT",
                 return_messages=True
             )
-        
+
+    # pickled_convo = pickle.dumps(conversation.memory)
+    # state.set("pickled_conversation", pickled_convo)
+
+
+
     # Initializes a conversation chain and loads the prompt template from a YAML file 
     # i.e "You are a customer of...".
     conversation = ConversationChain(llm=model, prompt=prompt, memory=memory)
@@ -240,8 +263,12 @@ def reply(row: dict, state: State):
 
     print("Persisting conversation to state in a pickle file...")
 
-    with open(pickle_file_path, "wb") as f:
-        pickle.dump(conversation.memory, f)
+    # with open(pickle_file_path, "wb") as f:
+    #     pickle.dump(conversation.memory, f)
+
+    print("Pickling convo to shared state...")
+    pickled_convo = pickle.dumps(conversation.memory)
+    state.set(pickled_conversation_key, pickled_convo)
 
     print("...done")
 
