@@ -70,7 +70,7 @@ if os.path.exists(directory):
 else:
     print(f"The directory [{directory}] does not exist.")
 
-    
+
 # Function to load a list of values from a text file
 def get_list(file: str):
     list = []
@@ -155,7 +155,7 @@ def reply(row: dict, state: State):
     print(row)
     print("------------------------------------------------")
 
-    pickle_file_path = "./state/convo.pkl"
+    pickle_file_path = "./state/customer_convo.pkl"
     loaded_data = None
     # conversation_state = state.get("conversation", None)
     if os.path.exists(pickle_file_path):
@@ -178,6 +178,8 @@ def reply(row: dict, state: State):
                 return_messages=True
             )
         
+    # Initializes a conversation chain and loads the prompt template from a YAML file 
+    # i.e "You are a customer of...".
     conversation = ConversationChain(llm=model, prompt=prompt, memory=memory)
 
     if not "customer_name" in row:
