@@ -45,15 +45,14 @@ chat_id = ""
 
 
 # Download the model and save it to the service's state directory if it is not already there:
-##### PUT THIS BACK!!
-# model_name = "llama-2-7b-chat.Q4_K_M.gguf"
-# model_path = f"./state/{model_name}"
+model_name = "llama-2-7b-chat.Q4_K_M.gguf"
+model_path = f"./state/{model_name}"
 
-# if not Path(model_path).exists():
-#     print("The model path does not exist in state. Downloading model...")
-#     hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
-# else:
-#     print("Loading model from state...")
+if not Path(model_path).exists():
+    print("The model path does not exist in state. Downloading model...")
+    hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
+else:
+    print("Loading model from state...")
 
 
 # Specify the directory
@@ -70,22 +69,21 @@ else:
     print(f"The directory [{directory}] does not exist.")
 
 
-##### PUT THIS BACK!!
-# # Load the model with the apporiate parameters:
-# llm = LlamaCpp(
-#     model_path=model_path,
-#     max_tokens=250,
-#     top_p=0.95,
-#     top_k=150,
-#     temperature=0.7,
-#     repeat_penalty=1.2,
-#     n_ctx=2048,
-#     streaming=False
-# )
+# Load the model with the apporiate parameters:
+llm = LlamaCpp(
+    model_path=model_path,
+    max_tokens=250,
+    top_p=0.95,
+    top_k=150,
+    temperature=0.7,
+    repeat_penalty=1.2,
+    n_ctx=2048,
+    streaming=False
+)
 
-# model = Llama2Chat(
-#     llm=llm,
-#     system_message=SystemMessage(content="You are a customer support agent for a large electronics retailer called 'ACME electronics'."))
+model = Llama2Chat(
+    llm=llm,
+    system_message=SystemMessage(content="You are a customer support agent for a large electronics retailer called 'ACME electronics'."))
 
 
 # Initializes a Quix Kafka consumer with a consumer group based on the role
@@ -174,94 +172,96 @@ def chat_init():
 chat_init()
 
 
-# # Detect and remove any common text issues from the models response
-# def clean_text(msg):
-#     print("Cleaning message...")
-#     print(f"BEFORE:\n{msg}")
-#     msg = re.sub(r'^.*?: ', '', msg, 1)  # Removing any extra "meta commentary" that the LLM sometime adds, followed by a colon.
-#     msg = re.sub(r'"', '', msg)  # Strip out any speech marks that the LLM tends to add.
-#     print(f"AFTER:\n{msg}")
-#     return msg
+# Detect and remove any common text issues from the models response
+def clean_text(msg):
+    print("Cleaning message...")
+    print(f"BEFORE:\n{msg}")
+    msg = re.sub(r'^.*?: ', '', msg, 1)  # Removing any extra "meta commentary" that the LLM sometime adds, followed by a colon.
+    msg = re.sub(r'"', '', msg)  # Strip out any speech marks that the LLM tends to add.
+    print(f"AFTER:\n{msg}")
+    return msg
 
-# # Define a function to reply to the customer's messages
-# def reply(row: dict, state: State):
-#     print("Thinking about the reply...")
+# Define a function to reply to the customer's messages
+def reply(row: dict, state: State):
+    print("Thinking about the reply...")
 
-#     pickled_conversation_key = "pickled_conversation-v1"# + conversation_id
-#     print(f"Getting pickled convo from shared state with key = {pickled_conversation_key}...")
-#     pickled_convo_state = state.get(pickled_conversation_key, None)
-#     if pickled_convo_state != None:
-#         print("Convo found in shared state. Loading...")
-#         # Convert the string back to pickled bytes
-#         pickled_bytes = pickled_convo_state.encode('latin1')
-#         # Unpickle the bytes object
-#         unpickled_convo_state = pickle.loads(pickled_bytes)
+    pickled_conversation_key = "pickled_conversation-v1"# + conversation_id
+    print(f"Getting pickled convo from shared state with key = {pickled_conversation_key}...")
+    pickled_convo_state = state.get(pickled_conversation_key, None)
+    if pickled_convo_state != None:
+        print("Convo found in shared state. Loading...")
+        # Convert the string back to pickled bytes
+        pickled_bytes = pickled_convo_state.encode('latin1')
+        # Unpickle the bytes object
+        unpickled_convo_state = pickle.loads(pickled_bytes)
         
-#         memory = unpickled_convo_state
-#         print("Done loading")
-#     else:
-#         print("No convo found in shared state")
-#         memory = ConversationTokenBufferMemory(
-#             llm=llm,
-#             max_token_limit=300,
-#             ai_prefix= "AGENT",
-#             human_prefix= "CUSTOMER",
-#             return_messages=True
-#         )
+        memory = unpickled_convo_state
+        print("Done loading")
+    else:
+        print("No convo found in shared state")
+        memory = ConversationTokenBufferMemory(
+            llm=llm,
+            max_token_limit=300,
+            ai_prefix= "AGENT",
+            human_prefix= "CUSTOMER",
+            return_messages=True
+        )
 
             
-#     # Initializes a conversation chain and loads the prompt template from a YAML file 
-#     # i.e "You are a support agent and need to answer the customer...".
-#     conversation = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
+    # Initializes a conversation chain and loads the prompt template from a YAML file 
+    # i.e "You are a support agent and need to answer the customer...".
+    conversation = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
 
-#     # The customer bot is primed to say "good bye" if the conversation has lasted too long
-#     # message limit defined in "conversation_length" environment variable
-#     # The agent looks for this "good bye" so it knows to restart too.
+    # The customer bot is primed to say "good bye" if the conversation has lasted too long
+    # message limit defined in "conversation_length" environment variable
+    # The agent looks for this "good bye" so it knows to restart too.
 
-#     # Send the customers response to the conversation chain so that the agent LLM can generate a reply
-#     # and store that reply in the msg variable
-#     msg = conversation.run(row["text"])
-#     msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
-#     print(f"{role.upper()} replying with: {msg}\n")
+    # Send the customers response to the conversation chain so that the agent LLM can generate a reply
+    # and store that reply in the msg variable
+    msg = conversation.run(row["text"])
+    msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
+    print(f"{role.upper()} replying with: {msg}\n")
 
-#     row["role"] = role
-#     row["text"] = msg
+    row["role"] = role
+    row["text"] = msg
 
 
-#     print(f"Pickling convo to shared state with key = {pickled_conversation_key}...")
-#     # pickle the convo memory object
-#     pickled_convo = pickle.dumps(conversation.memory)
-#     # Convert pickled bytes to a string
-#     pickled_string = pickled_convo.decode('latin1')
-#     state.set(pickled_conversation_key, pickled_string)
+    print(f"Pickling convo to shared state with key = {pickled_conversation_key}...")
+    # pickle the convo memory object
+    pickled_convo = pickle.dumps(conversation.memory)
+    # Convert pickled bytes to a string
+    pickled_string = pickled_convo.decode('latin1')
+    state.set(pickled_conversation_key, pickled_string)
 
-#     print("...done")
+    print("...done")
 
-#     # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
-#     # containing the agents role and reply 
-#     return row
+    # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
+    # containing the agents role and reply 
+    return row
 
 sdf = sdf.update(lambda row: print("-----------------------------------\n GOT THIS NEW ROW! \n------------------------------------------"))
 sdf = sdf.update(lambda row: print(row))
 sdf = sdf.update(lambda row: print("-----------------------------------"))
+sdf = sdf.update(lambda row: print(f"This message will be handled = {row['role'] != role}. ROW ROLE={row['role']}. MY ROLE={role}"))
+sdf = sdf.update(lambda row: print("-----------------------------------"))
 
 # Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
 # So that it doesn't reply to its own messages
-##### sdf = sdf[sdf["role"] != role]
+sdf = sdf[sdf["role"] != role]
 
 # Trigger the reply function for any new messages(rows) detected in the filtered SDF
-##### sdf = sdf.apply(reply, stateful=True)
+sdf = sdf.apply(reply, stateful=True)
 
 # Check the SDF again and filter out any empty rows
-##### sdf = sdf[sdf.apply(lambda row: row is not None)]
+sdf = sdf[sdf.apply(lambda row: row is not None)]
 
 # Update the timestamp column to the current time in nanoseconds
-##### sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
+sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 
-##### sdf = sdf.update(lambda row: print(f'Replying with: {row["text"]}'))
+sdf = sdf.update(lambda row: print(f'Replying with: {row["text"]}'))
 
 # Publish the processed SDF to a Kafka topic specified by the output_topic object. 
-##### sdf = sdf.to_topic(output_topic)
+sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
     app.run(sdf)
