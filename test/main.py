@@ -81,7 +81,7 @@ sdf = app.dataframe(input_topic)
 
 sdf = sdf[sdf["role"] != role]
 
-sdf = sdf.apply(reply, stateful=True)
+#sdf = sdf.apply(reply, stateful=True)
 
 sdf = sdf.update(lambda row: print(row))
 
