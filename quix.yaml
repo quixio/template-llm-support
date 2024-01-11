@@ -230,7 +230,7 @@ deployments:
   - name: consumer
     application: consumer
     deploymentType: Service
-    version: 676dd6936c3073d3d26ed14beecace1d9e33cacb
+    version: c1ec620eedf7812d6a8f593ffc7fddaeb23a34ee
     resources:
       cpu: 200
       memory: 500
@@ -246,7 +246,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: false
-        value: consumer-v3
+        value: consumer-latest-v1
       - name: role
         inputType: FreeText
         description: ''
