@@ -239,11 +239,6 @@ def reply(row: dict, state: State):
                 return_messages=True
             )
 
-    # pickled_convo = pickle.dumps(conversation.memory)
-    # state.set("pickled_conversation", pickled_convo)
-
-
-
     # Initializes a conversation chain and loads the prompt template from a YAML file 
     # i.e "You are a customer of...".
     conversation = ConversationChain(llm=model, prompt=prompt, memory=memory)
@@ -288,20 +283,15 @@ def reply(row: dict, state: State):
         row["text"] = "Noted, I think I have enough information. Thank you for your assistance. Good bye!"
         return row
 
-    print(f"Replying to: {row['text']}\n")
+    print("Thinking about the reply...")
     
     print("Generating response...\n")
     msg = conversation.run(row["text"])
     msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
-    print(f"{role.upper()}: {msg}\n")
-
     row["text"] = msg
     state.set(chatlen_key, chatlen + 1)
 
     print("Persisting conversation to state in a pickle file...")
-
-    # with open(pickle_file_path, "wb") as f:
-    #     pickle.dump(conversation.memory, f)
 
     print(f"Pickling convo to shared state with key = {pickled_conversation_key}...")
     # pickle the convo memory object
