@@ -307,6 +307,8 @@ def reply(row: dict, state: State):
 sdf = sdf.update(lambda row: print("-----------------------------------\n GOT THIS NEW ROW! \n------------------------------------------"))
 sdf = sdf.update(lambda row: print(row))
 sdf = sdf.update(lambda row: print("-----------------------------------"))
+sdf = sdf.update(lambda row: print(f"This message will be handled = {row['role'] != role}. ROW ROLE={row['role']}. MY ROLE={role}"))
+sdf = sdf.update(lambda row: print("-----------------------------------"))
 
 # Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
 # So that it doesn't reply to its own messages
