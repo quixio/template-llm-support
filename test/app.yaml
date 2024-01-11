@@ -11,6 +11,11 @@ variables:
     description: ''
     defaultValue: B
     required: false
+  - name: role
+    inputType: FreeText
+    description: ''
+    defaultValue: A
+    required: false
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
