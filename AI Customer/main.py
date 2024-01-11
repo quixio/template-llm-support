@@ -5,6 +5,7 @@ import uuid
 import re
 from pathlib import Path
 import pickle
+import glob
 
 
 # Import the main Quix Streams module for data processing and transformation
@@ -46,15 +47,40 @@ pickle
 # customer's side of the conversation
 chat_maxlen = int(os.environ["conversation_length"]) // 2
 
-# Download the model and save it to the service's state directory if it is not already there:
-model_name = "llama-2-7b-chat.Q4_K_M.gguf"
-model_path = f"./state/{model_name}"
 
-if not Path(model_path).exists():
-    print("The model path does not exist in state. Downloading model...")
-    hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
+# Get a list of all .gguf files in the state directory
+gguf_files = glob.glob('./state/*.gguf')
+
+# Delete each .gguf file
+for file in gguf_files:
+    try:
+        os.remove(file)
+        print(f"File {file} has been deleted.")
+    except Exception as e:
+        print(f"Error occurred while deleting file {file}. Error message: {e}")
+
+
+if gguf_files:
+    # Get the first .gguf file
+    model_path = gguf_files[0]
+    model_name = Path(model_path).name
+    print(f"Loading model from state: {model_name}")
 else:
-    print("Loading model from state...")
+    print("No .gguf files found in state. Downloading model...")
+    model_name = "llama-2-7b-chat.Q4_K_M.gguf"
+    hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
+    
+
+# Download the model and save it to the service's state directory if it is not already there:
+
+# model_name = "llama-2-7b-chat.Q4_K_M.gguf"
+# model_path = f"./state/{model_name}"
+
+# if not Path(model_path).exists():
+#     print("The model path does not exist in state. Downloading model...")
+#     hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
+# else:
+#     print("Loading model from state...")
 
 
 
