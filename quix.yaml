@@ -230,7 +230,7 @@ deployments:
   - name: consumer
     application: consumer
     deploymentType: Service
-    version: 255f312287d7eed5043f46cde312d664fe4293d0
+    version: 676dd6936c3073d3d26ed14beecace1d9e33cacb
     resources:
       cpu: 200
       memory: 500
