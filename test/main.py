@@ -59,6 +59,7 @@ def init():
 # only A will init. B will listen and respond
 # A will also respond. but only to B
 if role == "A":
+    print("Calling INIT!!!")
     init()
 
 def reply(row: dict, state: State):
