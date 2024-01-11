@@ -216,6 +216,16 @@ def reply(row: dict, state: State):
     # message limit defined in "conversation_length" environment variable
     # The agent looks for this "good bye" so it knows to restart too.
 
+    if "good bye" in row["text"].lower():
+        print("Initializing a new conversation...")
+        #del chains[row["conversation_id"]]
+        chat_init()
+
+        row["role"] = "none"
+        row["text"] = "conversation ended"
+        return row
+
+
     # Send the customers response to the conversation chain so that the agent LLM can generate a reply
     # and store that reply in the msg variable
     msg = conversation.run(row["text"])
