@@ -4,7 +4,7 @@ variables:
   - name: input
     inputType: InputTopic
     description: Name of the input topic to listen to.
-    defaultValue: test-topic
+    defaultValue: new-topic-3
     required: false
   - name: consumergroup
     inputType: FreeText
