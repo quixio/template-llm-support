@@ -185,7 +185,7 @@ def reply(row: dict, state: State):
     #         )
 
     pickled_conversation_key = "pickled_conversation" + conversation_id
-    print("Getting pickled convo from shared state...")
+    print(f"Getting pickled convo from shared state with key = {pickled_conversation_key}...")
     pickled_convo_state = state.get(pickled_conversation_key, None)
     if pickled_convo_state != None:
         print("Convo found in shared state. Loading...")
@@ -266,7 +266,7 @@ def reply(row: dict, state: State):
     # with open(pickle_file_path, "wb") as f:
     #     pickle.dump(conversation.memory, f)
 
-    print("Pickling convo to shared state...")
+    print(f"Pickling convo to shared state with key = {pickled_conversation_key}...")
     pickled_convo = pickle.dumps(conversation.memory)
     state.set(pickled_conversation_key, pickled_convo)
 
