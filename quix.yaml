@@ -191,7 +191,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: false
-        value: v5
+        value: v6
       - name: role
         inputType: FreeText
         description: ''
