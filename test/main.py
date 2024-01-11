@@ -65,11 +65,11 @@ def reply(row: dict, state: State):
     print(row)
     chat_id = row['conversation_id']
 
-    row["role"] = role,
-    row["text"] = "This is a reply from " + role,
-    row["conversation_id"] = chat_id,
-    row["Timestamp"] = time.time_ns(),
-
+    row["role"] = role
+    row["text"] = "This is a reply from " + role
+    row["conversation_id"] = chat_id
+    row["Timestamp"] = time.time_ns()
+    
     time.sleep(1)
     
     return row
