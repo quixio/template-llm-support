@@ -41,6 +41,7 @@ role = CUSTOMER_ROLE
 customer_id = 0
 customer_name = ""
 pickle
+
 # Define the maxiumum number of exchanges so that we can end the conversation if it has gone on too long
 # This maximum is defined in an environment variable
 # The maxium is divided by two because we are only accounting for the
@@ -55,20 +56,6 @@ if not Path(model_path).exists():
     hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
 else:
     print("Loading model from state...")
-
-
-# Specify the directory
-directory = './state'
-# Check if the directory exists
-if os.path.exists(directory):
-    # List the files in the directory
-    files = os.listdir(directory)
-    # Print the files
-    for file in files:
-        print(file)
-else:
-    print(f"The directory [{directory}] does not exist.")
-
 
 # Function to load a list of values from a text file
 def get_list(file: str):
