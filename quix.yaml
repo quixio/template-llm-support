@@ -195,7 +195,7 @@ deployments:
   - name: test B
     application: test
     deploymentType: Service
-    version: 929e7122dccf2cccff1cade25d0b18a15b222394
+    version: 004b9901e304631f313508493a9f7dcf80a6a3b9
     resources:
       cpu: 200
       memory: 500
