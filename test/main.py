@@ -54,12 +54,6 @@ def init():
             value=serializer(value=value, ctx=SerializationContext(topic=topics[0], headers=headers)),
         )
 
-# only A will init. B will listen and respond
-# A will also respond. but only to B
-if role == "A":
-    print("Calling INIT!!!")
-    init()
-
 def reply(row: dict, state: State):
 
     print(row)
@@ -89,4 +83,10 @@ sdf = sdf.update(lambda row: print(row))
 sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
+    # only A will init. B will listen and respond
+    # A will also respond. but only to B
+    if role == "A":
+        print("Calling INIT!!!")
+        init()
+    
     app.run(sdf)
