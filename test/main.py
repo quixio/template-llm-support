@@ -3,7 +3,7 @@ from quixstreams import Application, State
 from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
 
 
-app = Application.Quix("transformation-v1-side-a", auto_offset_reset="latest")
+app = Application.Quix("transformation-v1-side-"+os.environ["consumergroup"], auto_offset_reset="latest")
 
 input_topic = app.topic(os.environ["input"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["input"], value_serializer=QuixTimeseriesSerializer())
