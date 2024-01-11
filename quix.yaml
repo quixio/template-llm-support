@@ -227,6 +227,31 @@ deployments:
         description: ''
         required: false
         value: A
+  - name: consumer
+    application: consumer
+    deploymentType: Service
+    version: 255f312287d7eed5043f46cde312d664fe4293d0
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    desiredStatus: Running
+    variables:
+      - name: input
+        inputType: InputTopic
+        description: Name of the input topic to listen to.
+        required: false
+        value: new-topic-3
+      - name: consumergroup
+        inputType: FreeText
+        description: ''
+        required: false
+        value: consumer-v2
+      - name: role
+        inputType: FreeText
+        description: ''
+        required: false
+        value: sdfdsfdsf
 
 # This section describes the Topics of the data pipeline
 topics:
