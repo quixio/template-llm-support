@@ -4,6 +4,7 @@ import uuid
 import random
 import re
 from pathlib import Path
+import pickle
 
 # Import the main Quix Streams module for data processing and transformation:
 from quixstreams import Application, State
@@ -186,24 +187,35 @@ def reply(row: dict, state: State):
     print("Thinking about the reply...")
 
 
-    converstaion_state = state.get("conversation", None)
+    pickle_file_path = "./state/agent_convo.pkl"
+    loaded_data = None
+    # conversation_state = state.get("conversation", None)
+    if os.path.exists(pickle_file_path):
+        print("Loading conversation from pickle file")
 
-    # Defines how much of the conversation history to give to the model
-    # during each exchange (300 tokens, or a little over 300 words)
-    # Function automatically prunes the oldest messages from conversation history that fall outside the token range.
-    memory = ConversationTokenBufferMemory(
-        llm=llm,
-        max_token_limit=300,
-        ai_prefix= "AGENT",
-        human_prefix= "CUSTOMER",
-        return_messages=True
-    )
+        with open(pickle_file_path, 'rb') as f:
+            loaded_data = pickle.load(f)
+    else:
+        print("No conversation pickle file exists")
+
+    # use convo state from mem, or create a new one
+    if loaded_data != None:
+        memory = loaded_data
+    else:
+        # Defines how much of the conversation history to give to the model
+        # during each exchange (300 tokens, or a little over 300 words)
+        # Function automatically prunes the oldest messages from conversation history that fall outside the token range.
+        memory = ConversationTokenBufferMemory(
+            llm=llm,
+            max_token_limit=300,
+            ai_prefix= "AGENT",
+            human_prefix= "CUSTOMER",
+            return_messages=True
+        )
 
     # Initializes a conversation chain and loads the prompt template from a YAML file 
     # i.e "You are a support agent and need to answer the customer...".
     conversation = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
-
-    conversation.from_string
 
     # The customer bot is primed to say "good bye" if the conversation has lasted too long
     # message limit defined in "conversation_length" environment variable
@@ -218,9 +230,9 @@ def reply(row: dict, state: State):
     row["role"] = role
     row["text"] = msg
 
-    print("Persisting conversation to state...")
-    print(conversation.to_json())
-    state.set("conversation", converstaion_state.to_json())
+    print("Persisting conversation to state in a pickle file...")
+    with open(pickle_file_path, "wb") as f:
+        pickle.dump(conversation.memory, f)
     print("...done")
 
     # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
