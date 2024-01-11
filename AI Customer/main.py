@@ -51,13 +51,13 @@ chat_maxlen = int(os.environ["conversation_length"]) // 2
 # Get a list of all .gguf files in the state directory
 gguf_files = glob.glob('./state/*.gguf')
 
-# Delete each .gguf file
-for file in gguf_files:
-    try:
-        os.remove(file)
-        print(f"File {file} has been deleted.")
-    except Exception as e:
-        print(f"Error occurred while deleting file {file}. Error message: {e}")
+# # Delete each .gguf file
+# for file in gguf_files:
+#     try:
+#         os.remove(file)
+#         print(f"File {file} has been deleted.")
+#     except Exception as e:
+#         print(f"Error occurred while deleting file {file}. Error message: {e}")
 
 model_path = ""
 if gguf_files:
