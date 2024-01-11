@@ -48,6 +48,7 @@ pickle
 # customer's side of the conversation
 chat_maxlen = int(os.environ["conversation_length"]) // 2
 
+# load the model from state or download it from hugging face
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "./state/{}".format(model_name)
 
