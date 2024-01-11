@@ -54,23 +54,23 @@ def init():
             value=serializer(value=value, ctx=SerializationContext(topic=topics[0], headers=headers)),
         )
 
-def reply(row: dict, state: State):
+# def reply(row: dict, state: State):
 
-    print(row)
-    chat_id = row['conversation_id']
+#     print(row)
+#     chat_id = row['conversation_id']
 
-    output_role = role
-    if role == "A":
-        output_role = "B"
+#     output_role = role
+#     if role == "A":
+#         output_role = "B"
 
-    row["role"] = output_role
-    row["text"] = "This is a reply from " + role
-    row["conversation_id"] = chat_id
-    row["Timestamp"] = time.time_ns()
+#     row["role"] = output_role
+#     row["text"] = "This is a reply from " + role
+#     row["conversation_id"] = chat_id
+#     row["Timestamp"] = time.time_ns()
     
-    time.sleep(1)
+#     time.sleep(1)
     
-    return row
+#     return row
 
 sdf = app.dataframe(input_topic)
 
