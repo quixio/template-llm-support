@@ -255,7 +255,7 @@ deployments:
   - name: Producer
     application: test
     deploymentType: Service
-    version: 41f6e97a446d950ed2b97ebd78439dcc0f387fa8
+    version: 371a636254e3d792261fce7aa4ba746171e71873
     resources:
       cpu: 200
       memory: 500
