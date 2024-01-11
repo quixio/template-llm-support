@@ -175,7 +175,7 @@ deployments:
   - name: B
     application: test
     deploymentType: Service
-    version: 4fb43e05dfe1c8c21f63e4f049cc6ff999a058c6
+    version: e38a78e80b6ba2bc5c039635de138498e46d506f
     resources:
       cpu: 200
       memory: 500
@@ -191,7 +191,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: false
-        value: v4
+        value: v5
       - name: role
         inputType: FreeText
         description: ''
