@@ -125,11 +125,11 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: 4b46f4d6bce8f27218d9094de0d6e922dd2cac4b
+    version: 9d2cb6def880b926f7a03e36c7f8892082596b44
     resources:
       cpu: 4000
       memory: 4100
-      replicas: 5
+      replicas: 2
     state:
       enabled: true
       size: 6
