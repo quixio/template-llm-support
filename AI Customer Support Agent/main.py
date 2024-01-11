@@ -134,7 +134,7 @@ def chat_init():
     cfg_builder = QuixKafkaConfigsBuilder()
 
     # Get the input topic name from an environment variable
-    cfgs, topics, _ = cfg_builder.get_confluent_client_configs([os.environ["topic"]])
+    cfgs, topics, _ = cfg_builder.get_confluent_client_configs([os.environ["output"]])
 
     # Create the topic if it doesn't yet exist
     cfg_builder.create_topics([TopicCreationConfigs(name=topics[0])])
