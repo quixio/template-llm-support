@@ -246,7 +246,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: false
-        value: consumer-v2
+        value: consumer-v3
       - name: role
         inputType: FreeText
         description: ''
