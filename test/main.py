@@ -42,6 +42,7 @@ def init():
 
     # Define a dictionary for the message values
     value = {
+        "conversation_id": chat,
         "role": role,
         "text": "Hello I am here to help!",
         "Timestamp": time.time_ns(),
