@@ -185,10 +185,6 @@ chat_init()
 
 # # Define a function to reply to the customer's messages
 # def reply(row: dict, state: State):
-#     print("-------------------------------")
-#     print("Received:")
-#     print(row)
-#     print("-------------------------------")
 #     print("Thinking about the reply...")
 
 #     pickled_conversation_key = "pickled_conversation-v1"# + conversation_id
