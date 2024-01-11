@@ -215,7 +215,11 @@ def reply(row: dict, state: State):
     pickled_convo_state = state.get(pickled_conversation_key, None)
     if pickled_convo_state != None:
         print("Convo found in shared state. Loading...")
-        unpickled_convo_state = pickle.loads(pickled_convo_state)
+        # Convert the string back to pickled bytes
+        pickled_bytes = pickled_convo_state.encode('latin1')
+        # Unpickle the bytes object
+        unpickled_convo_state = pickle.loads(pickled_bytes)
+        
         memory = unpickled_convo_state
         print("Done loading")
     else:
@@ -293,8 +297,11 @@ def reply(row: dict, state: State):
     #     pickle.dump(conversation.memory, f)
 
     print(f"Pickling convo to shared state with key = {pickled_conversation_key}...")
+    # pickle the convo memory object
     pickled_convo = pickle.dumps(conversation.memory)
-    state.set(pickled_conversation_key, pickled_convo)
+    # Convert pickled bytes to a string
+    pickled_string = pickled_convo.decode('latin1')
+    state.set(pickled_conversation_key, pickled_string)
 
     print("...done")
 
