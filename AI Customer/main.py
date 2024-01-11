@@ -216,8 +216,12 @@ def reply(row: dict, state: State):
     if chatlen >= chat_maxlen:
         # if the lenth of conversation exceeds the limit, terminate it and dispose the conversation chain.
         print("Maximum conversation length reached, ending conversation...")
-        del chains[row["conversation_id"]]
-        state.delete(chatlen_key)
+
+        print(f"Looking for {conversation_id} in chains..")
+        if conversation_id in chains:
+            print(f"Deleting {conversation_id} from chains..")
+            #del chains[row["conversation_id"]]
+            state.delete(chatlen_key)
 
         # Send a message to the agent with the special termination signal "Good bye"
         # so that the agent knows to "hang up" too
