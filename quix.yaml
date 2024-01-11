@@ -180,7 +180,7 @@ deployments:
   - name: Customer - listen and respond
     application: test
     deploymentType: Service
-    version: e38a78e80b6ba2bc5c039635de138498e46d506f
+    version: aad281a2cb707acc476798241e994ac4761baa69
     resources:
       cpu: 200
       memory: 500
@@ -196,7 +196,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: false
-        value: v6
+        value: v100
       - name: role
         inputType: FreeText
         description: ''
