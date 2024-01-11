@@ -58,3 +58,7 @@ if __name__ == "__main__":
     print("Calling INIT!!!")
     init()
     
+    while True:
+        pass
+        time.sleep(1)
+    
