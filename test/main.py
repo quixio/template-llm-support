@@ -61,9 +61,22 @@ def init():
 if role == "A":
     init()
 
+def reply(row: dict, state: State):
+
+    chat_id = row['conversation_id']
+
+    row["role"] = role,
+    row["text"] = "This is a reply from " + role,
+    row["conversation_id"] = chat_id,
+    row["Timestamp"] = time.time_ns(),
+
+    return row
+
 sdf = app.dataframe(input_topic)
 
-# Here put transformation logic.
+sdf = sdf[sdf["role"] != role]
+
+sdf = sdf.apply(reply, stateful=True)
 
 sdf = sdf.update(lambda row: print(row))
 
