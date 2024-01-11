@@ -177,7 +177,7 @@ deployments:
         description: ''
         required: false
         value: B
-  - name: A
+  - name: Agent - Kicks off convo
     application: test
     deploymentType: Service
     version: e38a78e80b6ba2bc5c039635de138498e46d506f
