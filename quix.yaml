@@ -52,10 +52,10 @@ deployments:
         required: true
         secretKey: redis_host
       - name: redis_port
-        inputType: FreeText
-        description: Redis port.
+        inputType: Secret
+        description: Redis server port.
         required: true
-        value: 12393
+        secretKey: redis_port
       - name: redis_pwd
         inputType: Secret
         description: Redis password.
