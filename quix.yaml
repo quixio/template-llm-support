@@ -197,7 +197,7 @@ deployments:
         description: ''
         required: false
         value: A
-  - name: test 2
+  - name: B
     application: test
     deploymentType: Service
     version: 54655fe35ce5469d4dc753dedc0223de52647c51
