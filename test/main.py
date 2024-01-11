@@ -54,39 +54,7 @@ def init():
             value=serializer(value=value, ctx=SerializationContext(topic=topics[0], headers=headers)),
         )
 
-# def reply(row: dict, state: State):
-
-#     print(row)
-#     chat_id = row['conversation_id']
-
-#     output_role = role
-#     if role == "A":
-#         output_role = "B"
-
-#     row["role"] = output_role
-#     row["text"] = "This is a reply from " + role
-#     row["conversation_id"] = chat_id
-#     row["Timestamp"] = time.time_ns()
-    
-#     time.sleep(1)
-    
-#     return row
-
-sdf = app.dataframe(input_topic)
-
-sdf = sdf[sdf["role"] != role]
-
-#sdf = sdf.apply(reply, stateful=True)
-
-sdf = sdf.update(lambda row: print(row))
-
-sdf = sdf.to_topic(output_topic)
-
 if __name__ == "__main__":
-    # only A will init. B will listen and respond
-    # A will also respond. but only to B
-    if role == "A":
-        print("Calling INIT!!!")
-        init()
+    print("Calling INIT!!!")
+    init()
     
-    app.run(sdf)
