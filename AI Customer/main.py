@@ -59,7 +59,7 @@ for file in gguf_files:
     except Exception as e:
         print(f"Error occurred while deleting file {file}. Error message: {e}")
 
-
+model_path = ""
 if gguf_files:
     # Get the first .gguf file
     model_path = gguf_files[0]
@@ -70,6 +70,18 @@ else:
     model_name = "llama-2-7b-chat.Q4_K_M.gguf"
     hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
     
+    gguf_files = glob.glob('./state/*.gguf')
+    if gguf_files:
+        # Get the first .gguf file
+        model_path = gguf_files[0]
+        model_name = Path(model_path).name
+        print(f"Loading model from state: {model_name}")
+    else:
+        print("FAILED TO GET MODEL")
+        while True:
+            print("FAILED TO GET MODEL")
+            time.sleep(1)
+
 
 # Download the model and save it to the service's state directory if it is not already there:
 
