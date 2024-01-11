@@ -187,7 +187,14 @@ def reply(row: dict, state: State):
     print("Thinking about the reply...")
 
 
-    pickle_file_path = "./state/agent_convo.pkl"
+    # use the conversation id to identify the conversation memory pickle file
+    if "conversation_id" in row:
+        conversation_id = row["conversation_id"]
+    else:
+        conversation_id = ""
+
+    pickle_file_path = f"./state/agent_convo-{conversation_id}.pkl"
+
     loaded_data = None
     # conversation_state = state.get("conversation", None)
     if os.path.exists(pickle_file_path):
