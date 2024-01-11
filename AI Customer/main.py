@@ -319,6 +319,10 @@ def reply(row: dict, state: State):
 
     return row
 
+sdf = sdf.update(lambda row: print("-----------------------------------\n GOT THIS NEW ROW! \n------------------------------------------"))
+sdf = sdf.update(lambda row: print(row))
+sdf = sdf.update(lambda row: print("-----------------------------------\n GOT THIS NEW ROW! \n------------------------------------------"))
+
 # Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
 # So that it doesn't reply to its own messages
 sdf = sdf[sdf["role"] != role]
