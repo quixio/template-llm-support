@@ -14,7 +14,7 @@ from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseries
 
 consumergroup = os.environ["consumergroup"]
 
-app = Application.Quix("transformation-v1-side-"+os.environ["consumergroup"], auto_offset_reset="latest")
+app = Application.Quix("transformation-v2-side-"+os.environ["consumergroup"], auto_offset_reset="latest")
 
 input_topic = app.topic(os.environ["input"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["input"], value_serializer=QuixTimeseriesSerializer())
