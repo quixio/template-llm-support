@@ -20,6 +20,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
     key = os.environ["Quix__Workspace__Id"] + ":" + sc.stream_id
     
     def on_data_recv_handler(stream_consumer: qx.StreamConsumer, data: qx.TimeseriesData):
+        print("Data rx'd")
         for ts in data.timestamps:
             if "good bye" in ts.parameters["text"].string_value.lower():
                 r.delete(key)
