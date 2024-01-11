@@ -155,7 +155,13 @@ def reply(row: dict, state: State):
     print(row)
     print("------------------------------------------------")
 
-    pickle_file_path = "./state/customer_convo.pkl"
+    # use the conversation id to identify the conversation memory pickle file
+    if "conversation_id" in row:
+        conversation_id = row["conversation_id"]
+    else:
+        conversation_id = ""
+
+    pickle_file_path = f"./state/customer_convo-{conversation_id}.pkl"
     loaded_data = None
     # conversation_state = state.get("conversation", None)
     if os.path.exists(pickle_file_path):
