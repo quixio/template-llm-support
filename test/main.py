@@ -65,7 +65,11 @@ def reply(row: dict, state: State):
     print(row)
     chat_id = row['conversation_id']
 
-    row["role"] = role
+    output_role = role
+    if role == "A":
+        output_role = "B"
+
+    row["role"] = output_role
     row["text"] = "This is a reply from " + role
     row["conversation_id"] = chat_id
     row["Timestamp"] = time.time_ns()
