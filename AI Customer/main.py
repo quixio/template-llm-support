@@ -169,7 +169,7 @@ app = Application.Quix("transformation-v18-"+role, auto_offset_reset="latest")
 
 # Define the input and output topics with the relevant deserialization and serialization methods
 input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
-output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
+output_topic = app.topic(os.environ["output"], value_serializer=QuixTimeseriesSerializer())
 
 # Initialize a streaming dataframe based on the stream of messages from the input topic:
 sdf = app.dataframe(input_topic)
