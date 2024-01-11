@@ -155,7 +155,7 @@ deployments:
   - name: Agent - Kicks off convo
     application: test
     deploymentType: Service
-    version: e38a78e80b6ba2bc5c039635de138498e46d506f
+    version: aad281a2cb707acc476798241e994ac4761baa69
     resources:
       cpu: 200
       memory: 500
@@ -171,7 +171,7 @@ deployments:
         inputType: FreeText
         description: ''
         required: false
-        value: v5
+        value: v500
       - name: role
         inputType: FreeText
         description: ''
