@@ -187,11 +187,6 @@ def clean_text(msg):
 def reply(row: dict, state: State):
 
     print("Processing reply")
-    print(f"Received a reply: {row['text']}")
-    print("------------------------------------------------")
-    print("Received row data is:")
-    print(row)
-    print("------------------------------------------------")
 
     # use the conversation id to identify the conversation memory pickle file
     if "conversation_id" in row:
@@ -321,7 +316,7 @@ def reply(row: dict, state: State):
 
 sdf = sdf.update(lambda row: print("-----------------------------------\n GOT THIS NEW ROW! \n------------------------------------------"))
 sdf = sdf.update(lambda row: print(row))
-sdf = sdf.update(lambda row: print("-----------------------------------\n GOT THIS NEW ROW! \n------------------------------------------"))
+sdf = sdf.update(lambda row: print("-----------------------------------"))
 
 # Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
 # So that it doesn't reply to its own messages
