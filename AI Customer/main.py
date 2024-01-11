@@ -56,6 +56,21 @@ if not Path(model_path).exists():
 else:
     print("Loading model from state...")
 
+
+
+# Specify the directory
+directory = './state'
+# Check if the directory exists
+if os.path.exists(directory):
+    # List the files in the directory
+    files = os.listdir(directory)
+    # Print the files
+    for file in files:
+        print(file)
+else:
+    print(f"The directory [{directory}] does not exist.")
+
+    
 # Function to load a list of values from a text file
 def get_list(file: str):
     list = []
