@@ -222,7 +222,7 @@ def reply(row: dict, state: State):
     #             return_messages=True
     #         )
 
-    pickled_conversation_key = "pickled_conversation" + conversation_id
+    pickled_conversation_key = "pickled_conversation-v1"# + conversation_id
     print(f"Getting pickled convo from shared state with key = {pickled_conversation_key}...")
     pickled_convo_state = state.get(pickled_conversation_key, None)
     if pickled_convo_state != None:
