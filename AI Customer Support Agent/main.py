@@ -43,20 +43,22 @@ AGENT_ROLE = "agent"
 role = AGENT_ROLE
 chat_id = ""
 
+
 # Download the model and save it to the service's state directory if it is not already there:
-model_name = "llama-2-7b-chat.Q4_K_M.gguf"
-model_path = f"./state/{model_name}"
+##### PUT THIS BACK!!
+# model_name = "llama-2-7b-chat.Q4_K_M.gguf"
+# model_path = f"./state/{model_name}"
 
-if not Path(model_path).exists():
-    print("The model path does not exist in state. Downloading model...")
-    hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
-else:
-    print("Loading model from state...")
-
+# if not Path(model_path).exists():
+#     print("The model path does not exist in state. Downloading model...")
+#     hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
+# else:
+#     print("Loading model from state...")
 
 
 # Specify the directory
 directory = './state'
+print("Files in state dir:")
 # Check if the directory exists
 if os.path.exists(directory):
     # List the files in the directory
@@ -68,21 +70,22 @@ else:
     print(f"The directory [{directory}] does not exist.")
 
 
-# Load the model with the apporiate parameters:
-llm = LlamaCpp(
-    model_path=model_path,
-    max_tokens=250,
-    top_p=0.95,
-    top_k=150,
-    temperature=0.7,
-    repeat_penalty=1.2,
-    n_ctx=2048,
-    streaming=False
-)
+##### PUT THIS BACK!!
+# # Load the model with the apporiate parameters:
+# llm = LlamaCpp(
+#     model_path=model_path,
+#     max_tokens=250,
+#     top_p=0.95,
+#     top_k=150,
+#     temperature=0.7,
+#     repeat_penalty=1.2,
+#     n_ctx=2048,
+#     streaming=False
+# )
 
-model = Llama2Chat(
-    llm=llm,
-    system_message=SystemMessage(content="You are a customer support agent for a large electronics retailer called 'ACME electronics'."))
+# model = Llama2Chat(
+#     llm=llm,
+#     system_message=SystemMessage(content="You are a customer support agent for a large electronics retailer called 'ACME electronics'."))
 
 
 # Initializes a Quix Kafka consumer with a consumer group based on the role
@@ -188,34 +191,6 @@ def reply(row: dict, state: State):
     print("-------------------------------")
     print("Thinking about the reply...")
 
-
-    # pickle_file_path = "./state/agent_convo.pkl"
-    # loaded_data = None
-    # # conversation_state = state.get("conversation", None)
-    # if os.path.exists(pickle_file_path):
-    #     print("Loading conversation from pickle file")
-
-    #     with open(pickle_file_path, 'rb') as f:
-    #         loaded_data = pickle.load(f)
-    # else:
-    #     print("No conversation pickle file exists")
-
-    # # use convo state from mem, or create a new one
-    # if loaded_data != None:
-    #     memory = loaded_data
-    # else:
-    #     # Defines how much of the conversation history to give to the model
-    #     # during each exchange (300 tokens, or a little over 300 words)
-    #     # Function automatically prunes the oldest messages from conversation history that fall outside the token range.
-    #     memory = ConversationTokenBufferMemory(
-    #         llm=llm,
-    #         max_token_limit=300,
-    #         ai_prefix= "AGENT",
-    #         human_prefix= "CUSTOMER",
-    #         return_messages=True
-    #     )
-
-
     pickled_conversation_key = "pickled_conversation-v1"# + conversation_id
     print(f"Getting pickled convo from shared state with key = {pickled_conversation_key}...")
     pickled_convo_state = state.get(pickled_conversation_key, None)
@@ -256,10 +231,6 @@ def reply(row: dict, state: State):
     row["role"] = role
     row["text"] = msg
 
-    # print("Persisting conversation to state in a pickle file...")
-    # with open(pickle_file_path, "wb") as f:
-    #     pickle.dump(conversation.memory, f)
-    # print("...done")
 
     print(f"Pickling convo to shared state with key = {pickled_conversation_key}...")
     # pickle the convo memory object
@@ -279,19 +250,19 @@ sdf = sdf.update(lambda row: print(row))
 
 # Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
 # So that it doesn't reply to its own messages
-sdf = sdf[sdf["role"] != role]
+##### sdf = sdf[sdf["role"] != role]
 
 # Trigger the reply function for any new messages(rows) detected in the filtered SDF
-sdf = sdf.apply(reply, stateful=True)
+##### sdf = sdf.apply(reply, stateful=True)
 
 # Check the SDF again and filter out any empty rows
-sdf = sdf[sdf.apply(lambda row: row is not None)]
+##### sdf = sdf[sdf.apply(lambda row: row is not None)]
 
 # Update the timestamp column to the current time in nanoseconds
-sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
+##### sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
 
 # Publish the processed SDF to a Kafka topic specified by the output_topic object. 
-sdf = sdf.to_topic(output_topic)
+##### sdf = sdf.to_topic(output_topic)
 
 if __name__ == "__main__":
     app.run(sdf)
