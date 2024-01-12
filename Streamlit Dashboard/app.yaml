@@ -26,6 +26,11 @@ variables:
     description: Custom style sheet for Streamlit.
     defaultValue: style.css
     required: false
+  - name: flush
+    inputType: FreeText
+    description: ''
+    defaultValue: 0
+    required: false
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
