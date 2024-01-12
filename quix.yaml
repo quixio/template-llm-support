@@ -185,13 +185,6 @@ topics:
       replicationFactor: 2
       retentionInMinutes: 1440
       retentionInBytes: 52428800
-  - name: test-1004
-    persisted: false
-    configuration:
-      partitions: 3
-      replicationFactor: 2
-      retentionInMinutes: 1440
-      retentionInBytes: 52428800
   - name: ai-chat-history-5
     persisted: false
     configuration:
