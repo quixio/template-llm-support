@@ -98,7 +98,7 @@ print("Prompt:\n{}".format(prompt.to_json()))
 # Load the model with the apporiate parameters
 llm = LlamaCpp(
     model_path=model_path,
-    max_tokens=50,
+    max_tokens=250,
     top_p=0.95,
     top_k=150,
     temperature=0.7,
@@ -190,7 +190,7 @@ def reply(row: dict, state: State):
         print("No convo found in shared state")
         memory = ConversationTokenBufferMemory(
                 llm=llm,
-                max_token_limit=50,
+                max_token_limit=250,
                 ai_prefix= "CUSTOMER",
                 human_prefix= "AGENT",
                 return_messages=True
