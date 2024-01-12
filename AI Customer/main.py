@@ -5,8 +5,6 @@ import uuid
 import re
 from pathlib import Path
 import pickle
-import glob
-
 
 # Import the main Quix Streams module for data processing and transformation
 from quixstreams import Application, State
@@ -32,18 +30,10 @@ import ctypes
 # Create a constant that defines the role of the bot.
 CUSTOMER_ROLE = "customer"
 
-# REPLICA STATE HERE
-# generate a random ID for this replica (this deployment of the code)
-replica_id = str(uuid.uuid4())
-print("==========================")
-print(f"RECPLICA_ID={replica_id}")
-print("==========================")
-
 # Set the current role to the role constant and initialite variables for supplementary customer metadata:
 role = CUSTOMER_ROLE
 customer_id = 0
 customer_name = ""
-pickle
 
 # Define the maxiumum number of exchanges so that we can end the conversation if it has gone on too long
 # This maximum is defined in an environment variable
@@ -81,7 +71,6 @@ moods = get_list("moods.txt")
 # update the products.txt file to add/remove defective appliances.
 products = get_list("products.txt")
 
-
 # Loads the prompt template from a YAML file 
 # i.e "You are a customer interacting with a support agent..."
 prompt = load_prompt("prompt.yaml")
@@ -108,6 +97,7 @@ llm = LlamaCpp(
     streaming=True
 )
 
+# create the Llama model and set the default message
 model = Llama2Chat(
     llm=llm,
     system_message=SystemMessage(content="You are a customer of a large electronics retailer called 'ACME electronics' who is trying to resolve an issue with a defective product that you purchased."))
@@ -134,46 +124,15 @@ sdf = app.dataframe(input_topic)
 
 # Detect and remove any common text issues from the models response
 def clean_text(msg):
-    #print("Cleaning message...")
-    #print(f"BEFORE:\n{msg}")
     msg = re.sub('^[^:]*:\n?', '', msg, 1)  # Removing any extra "meta commentary" that the LLM sometime adds, followed by a colon.
     msg = re.sub(r'"', '', msg)  # Strip out any speech marks that the LLM tends to add.
-    #print(f"AFTER:\n{msg}")
     return msg
 
 # Define a function to reply to the agent's messages
 def reply(row: dict, state: State):
 
-    #print("Processing reply")
-
     # use the conversation id to identify the conversation memory pickle file
-    if "conversation_id" in row:
-        conversation_id = row["conversation_id"]
-    else:
-        conversation_id = ""
-
-    # pickle_file_path = f"./state/customer_convo-{conversation_id}.pkl"
-    # loaded_data = None
-    # # conversation_state = state.get("conversation", None)
-    # if os.path.exists(pickle_file_path):
-    #     print("Loading conversation from pickle file")
-
-    #     with open(pickle_file_path, 'rb') as f:
-    #         loaded_data = pickle.load(f)
-    # else:
-    #     print("No conversation pickle file exists")
-
-    # # use convo state from mem, or create a new one
-    # if loaded_data != None:
-    #     memory = loaded_data
-    # else:
-    #     memory = ConversationTokenBufferMemory(
-    #             llm=llm,
-    #             max_token_limit=50,
-    #             ai_prefix= "CUSTOMER",
-    #             human_prefix= "AGENT",
-    #             return_messages=True
-    #         )
+    conversation_id = row["conversation_id"]
 
     pickled_conversation_key = "pickled_conversation-v1"# + conversation_id
     print(f"Getting pickled convo from shared state with key = {pickled_conversation_key}...")
@@ -235,7 +194,7 @@ def reply(row: dict, state: State):
         #print(f"Looking for {conversation_id} in chains..")
         if conversation_id in chains:
             print(f"Deleting {conversation_id} from chains..")
-            #del chains[row["conversation_id"]]
+            del chains[conversation_id]
             state.delete(chatlen_key)
 
         # Send a message to the agent with the special termination signal "Good bye"
@@ -243,21 +202,24 @@ def reply(row: dict, state: State):
         row["text"] = "Noted, I think I have enough information. Thank you for your assistance. Good bye!"
         return row
 
-    #print("Thinking about the reply...")
-    
     print("Generating response...\n")
+
+    # call the Llama model.
+    # this generates the new message and
+    # and adds it to the conversation chain
     msg = conversation.run(row["text"])
     msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
     row["text"] = msg
-    state.set(chatlen_key, chatlen + 1)
 
-    #print("Persisting conversation to state in a pickle file...")
+    # persist the chat length to state
+    state.set(chatlen_key, chatlen + 1)
 
     print(f"Pickling convo to shared state with key = {pickled_conversation_key}...")
     # pickle the convo memory object
     pickled_convo = pickle.dumps(conversation.memory)
     # Convert pickled bytes to a string
     pickled_string = pickled_convo.decode('latin1')
+    # save the pickled and stringified conversation memory to state
     state.set(pickled_conversation_key, pickled_string)
     print("...done")
 
@@ -272,8 +234,6 @@ sdf = sdf[sdf["role"] != "none"]
 
 sdf = sdf.update(lambda row: print("-----------------------------------\n GOT THIS NEW ROW! \n------------------------------------------"))
 sdf = sdf.update(lambda row: print(row))
-sdf = sdf.update(lambda row: print("-----------------------------------"))
-sdf = sdf.update(lambda row: print(f"This message will be handled = {row['role'] != role}. ROW ROLE={row['role']}. MY ROLE={role}"))
 sdf = sdf.update(lambda row: print("-----------------------------------"))
 
 # Trigger the reply function for any new messages(rows) detected in the filtered SDF
