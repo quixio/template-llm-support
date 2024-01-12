@@ -114,8 +114,8 @@ deployments:
     deploymentType: Service
     version: 9b47a8465e724164b1a10583694c2617e5a02791
     resources:
-      cpu: 2500
-      memory: 4100
+      cpu: 4100
+      memory: 8000
       replicas: 2
     desiredStatus: Stopped
     variables:
@@ -123,7 +123,7 @@ deployments:
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: ai-chat-history-2
+        value: ai-chat-history-3
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
