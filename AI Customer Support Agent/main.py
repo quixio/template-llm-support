@@ -27,6 +27,8 @@ from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
 from langchain.schema import SystemMessage
+from llama_cpp import llama_log_set
+import ctypes
 
 # REPLICA STATE HERE
 # generate a random ID for this replica (this deployment of the code)
@@ -85,6 +87,11 @@ model = Llama2Chat(
     llm=llm,
     system_message=SystemMessage(content="You are a customer support agent for a large electronics retailer called 'ACME electronics'."))
 
+def my_log_callback(level, message, user_data):
+    pass
+
+log_callback = ctypes.CFUNCTYPE(None, ctypes.c_int, ctypes.c_char_p, ctypes.c_void_p)(my_log_callback)
+llama_log_set(log_callback, ctypes.c_void_p())
 
 # Initializes a Quix Kafka consumer with a consumer group based on the role
 # and configured to read the latest message if no offset was previously registered for the consumer group
