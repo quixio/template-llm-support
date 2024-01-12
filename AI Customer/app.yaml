@@ -11,11 +11,6 @@ variables:
     description: Maximum conversation length, after which the conversation resets.
     defaultValue: 15
     required: true
-  - name: output
-    inputType: InputTopic
-    description: ''
-    defaultValue: agent-topic
-    required: false
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
