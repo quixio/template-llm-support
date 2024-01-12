@@ -5,7 +5,6 @@ import random
 import re
 from pathlib import Path
 import pickle
-import glob
 
 
 # Import the main Quix Streams module for data processing and transformation:
@@ -30,21 +29,12 @@ from langchain.schema import SystemMessage
 from llama_cpp import llama_log_set
 import ctypes
 
-# REPLICA STATE HERE
-# generate a random ID for this replica (this deployment of the code)
-replica_id = str(uuid.uuid4())
-print("==========================")
-print(f"replica_id = {replica_id}")
-print("==========================")
-
-
 # Create a constant that defines the role of the bot:
 AGENT_ROLE = "agent"
 
 # Set the current role to the role constant:
 role = AGENT_ROLE
 chat_id = ""
-
 
 # Download the model and save it to the service's state directory if it is not already there:
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
@@ -55,21 +45,6 @@ if not Path(model_path).exists():
     hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
 else:
     print("Loading model from state...")
-
-
-# Specify the directory
-directory = './state'
-print("Files in state dir:")
-# Check if the directory exists
-if os.path.exists(directory):
-    # List the files in the directory
-    files = os.listdir(directory)
-    # Print the files
-    for file in files:
-        print(file)
-else:
-    print(f"The directory [{directory}] does not exist.")
-
 
 # Load the model with the apporiate parameters:
 llm = LlamaCpp(
@@ -83,13 +58,14 @@ llm = LlamaCpp(
     streaming=False
 )
 
+# create the Llama model and initialise it with the default message
 model = Llama2Chat(
     llm=llm,
     system_message=SystemMessage(content="You are a customer support agent for a large electronics retailer called 'ACME electronics'."))
 
+# disable the verbose logging with a do nothing override
 def my_log_callback(level, message, user_data):
     pass
-
 log_callback = ctypes.CFUNCTYPE(None, ctypes.c_int, ctypes.c_char_p, ctypes.c_void_p)(my_log_callback)
 llama_log_set(log_callback, ctypes.c_void_p())
 
@@ -98,13 +74,11 @@ llama_log_set(log_callback, ctypes.c_void_p())
 app = Application.Quix("transformation-v17-"+role, auto_offset_reset="latest")
 
 # Defines the input and output topics with the relevant deserialization and serialization methods (and get the topic names from enviroiment variables)
-
 input_topic = app.topic(os.environ["input"], value_deserializer=QuixDeserializer())
 output_topic = app.topic(os.environ["input"], value_serializer=QuixTimeseriesSerializer())
 
 # Initialize a streaming dataframe based on the stream of messages from the input topic:
 sdf = app.dataframe(topic=input_topic)
-
 
 # Load a list of possible agent names from a text file:
 def agents_init():
@@ -122,9 +96,8 @@ agents = agents_init()
 def chat_init():
     chat_id = str(uuid.uuid4()) # Give the conversation an ID for effective message keying
     print("======================================")
-    print(f"NEW CHAT WITH CHAT_ID = {chat_id}")
+    print(f"STARTED A NEW CHAT WITH CHAT_ID = {chat_id}")
     print("======================================")
-
 
     agent_id = random.getrandbits(16) # Give the agent a random ID to display in the dashboard
     agent_name = random.choice(agents) # Randomly select a name from the list of agent names
@@ -135,9 +108,9 @@ def chat_init():
                How can I help you today?"""
 
     # Load the relevant configurations from environment variables
-    ### In Quix Cloud, These variables are already preconfigured with defaults
-    ### When running locally, you need to define 'Quix__Sdk__Token' as an environment variable
-    ### Defining 'Quix__Workspace__Id' is also preferable, but often the workspace ID can be inferred.
+    # In Quix Cloud, These variables are already preconfigured with defaults
+    # When running locally, you need to define 'Quix__Sdk__Token' as an environment variable
+    # Defining 'Quix__Workspace__Id' is also preferable, but often the workspace ID can be inferred.
     cfg_builder = QuixKafkaConfigsBuilder()
 
     # Get the input topic name from an environment variable
@@ -218,14 +191,16 @@ def reply(row: dict, state: State):
     # The customer bot is primed to say "good bye" if the conversation has lasted too long
     # message limit defined in "conversation_length" environment variable
     # The agent looks for this "good bye" so it knows to restart too.
-
     if "good bye" in row["text"].lower():
         print("Initializing a new conversation...")
-        #del chains[row["conversation_id"]]
+
+        # that was then end of the chat
+        # start a new chat with a new customer
         chat_init()
 
+        # set these to ensure the conversation doesn't continue
         row["role"] = "none"
-        row["text"] = "conversation ended"
+        row["text"] = ""
         return row
 
 
@@ -233,22 +208,20 @@ def reply(row: dict, state: State):
     # and store that reply in the msg variable
     msg = conversation.run(row["text"])
     msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
-    #print(f"{role.upper()} replying with: {msg}\n")
-
-    row["role"] = role
-    row["text"] = msg
-
 
     print(f"Pickling convo to shared state with key = {pickled_conversation_key}...")
     # pickle the convo memory object
     pickled_convo = pickle.dumps(conversation.memory)
-    # Convert pickled bytes to a string
+    # convert pickled bytes to a string
     pickled_string = pickled_convo.decode('latin1')
+    # save the pickled and stringified conversation memory to state
     state.set(pickled_conversation_key, pickled_string)
-    #print("...done")
 
     # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
     # containing the agents role and reply 
+    row["role"] = role
+    row["text"] = msg
+
     return row
 
 # Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
@@ -260,8 +233,6 @@ sdf = sdf[sdf["role"] != "none"]
 
 sdf = sdf.update(lambda row: print("-----------------------------------\n GOT THIS NEW ROW! \n------------------------------------------"))
 sdf = sdf.update(lambda row: print(row))
-sdf = sdf.update(lambda row: print("-----------------------------------"))
-sdf = sdf.update(lambda row: print(f"This message will be handled = {row['role'] != role}. ROW ROLE={row['role']}. MY ROLE={role}"))
 sdf = sdf.update(lambda row: print("-----------------------------------"))
 
 # Trigger the reply function for any new messages(rows) detected in the filtered SDF
