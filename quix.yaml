@@ -123,7 +123,7 @@ deployments:
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: ai-chat-history
+        value: ai-chat-history-2
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
