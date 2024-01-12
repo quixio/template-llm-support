@@ -136,7 +136,7 @@ sdf = app.dataframe(input_topic)
 def clean_text(msg):
     #print("Cleaning message...")
     #print(f"BEFORE:\n{msg}")
-    msg = re.sub(r'^.*?: ', '', msg, 1)  # Removing any extra "meta commentary" that the LLM sometime adds, followed by a colon.
+    msg = re.sub('^[^:]*:\n?', '', msg, 1)  # Removing any extra "meta commentary" that the LLM sometime adds, followed by a colon.
     msg = re.sub(r'"', '', msg)  # Strip out any speech marks that the LLM tends to add.
     #print(f"AFTER:\n{msg}")
     return msg
