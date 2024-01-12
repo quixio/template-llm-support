@@ -182,7 +182,6 @@ def clean_text(msg):
 
 # Define a function to reply to the customer's messages
 def reply(row: dict, state: State):
-    print("Thinking about the reply...")
 
     pickled_conversation_key = "pickled_conversation-v1"# + conversation_id
     print(f"Getting pickled convo from shared state with key = {pickled_conversation_key}...")
@@ -229,7 +228,7 @@ def reply(row: dict, state: State):
     # and store that reply in the msg variable
     msg = conversation.run(row["text"])
     msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
-    print(f"{role.upper()} replying with: {msg}\n")
+    #print(f"{role.upper()} replying with: {msg}\n")
 
     row["role"] = role
     row["text"] = msg
@@ -241,18 +240,11 @@ def reply(row: dict, state: State):
     # Convert pickled bytes to a string
     pickled_string = pickled_convo.decode('latin1')
     state.set(pickled_conversation_key, pickled_string)
-
-    print("...done")
+    #print("...done")
 
     # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
     # containing the agents role and reply 
     return row
-
-sdf = sdf.update(lambda row: print("-----------------------------------\n GOT THIS NEW ROW! \n------------------------------------------"))
-sdf = sdf.update(lambda row: print(row))
-sdf = sdf.update(lambda row: print("-----------------------------------"))
-sdf = sdf.update(lambda row: print(f"This message will be handled = {row['role'] != role}. ROW ROLE={row['role']}. MY ROLE={role}"))
-sdf = sdf.update(lambda row: print("-----------------------------------"))
 
 # Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
 # So that it doesn't reply to its own messages
@@ -261,6 +253,11 @@ sdf = sdf[sdf["role"] != role]
 # exclude rows with none as the role. these are conversations that have ended.
 sdf = sdf[sdf["role"] != "none"]
 
+sdf = sdf.update(lambda row: print("-----------------------------------\n GOT THIS NEW ROW! \n------------------------------------------"))
+sdf = sdf.update(lambda row: print(row))
+sdf = sdf.update(lambda row: print("-----------------------------------"))
+sdf = sdf.update(lambda row: print(f"This message will be handled = {row['role'] != role}. ROW ROLE={row['role']}. MY ROLE={role}"))
+sdf = sdf.update(lambda row: print("-----------------------------------"))
 
 # Trigger the reply function for any new messages(rows) detected in the filtered SDF
 sdf = sdf.apply(reply, stateful=True)
