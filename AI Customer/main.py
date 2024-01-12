@@ -25,6 +25,9 @@ from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
 from langchain.schema import SystemMessage
+from llama_cpp import llama_log_set
+import ctypes
+
 
 # Create a constant that defines the role of the bot.
 CUSTOMER_ROLE = "customer"
@@ -108,6 +111,11 @@ model = Llama2Chat(
     llm=llm,
     system_message=SystemMessage(content="You are a customer of a large electronics retailer called 'ACME electronics' who is trying to resolve an issue with a defective product that you purchased."))
 
+# disable verbose logging
+def my_log_callback(level, message, user_data):
+    pass
+log_callback = ctypes.CFUNCTYPE(None, ctypes.c_int, ctypes.c_char_p, ctypes.c_void_p)(my_log_callback)
+llama_log_set(log_callback, ctypes.c_void_p())
 
 # hold the conversation chains
 chains = {}
