@@ -164,13 +164,6 @@ topics:
       replicationFactor: 2
       retentionInMinutes: 1440
       retentionInBytes: 52428800
-  - name: ai-chat-history
-    persisted: false
-    configuration:
-      partitions: 16
-      replicationFactor: 2
-      retentionInMinutes: 1440
-      retentionInBytes: 52428800
   - name: agent-topic
     persisted: false
     configuration:
