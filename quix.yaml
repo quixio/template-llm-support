@@ -69,7 +69,7 @@ deployments:
   - name: Streamlit Dashboard
     application: Streamlit Dashboard
     deploymentType: Service
-    version: 9b76854de53b62eac8350c843d9962471a23c4f3
+    version: 4efee0c9b9ac7a7a2455d4084b8ff3c536ef4d37
     resources:
       cpu: 200
       memory: 500
