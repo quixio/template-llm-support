@@ -38,6 +38,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
                 "agent_name": ts.parameters["agent_name"].string_value,
                 "customer_id": ts.parameters["customer_id"].numeric_value if "customer_id" in ts.parameters else 0,
                 "customer_name": ts.parameters["customer_name"].string_value if "customer_name" in ts.parameters else "",
+                "product": ts.parameters["product"].string_value if "product" in ts.parameters else ""
             }
 
             cached = r.json().get(key)
