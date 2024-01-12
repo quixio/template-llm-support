@@ -146,7 +146,7 @@ deployments:
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: agent-chat-3
+        value: test-1000
       - name: conversation_length
         inputType: FreeText
         description: Maximum conversation length, after which the conversation resets.
@@ -156,7 +156,7 @@ deployments:
         inputType: InputTopic
         description: ''
         required: false
-        value: agent-chat-3
+        value: test-1000
   - name: Agent - Kicks off convo
     application: test
     deploymentType: Service
