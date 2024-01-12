@@ -90,7 +90,8 @@ prompt = load_prompt("prompt.yaml")
 # (for variation in sentiment analysis)
 # and the specific product that they are calling about
 prompt.partial_variables["mood"] = random.choice(moods)
-prompt.partial_variables["product"] = random.choice(products)
+product = random.choice(products)
+prompt.partial_variables["product"] = product
 
 # For debugging, print the prompt with the populated mood and product variables.
 print("Prompt:\n{}".format(prompt.to_json()))
@@ -209,6 +210,8 @@ def reply(row: dict, state: State):
 
     # Replace previous role with the new role
     row["role"] = role
+    # add the product to the data set, just so we can display it in the streamlit dash
+    row["product"] = product
 
     # create a new key to store the length of the conversation 
     # as the number of chat messages
