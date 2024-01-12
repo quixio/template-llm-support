@@ -97,6 +97,7 @@ while True:
                 st.markdown(f"**Agent ID:** {msg_latest['agent_id']:.0f} ({msg_latest['agent_name']})")
                 st.markdown(f"**Customer ID:** {get_customer_info(msg_latest)})")
                 st.markdown(f"**Average Sentiment:** {mood_avg}")
+                st.markdown(f"**Product:** {msg_latest['product']}")
             
             with c[1].container(border=True):
                 for msg in chats[i]:
