@@ -185,7 +185,7 @@ def reply(row: dict, state: State):
 
     # get the conversation id from the row to locate the conversation buffer memory in state    
     conversation_id = row["text"]
-    pickled_conversation_key = "pickled_conversation-v1" + conversation_id
+    pickled_conversation_key = "pickled_conversation-v2"
     print(f"Getting pickled convo from shared state with key = {pickled_conversation_key}...")
     
     # get the conversation token buffer from state
