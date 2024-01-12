@@ -129,8 +129,8 @@ deployments:
     deploymentType: Service
     version: ceb011c5aa788793476e7cf8cacb20ec5be34d1b
     resources:
-      cpu: 2500
-      memory: 4000
+      cpu: 4000
+      memory: 8000
       replicas: 2
     state:
       enabled: true
@@ -141,7 +141,7 @@ deployments:
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: ai-chat-history-2
+        value: ai-chat-history-3
       - name: conversation_length
         inputType: FreeText
         description: Maximum conversation length, after which the conversation resets.
