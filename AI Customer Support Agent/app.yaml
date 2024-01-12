@@ -6,11 +6,6 @@ variables:
     description: This is the output topic to write data to
     defaultValue: agent-topic
     required: true
-  - name: output
-    inputType: InputTopic
-    description: ''
-    defaultValue: customer-topic
-    required: false
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
