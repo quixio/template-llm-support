@@ -11,6 +11,9 @@ r = redis.Redis(
   password=os.environ["redis_pwd"]
 )
 
+if os.environ["flush"] == "1":
+    r.flushdb()
+
 key_prefix = os.environ["Quix__Workspace__Id"] + ":"
 
 st.set_page_config(
