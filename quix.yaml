@@ -112,7 +112,7 @@ deployments:
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
-    version: d4eb035067818b52d78e4349b71137723bb60223
+    version: c19829e885ab9c92c0f05505e66f0cbc91eee807
     resources:
       cpu: 8000
       memory: 16384
@@ -123,12 +123,7 @@ deployments:
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: test-1004
-      - name: output
-        inputType: InputTopic
-        description: ''
-        required: false
-        value: test-1004
+        value: ai-chat-history
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
