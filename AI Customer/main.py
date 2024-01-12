@@ -133,17 +133,17 @@ sdf = app.dataframe(input_topic)
 
 # Detect and remove any common text issues from the models response
 def clean_text(msg):
-    print("Cleaning message...")
-    print(f"BEFORE:\n{msg}")
+    #print("Cleaning message...")
+    #print(f"BEFORE:\n{msg}")
     msg = re.sub(r'^.*?: ', '', msg, 1)  # Removing any extra "meta commentary" that the LLM sometime adds, followed by a colon.
     msg = re.sub(r'"', '', msg)  # Strip out any speech marks that the LLM tends to add.
-    print(f"AFTER:\n{msg}")
+    #print(f"AFTER:\n{msg}")
     return msg
 
 # Define a function to reply to the agent's messages
 def reply(row: dict, state: State):
 
-    print("Processing reply")
+    #print("Processing reply")
 
     # use the conversation id to identify the conversation memory pickle file
     if "conversation_id" in row:
@@ -229,7 +229,7 @@ def reply(row: dict, state: State):
         # if the lenth of conversation exceeds the limit, terminate it and dispose the conversation chain.
         print("Maximum conversation length reached, ending conversation...")
 
-        print(f"Looking for {conversation_id} in chains..")
+        #print(f"Looking for {conversation_id} in chains..")
         if conversation_id in chains:
             print(f"Deleting {conversation_id} from chains..")
             #del chains[row["conversation_id"]]
@@ -240,7 +240,7 @@ def reply(row: dict, state: State):
         row["text"] = "Noted, I think I have enough information. Thank you for your assistance. Good bye!"
         return row
 
-    print("Thinking about the reply...")
+    #print("Thinking about the reply...")
     
     print("Generating response...\n")
     msg = conversation.run(row["text"])
@@ -248,7 +248,7 @@ def reply(row: dict, state: State):
     row["text"] = msg
     state.set(chatlen_key, chatlen + 1)
 
-    print("Persisting conversation to state in a pickle file...")
+    #print("Persisting conversation to state in a pickle file...")
 
     print(f"Pickling convo to shared state with key = {pickled_conversation_key}...")
     # pickle the convo memory object
@@ -256,16 +256,9 @@ def reply(row: dict, state: State):
     # Convert pickled bytes to a string
     pickled_string = pickled_convo.decode('latin1')
     state.set(pickled_conversation_key, pickled_string)
-
     print("...done")
 
     return row
-
-sdf = sdf.update(lambda row: print("-----------------------------------\n GOT THIS NEW ROW! \n------------------------------------------"))
-sdf = sdf.update(lambda row: print(row))
-sdf = sdf.update(lambda row: print("-----------------------------------"))
-sdf = sdf.update(lambda row: print(f"This message will be handled = {row['role'] != role}. ROW ROLE={row['role']}. MY ROLE={role}"))
-sdf = sdf.update(lambda row: print("-----------------------------------"))
 
 # Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
 # So that it doesn't reply to its own messages
@@ -273,6 +266,12 @@ sdf = sdf[sdf["role"] != role]
 
 # exclude rows with none as the role. these are conversations that have ended.
 sdf = sdf[sdf["role"] != "none"]
+
+sdf = sdf.update(lambda row: print("-----------------------------------\n GOT THIS NEW ROW! \n------------------------------------------"))
+sdf = sdf.update(lambda row: print(row))
+sdf = sdf.update(lambda row: print("-----------------------------------"))
+sdf = sdf.update(lambda row: print(f"This message will be handled = {row['role'] != role}. ROW ROLE={row['role']}. MY ROLE={role}"))
+sdf = sdf.update(lambda row: print("-----------------------------------"))
 
 # Trigger the reply function for any new messages(rows) detected in the filtered SDF
 # while enabling stateful storage (required for tracking conversation length)
