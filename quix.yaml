@@ -69,7 +69,7 @@ deployments:
   - name: Streamlit Dashboard
     application: Streamlit Dashboard
     deploymentType: Service
-    version: d489ea438e1b80b838075ff4448629d67eee3f78
+    version: 9b76854de53b62eac8350c843d9962471a23c4f3
     resources:
       cpu: 200
       memory: 500
@@ -104,6 +104,11 @@ deployments:
         description: Custom style sheet for Streamlit.
         required: false
         value: style.css
+      - name: flush
+        inputType: FreeText
+        description: ''
+        required: false
+        value: 0
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
