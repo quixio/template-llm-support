@@ -136,7 +136,7 @@ deployments:
     resources:
       cpu: 8000
       memory: 16384
-      replicas: 1
+      replicas: 2
     state:
       enabled: true
       size: 6
