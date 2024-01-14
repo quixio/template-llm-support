@@ -12,7 +12,7 @@ r = redis.Redis(
   password=os.environ["redis_pwd"]
 )
 
-#r.flushdb() — optional line in case you want to purge the Redis DB when restarting
+r.flushdb() #— optional line in case you want to purge the Redis DB when restarting
 # redis keys for conversations are namespaced using project id to avoid collisions
 # between conversations from different projects
 key_prefix = os.environ["Quix__Workspace__Id"] + ":"
