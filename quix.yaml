@@ -117,6 +117,9 @@ deployments:
       cpu: 4100
       memory: 8000
       replicas: 2
+    state:
+      enabled: true
+      size: 6
     desiredStatus: Stopped
     variables:
       - name: input
