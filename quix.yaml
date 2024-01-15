@@ -84,6 +84,24 @@ deployments:
         description: ''
         required: false
         value: 1
+  - name: AI Support Agent 1
+    application: AI Customer Support Agent
+    deploymentType: Service
+    version: 4c17d62c575911af63f97031ced790a84cb6ff7c
+    resources:
+      cpu: 8000
+      memory: 16000
+      replicas: 1
+    state:
+      enabled: true
+      size: 6
+    desiredStatus: Running
+    variables:
+      - name: input
+        inputType: OutputTopic
+        description: This is the output topic to write data to
+        required: true
+        value: conversation-store1
 
 # This section describes the Topics of the data pipeline
 topics:
