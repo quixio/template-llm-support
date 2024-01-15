@@ -230,7 +230,7 @@ deployments:
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: customer-topic
+        value: conversation-store3
       - name: conversation_length
         inputType: FreeText
         description: Maximum conversation length, after which the conversation resets.
