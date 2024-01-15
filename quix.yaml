@@ -216,6 +216,26 @@ deployments:
         description: Input buffer configuration (timeout and timespan in milliseconds).
         required: false
         value: 0
+  - name: AI Customer 3
+    application: AI Customer
+    deploymentType: Service
+    version: c46ed7c67d7a6ee84b8460ed3ebe345fbb917e67
+    resources:
+      cpu: 8000
+      memory: 16000
+      replicas: 1
+    desiredStatus: Running
+    variables:
+      - name: input
+        inputType: OutputTopic
+        description: This is the output topic to write data to
+        required: true
+        value: customer-topic
+      - name: conversation_length
+        inputType: FreeText
+        description: Maximum conversation length, after which the conversation resets.
+        required: true
+        value: 15
 
 # This section describes the Topics of the data pipeline
 topics:
