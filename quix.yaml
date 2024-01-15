@@ -265,7 +265,7 @@ deployments:
         inputType: InputTopic
         description: Name of the input topic to listen to.
         required: true
-        value: chat
+        value: conversation-store3
       - name: output
         inputType: OutputTopic
         description: Name of the output topic to write to.
