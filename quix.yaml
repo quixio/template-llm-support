@@ -190,7 +190,7 @@ deployments:
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
-        value: agent-topic
+        value: conversation-store2
 
 # This section describes the Topics of the data pipeline
 topics:
