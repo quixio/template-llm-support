@@ -109,29 +109,6 @@ deployments:
         description: ''
         required: false
         value: 1
-  - name: AI Customer
-    application: AI Customer
-    deploymentType: Service
-    version: c46ed7c67d7a6ee84b8460ed3ebe345fbb917e67
-    resources:
-      cpu: 4000
-      memory: 8000
-      replicas: 2
-    state:
-      enabled: true
-      size: 6
-    desiredStatus: Stopped
-    variables:
-      - name: input
-        inputType: OutputTopic
-        description: This is the output topic to write data to
-        required: true
-        value: ai-chat-history-5
-      - name: conversation_length
-        inputType: FreeText
-        description: Maximum conversation length, after which the conversation resets.
-        required: true
-        value: 15
 
 # This section describes the Topics of the data pipeline
 topics:
