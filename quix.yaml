@@ -102,6 +102,29 @@ deployments:
         description: This is the output topic to write data to
         required: true
         value: conversation-store1
+  - name: AI Customer 1
+    application: AI Customer
+    deploymentType: Service
+    version: c46ed7c67d7a6ee84b8460ed3ebe345fbb917e67
+    resources:
+      cpu: 8000
+      memory: 16000
+      replicas: 1
+    state:
+      enabled: true
+      size: 6
+    desiredStatus: Running
+    variables:
+      - name: input
+        inputType: OutputTopic
+        description: This is the output topic to write data to
+        required: true
+        value: conversation-store1
+      - name: conversation_length
+        inputType: FreeText
+        description: Maximum conversation length, after which the conversation resets.
+        required: true
+        value: 15
 
 # This section describes the Topics of the data pipeline
 topics:
