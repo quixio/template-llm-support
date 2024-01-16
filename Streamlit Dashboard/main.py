@@ -74,6 +74,7 @@ while True:
     # fetch keys for conversations from the current project from redis
     for key in r.scan_iter(key_prefix + "*") :
         chat = r.json().get(key)
+        print(chat)
         if chat:
             chats.append(chat)
             sentiment_data["timestamp"] = []
