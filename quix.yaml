@@ -34,7 +34,7 @@ deployments:
   - name: Redis Sink
     application: Redis Sink
     deploymentType: Service
-    version: 866050d1c8ecc719edb65350e319906fc80196e4
+    version: 3e7a551f240fe5b3adb64d6c01d815353df04aab
     resources:
       cpu: 200
       memory: 500
@@ -53,7 +53,7 @@ deployments:
         secretKey: redis_host
       - name: redis_port
         inputType: Secret
-        description: Redis server port.
+        description: Redis port.
         required: true
         secretKey: redis_port
       - name: redis_pwd
