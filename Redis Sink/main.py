@@ -49,7 +49,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
 
             cached.append(entry)
             r.json().set(key, Path.root_path(), cached)
-            r.expire(key, timedelta(minutes=float(os.environ["expire_after"])))
+            #r.expire(key, timedelta(minutes=float(os.environ["expire_after"])))
 
             print("updated key: {}".format(key))
     
