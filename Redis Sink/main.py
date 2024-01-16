@@ -48,6 +48,7 @@ def on_stream_recv_handler(sc: qx.StreamConsumer):
 
             # store messages in the conversation as a list of json objects
             cached.append(entry)
+            print(f"CACHE: {cached}")
             r.json().set(key, Path.root_path(), cached)
             r.expire(key, timedelta(minutes=float(os.environ["expire_after"])))
 
