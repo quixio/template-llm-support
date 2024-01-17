@@ -121,123 +121,130 @@ def clean_text(msg):
 # Define a function to reply to the agent's messages
 def reply(row: dict, state: State):
 
-    # use the conversation id to identify the conversation memory pickle file
-    conversation_id = row["conversation_id"]
-
-    is_new_conversation = False
-    if "is_new_conversation" in row:
-        is_new_conversation = row["is_new_conversation"] or False
-
-    print(f"Is new convo = {is_new_conversation}")
-
-    if is_new_conversation:
-        # randomly select the tone of voice that the customer speaks with
-        # (for variation in sentiment analysis)
-        # and the specific product that they are calling about
-        mood = random.choice(moods)
-        prompt.partial_variables["mood"] = mood
-        product = random.choice(products)
-        prompt.partial_variables["product"] = product
-
-        # add the mood to the data set, just so we can display it in the streamlit dash
-        row["mood"] = mood
-        
-        # add the product to the data set, just so we can display it in the streamlit dash
-        row["product"] = product
-
-        # generate customer information randomly.
-        customer_id = random.getrandbits(16)
-        customer_name = random.choice(names)
-        row["customer_id"] = customer_id
-        row["customer_name"] = customer_name
-
-        # For debugging, print the prompt with the populated mood and product variables.
-        print("Prompt:\n{}".format(prompt.to_json()))
-    else:
-        row["isNewConversation"]
-
-
-    pickled_conversation_key = "pickled_conversation-v1"# + conversation_id
-    print(f"Getting pickled convo from shared state with key = {pickled_conversation_key}...")
-    pickled_convo_state = state.get(pickled_conversation_key, None)
-    if pickled_convo_state != None:
-        print("Convo found in shared state. Loading...")
-        # Convert the string back to pickled bytes
-        pickled_bytes = pickled_convo_state.encode('latin1')
-        # Unpickle the bytes object
-        unpickled_convo_state = pickle.loads(pickled_bytes)
-        
-        memory = unpickled_convo_state
-        print("Done loading")
-    else:
-        print("No convo found in shared state")
-        memory = ConversationTokenBufferMemory(
-                llm=llm,
-                max_token_limit=250,
-                ai_prefix= "CUSTOMER",
-                human_prefix= "AGENT",
-                return_messages=True
-            )
-
-    # Initializes a conversation chain and loads the prompt template from a YAML file 
-    # i.e "You are a customer of...".
-    conversation = ConversationChain(llm=model, prompt=prompt, memory=memory)
-
-    # Replace previous role with the new role
-    row["role"] = role
+    try:
     
-    # create a new key to store the length of the conversation 
-    # as the number of chat messages
-    chatlen_key = "chatlen"
+        # use the conversation id to identify the conversation memory pickle file
+        conversation_id = row["conversation_id"]
 
-    # If the key doesnt already exist in state, use the Quix state function
-    # to add it (so we can keep track of the number of chat exchanges) 
-    if not state.exists(chatlen_key):
-        state.set(chatlen_key, 0)
+        is_new_conversation = False
+        if "is_new_conversation" in row:
+            is_new_conversation = row["is_new_conversation"] or False
 
-    # for debugging, print the current contents of the chatlen_key from state:
-    chatlen = state.get(chatlen_key)
-    print(f"Chat length = {chatlen}")
-    
-    # End the conversation if it has gone on too long using the chat_maxlen limit defined
-    # at the start of the file
-    if chatlen >= chat_maxlen:
-        # if the lenth of conversation exceeds the limit, terminate it and dispose the conversation chain.
-        print("Maximum conversation length reached, ending conversation...")
+        print(f"Is new convo = {is_new_conversation}")
 
-        #print(f"Looking for {conversation_id} in chains..")
-        if conversation_id in chains:
-            print(f"Deleting {conversation_id} from chains..")
-            del chains[conversation_id]
-            state.delete(chatlen_key)
+        if is_new_conversation:
+            # randomly select the tone of voice that the customer speaks with
+            # (for variation in sentiment analysis)
+            # and the specific product that they are calling about
+            mood = random.choice(moods)
+            prompt.partial_variables["mood"] = mood
+            product = random.choice(products)
+            prompt.partial_variables["product"] = product
 
-        # Send a message to the agent with the special termination signal "Good bye"
-        # so that the agent knows to "hang up" too
-        row["text"] = "Noted, I think I have enough information. Thank you for your assistance. Good bye!"
+            # add the mood to the data set, just so we can display it in the streamlit dash
+            row["mood"] = mood
+            
+            # add the product to the data set, just so we can display it in the streamlit dash
+            row["product"] = product
+
+            # generate customer information randomly.
+            customer_id = random.getrandbits(16)
+            customer_name = random.choice(names)
+            row["customer_id"] = customer_id
+            row["customer_name"] = customer_name
+
+            # For debugging, print the prompt with the populated mood and product variables.
+            print("Prompt:\n{}".format(prompt.to_json()))
+        else:
+            row["is_new_conversation"] = False
+
+
+        pickled_conversation_key = "pickled_conversation-v1"# + conversation_id
+        print(f"Getting pickled convo from shared state with key = {pickled_conversation_key}...")
+        pickled_convo_state = state.get(pickled_conversation_key, None)
+        if pickled_convo_state != None:
+            print("Convo found in shared state. Loading...")
+            # Convert the string back to pickled bytes
+            pickled_bytes = pickled_convo_state.encode('latin1')
+            # Unpickle the bytes object
+            unpickled_convo_state = pickle.loads(pickled_bytes)
+            
+            memory = unpickled_convo_state
+            print("Done loading")
+        else:
+            print("No convo found in shared state")
+            memory = ConversationTokenBufferMemory(
+                    llm=llm,
+                    max_token_limit=250,
+                    ai_prefix= "CUSTOMER",
+                    human_prefix= "AGENT",
+                    return_messages=True
+                )
+
+        # Initializes a conversation chain and loads the prompt template from a YAML file 
+        # i.e "You are a customer of...".
+        conversation = ConversationChain(llm=model, prompt=prompt, memory=memory)
+
+        # Replace previous role with the new role
+        row["role"] = role
+        
+        # create a new key to store the length of the conversation 
+        # as the number of chat messages
+        chatlen_key = "chatlen"
+
+        # If the key doesnt already exist in state, use the Quix state function
+        # to add it (so we can keep track of the number of chat exchanges) 
+        if not state.exists(chatlen_key):
+            state.set(chatlen_key, 0)
+
+        # for debugging, print the current contents of the chatlen_key from state:
+        chatlen = state.get(chatlen_key)
+        print(f"Chat length = {chatlen}")
+        
+        # End the conversation if it has gone on too long using the chat_maxlen limit defined
+        # at the start of the file
+        if chatlen >= chat_maxlen:
+            # if the lenth of conversation exceeds the limit, terminate it and dispose the conversation chain.
+            print("Maximum conversation length reached, ending conversation...")
+
+            #print(f"Looking for {conversation_id} in chains..")
+            if conversation_id in chains:
+                print(f"Deleting {conversation_id} from chains..")
+                del chains[conversation_id]
+                state.delete(chatlen_key)
+
+            # Send a message to the agent with the special termination signal "Good bye"
+            # so that the agent knows to "hang up" too
+            row["text"] = "Noted, I think I have enough information. Thank you for your assistance. Good bye!"
+            return row
+
+        print("Generating response...\n")
+
+        # call the Llama model.
+        # this generates the new message and
+        # and adds it to the conversation chain
+        msg = conversation.run(row["text"])
+        msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
+        row["text"] = msg
+
+        # persist the chat length to state
+        state.set(chatlen_key, chatlen + 1)
+
+        print(f"Pickling convo to shared state with key = {pickled_conversation_key}...")
+        # pickle the convo memory object
+        pickled_convo = pickle.dumps(conversation.memory)
+        # Convert pickled bytes to a string
+        pickled_string = pickled_convo.decode('latin1')
+        # save the pickled and stringified conversation memory to state
+        state.set(pickled_conversation_key, pickled_string)
+        print("...done")
+
         return row
 
-    print("Generating response...\n")
-
-    # call the Llama model.
-    # this generates the new message and
-    # and adds it to the conversation chain
-    msg = conversation.run(row["text"])
-    msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
-    row["text"] = msg
-
-    # persist the chat length to state
-    state.set(chatlen_key, chatlen + 1)
-
-    print(f"Pickling convo to shared state with key = {pickled_conversation_key}...")
-    # pickle the convo memory object
-    pickled_convo = pickle.dumps(conversation.memory)
-    # Convert pickled bytes to a string
-    pickled_string = pickled_convo.decode('latin1')
-    # save the pickled and stringified conversation memory to state
-    state.set(pickled_conversation_key, pickled_string)
-    print("...done")
-
-    return row
+    except Exception as e:
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print(e)
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 # Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
 # So that it doesn't reply to its own messages
