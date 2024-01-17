@@ -124,7 +124,7 @@ def reply(row: dict, state: State):
     # use the conversation id to identify the conversation memory pickle file
     conversation_id = row["conversation_id"]
 
-    is_new_conversation = row["isNewConversation"] or False
+    is_new_conversation = row["is_new_conversation"] or False
 
     print(f"Is new convo = {is_new_conversation}")
 
