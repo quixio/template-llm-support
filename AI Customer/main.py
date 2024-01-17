@@ -157,7 +157,8 @@ def reply(row: dict, state: State):
 
             # For debugging, print the prompt with the populated mood and product variables.
             print("Prompt:\n{}".format(prompt.to_json()))
-        else:
+
+            # mark conversation as not new
             row["is_new_conversation"] = 'False'
 
 
