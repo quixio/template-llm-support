@@ -128,11 +128,11 @@ def reply(row: dict, state: State):
 
         is_new_conversation = False
         if "is_new_conversation" in row:
-            is_new_conversation = row["is_new_conversation"] or False
+            is_new_conversation = row["is_new_conversation"] or 'False'
 
         print(f"Is new convo = {is_new_conversation}")
 
-        if is_new_conversation:
+        if is_new_conversation == 'True':
             # randomly select the tone of voice that the customer speaks with
             # (for variation in sentiment analysis)
             # and the specific product that they are calling about
@@ -156,7 +156,7 @@ def reply(row: dict, state: State):
             # For debugging, print the prompt with the populated mood and product variables.
             print("Prompt:\n{}".format(prompt.to_json()))
         else:
-            row["is_new_conversation"] = False
+            row["is_new_conversation"] = 'False'
 
 
         pickled_conversation_key = "pickled_conversation-v1"# + conversation_id
