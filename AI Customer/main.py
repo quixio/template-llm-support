@@ -133,6 +133,8 @@ def reply(row: dict, state: State):
         print(f"Is new convo = {is_new_conversation}")
 
         if is_new_conversation == 'True':
+            print("New conversation.. selecting new customer name, product and mood")
+
             # randomly select the tone of voice that the customer speaks with
             # (for variation in sentiment analysis)
             # and the specific product that they are calling about
