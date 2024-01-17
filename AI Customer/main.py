@@ -142,10 +142,10 @@ def reply(row: dict, state: State):
             prompt.partial_variables["product"] = product
 
             # add the mood to the data set, just so we can display it in the streamlit dash
-            row["mood"] = mood
+            row["customer_mood"] = mood
             
             # add the product to the data set, just so we can display it in the streamlit dash
-            row["product"] = product
+            row["customer_product"] = product
 
             # generate customer information randomly.
             customer_id = random.getrandbits(16)
