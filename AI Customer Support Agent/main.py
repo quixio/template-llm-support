@@ -157,71 +157,77 @@ def clean_text(msg):
 # Define a function to reply to the customer's messages
 def reply(row: dict, state: State):
 
-    pickled_conversation_key = "pickled_conversation-v2"
-    print(f"Getting pickled convo from shared state with key = {pickled_conversation_key}...")
+    try:
     
-    # get the conversation token buffer from state
-    pickled_convo_state = state.get(pickled_conversation_key, None)
-    if pickled_convo_state != None:
-        print("Convo found in shared state. Loading...")
-        # Convert the string back to pickled bytes
-        pickled_bytes = pickled_convo_state.encode('latin1')
-        # Unpickle the bytes object
-        unpickled_convo_state = pickle.loads(pickled_bytes)
+        pickled_conversation_key = "pickled_conversation-v2"
+        print(f"Getting pickled convo from shared state with key = {pickled_conversation_key}...")
         
-        memory = unpickled_convo_state
-        print("Done loading")
-    else:
-        print("No convo found in shared state")
-        # init a new conversation token buffer
-        memory = ConversationTokenBufferMemory(
-            llm=llm,
-            max_token_limit=300,
-            ai_prefix= "AGENT",
-            human_prefix= "CUSTOMER",
-            return_messages=True
-        )
-
+        # get the conversation token buffer from state
+        pickled_convo_state = state.get(pickled_conversation_key, None)
+        if pickled_convo_state != None:
+            print("Convo found in shared state. Loading...")
+            # Convert the string back to pickled bytes
+            pickled_bytes = pickled_convo_state.encode('latin1')
+            # Unpickle the bytes object
+            unpickled_convo_state = pickle.loads(pickled_bytes)
             
-    # Initializes a conversation chain and loads the prompt template from a YAML file 
-    # i.e "You are a support agent and need to answer the customer...".
-    conversation = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
+            memory = unpickled_convo_state
+            print("Done loading")
+        else:
+            print("No convo found in shared state")
+            # init a new conversation token buffer
+            memory = ConversationTokenBufferMemory(
+                llm=llm,
+                max_token_limit=300,
+                ai_prefix= "AGENT",
+                human_prefix= "CUSTOMER",
+                return_messages=True
+            )
 
-    # The customer bot is primed to say "good bye" if the conversation has lasted too long
-    # message limit defined in "conversation_length" environment variable
-    # The agent looks for this "good bye" so it knows to restart too.
-    if "good bye" in row["text"].lower():
-        print("Initializing a new conversation...")
+                
+        # Initializes a conversation chain and loads the prompt template from a YAML file 
+        # i.e "You are a support agent and need to answer the customer...".
+        conversation = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
 
-        # that was then end of the chat
-        # start a new chat with a new customer
-        chat_init()
+        # The customer bot is primed to say "good bye" if the conversation has lasted too long
+        # message limit defined in "conversation_length" environment variable
+        # The agent looks for this "good bye" so it knows to restart too.
+        if "good bye" in row["text"].lower():
+            print("Initializing a new conversation...")
 
-        # set these to ensure the conversation doesn't continue
-        row["role"] = "none"
-        row["text"] = ""
+            # that was then end of the chat
+            # start a new chat with a new customer
+            chat_init()
+
+            # set these to ensure the conversation doesn't continue
+            row["role"] = "none"
+            row["text"] = ""
+            return row
+
+
+        # Send the customers response to the conversation chain so that the agent LLM can generate a reply
+        # and store that reply in the msg variable
+        msg = conversation.run(row["text"])
+        msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
+
+        print(f"Pickling convo to shared state with key = {pickled_conversation_key}...")
+        # pickle the convo memory object
+        pickled_convo = pickle.dumps(conversation.memory)
+        # convert pickled bytes to a string
+        pickled_string = pickled_convo.decode('latin1')
+        # save the pickled and stringified conversation memory to state
+        state.set(pickled_conversation_key, pickled_string)
+
+        # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
+        # containing the agents role and reply 
+        row["role"] = role
+        row["text"] = msg
+
         return row
-
-
-    # Send the customers response to the conversation chain so that the agent LLM can generate a reply
-    # and store that reply in the msg variable
-    msg = conversation.run(row["text"])
-    msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
-
-    print(f"Pickling convo to shared state with key = {pickled_conversation_key}...")
-    # pickle the convo memory object
-    pickled_convo = pickle.dumps(conversation.memory)
-    # convert pickled bytes to a string
-    pickled_string = pickled_convo.decode('latin1')
-    # save the pickled and stringified conversation memory to state
-    state.set(pickled_conversation_key, pickled_string)
-
-    # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
-    # containing the agents role and reply 
-    row["role"] = role
-    row["text"] = msg
-
-    return row
+    except Exception as e:
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print(e)
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 # Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
 # So that it doesn't reply to its own messages
