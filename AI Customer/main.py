@@ -143,7 +143,11 @@ def reply(row: dict, state: State):
         # add the product to the data set, just so we can display it in the streamlit dash
         row["product"] = product
 
-
+        # generate customer information randomly.
+        customer_id = random.getrandbits(16)
+        customer_name = random.choice(names)
+        row["customer_id"] = customer_id
+        row["customer_name"] = customer_name
 
         # For debugging, print the prompt with the populated mood and product variables.
         print("Prompt:\n{}".format(prompt.to_json()))
@@ -176,13 +180,6 @@ def reply(row: dict, state: State):
     # Initializes a conversation chain and loads the prompt template from a YAML file 
     # i.e "You are a customer of...".
     conversation = ConversationChain(llm=model, prompt=prompt, memory=memory)
-
-    if not "customer_name" in row:
-        # generate customer information randomly.
-        customer_id = random.getrandbits(16)
-        customer_name = random.choice(names)
-        row["customer_id"] = customer_id
-        row["customer_name"] = customer_name
 
     # Replace previous role with the new role
     row["role"] = role
