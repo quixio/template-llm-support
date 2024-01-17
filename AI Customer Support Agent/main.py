@@ -133,6 +133,7 @@ def chat_init():
         "agent_name": agent_name,
         "conversation_id": chat_id,
         "Timestamp": time.time_ns(),
+        "is_new_conversation": True
     }
 
     # Initialize a Kafka Producer using the chat ID as the message key
