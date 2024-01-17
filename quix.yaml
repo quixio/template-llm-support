@@ -20,7 +20,7 @@ deployments:
         inputType: InputTopic
         description: Name of the input topic to listen to.
         required: true
-        value: ai-chat-history-6
+        value: ai-chat-history-7
       - name: output
         inputType: OutputTopic
         description: Name of the output topic to write to.
