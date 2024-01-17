@@ -125,16 +125,12 @@ deployments:
         value: ai-chat-history-5
   - name: AI Customer
     application: AI Customer
-    deploymentType: Service
+    deploymentType: Job
     version: 3e51cc20177d47b1d388e91f3f13f6f60cab0964
     resources:
       cpu: 4000
       memory: 8000
-      replicas: 2
-    state:
-      enabled: true
-      size: 6
-    desiredStatus: Running
+      replicas: 1
     variables:
       - name: input
         inputType: OutputTopic
