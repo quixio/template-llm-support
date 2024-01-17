@@ -111,13 +111,12 @@ deployments:
         value: 1
   - name: AI Support Agent
     application: AI Customer Support Agent
-    deploymentType: Service
+    deploymentType: Job
     version: 3ef42085b80f09a33ac95aa2b46b002eb9555cea
     resources:
       cpu: 4100
       memory: 8000
-      replicas: 2
-    desiredStatus: Running
+      replicas: 1
     variables:
       - name: input
         inputType: OutputTopic
