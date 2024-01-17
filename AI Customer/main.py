@@ -75,16 +75,6 @@ products = get_list("products.txt")
 # i.e "You are a customer interacting with a support agent..."
 prompt = load_prompt("prompt.yaml")
 
-# randomly select the tone of voice that the customer speaks with
-# (for variation in sentiment analysis)
-# and the specific product that they are calling about
-prompt.partial_variables["mood"] = random.choice(moods)
-product = random.choice(products)
-prompt.partial_variables["product"] = product
-
-# For debugging, print the prompt with the populated mood and product variables.
-print("Prompt:\n{}".format(prompt.to_json()))
-
 # Load the model with the apporiate parameters
 llm = LlamaCpp(
     model_path=model_path,
@@ -134,6 +124,33 @@ def reply(row: dict, state: State):
     # use the conversation id to identify the conversation memory pickle file
     conversation_id = row["conversation_id"]
 
+    is_new_conversation = row["isNewConversation"] or False
+
+    print(f"Is new convo = {is_new_conversation}")
+
+    if is_new_conversation:
+        # randomly select the tone of voice that the customer speaks with
+        # (for variation in sentiment analysis)
+        # and the specific product that they are calling about
+        mood = random.choice(moods)
+        prompt.partial_variables["mood"] = mood
+        product = random.choice(products)
+        prompt.partial_variables["product"] = product
+
+        # add the mood to the data set, just so we can display it in the streamlit dash
+        row["mood"] = mood
+        
+        # add the product to the data set, just so we can display it in the streamlit dash
+        row["product"] = product
+
+
+
+        # For debugging, print the prompt with the populated mood and product variables.
+        print("Prompt:\n{}".format(prompt.to_json()))
+    else:
+        row["isNewConversation"]
+
+
     pickled_conversation_key = "pickled_conversation-v1"# + conversation_id
     print(f"Getting pickled convo from shared state with key = {pickled_conversation_key}...")
     pickled_convo_state = state.get(pickled_conversation_key, None)
@@ -169,9 +186,7 @@ def reply(row: dict, state: State):
 
     # Replace previous role with the new role
     row["role"] = role
-    # add the product to the data set, just so we can display it in the streamlit dash
-    row["product"] = product
-
+    
     # create a new key to store the length of the conversation 
     # as the number of chat messages
     chatlen_key = "chatlen"
