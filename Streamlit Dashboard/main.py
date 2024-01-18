@@ -1,5 +1,4 @@
 import os
-from influxdb_client import InfluxDBClient
 import streamlit as st
 from dotenv import load_dotenv
 import influxdb_client_3 as InfluxDBClient3
