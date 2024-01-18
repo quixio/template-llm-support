@@ -69,7 +69,7 @@ deployments:
   - name: Streamlit Dashboard
     application: Streamlit Dashboard
     deploymentType: Service
-    version: 4efee0c9b9ac7a7a2455d4084b8ff3c536ef4d37
+    version: 7a70d6894fa9ed4524a7f633e37f0f3155124721
     resources:
       cpu: 200
       memory: 500
@@ -79,36 +79,36 @@ deployments:
       urlPrefix: dashboard
     desiredStatus: Stopped
     variables:
-      - name: redis_host
-        inputType: Secret
-        description: Redis server.
-        required: true
-        secretKey: redis_host
-      - name: redis_port
-        inputType: Secret
-        description: Redis server port.
-        required: true
-        secretKey: redis_port
-      - name: redis_pwd
-        inputType: Secret
-        description: Redis password.
-        required: true
-        secretKey: redis_pwd
       - name: chat_count
         inputType: FreeText
         description: Maximum number of chats to display on the dashboard.
         required: true
-        value: 12
+        value: 3
       - name: style_sheet
         inputType: FreeText
         description: Custom style sheet for Streamlit.
         required: false
         value: style.css
-      - name: flush
+      - name: INFLUXDB_TOKEN
         inputType: FreeText
         description: ''
         required: false
-        value: 1
+        value: iWGU-RZ-AoML0bP4kjabHrqlB3IDtyLPAs_XMDpGOldEvQrzmtwC2Y-4arrkl1BX_bQpEvtYGgh16pJyviIsvA=="
+      - name: INFLUXDB_HOST
+        inputType: FreeText
+        description: ''
+        required: false
+        value: https://us-east-1-1.aws.cloud2.influxdata.com
+      - name: INFLUXDB_ORG
+        inputType: FreeText
+        description: ''
+        required: false
+        value: ContentSquad
+      - name: INFLUXDB_DATABASE
+        inputType: FreeText
+        description: ''
+        required: false
+        value: ConversationStore
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Job
