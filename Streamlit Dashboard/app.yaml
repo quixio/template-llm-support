@@ -4,7 +4,7 @@ variables:
   - name: chat_count
     inputType: FreeText
     description: Maximum number of chats to display on the dashboard.
-    defaultValue: 12
+    defaultValue: 3
     required: true
   - name: style_sheet
     inputType: FreeText
