@@ -218,7 +218,7 @@ def reply(row: dict, state: State):
 
             # Send a message to the agent with the special termination signal "Good bye"
             # so that the agent knows to "hang up" too
-            row["text"] = "Noted, I think I have enough information. Thank you for your assistance. Good bye!"
+            row["text"] = "OK, I think we're done here. Thank you for your assistance. Good bye!"
             return row
 
         print("Generating response...\n")
