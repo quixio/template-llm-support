@@ -1,6 +1,5 @@
 import os
 import streamlit as st
-from dotenv import load_dotenv
 import influxdb_client_3 as InfluxDBClient3
 import pandas as pd
 import time
