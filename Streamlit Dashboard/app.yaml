@@ -1,11 +1,6 @@
 name: Streamlit Dashboard
 language: python
 variables:
-  - name: redis_port
-    inputType: Secret
-    description: Redis server port.
-    defaultValue: redis_port
-    required: true
   - name: chat_count
     inputType: FreeText
     description: Maximum number of chats to display on the dashboard.
