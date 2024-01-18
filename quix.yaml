@@ -90,7 +90,7 @@ deployments:
         value: ai-chat-history-7
   - name: AI Customer
     application: AI Customer
-    deploymentType: Job
+    deploymentType: Service
     version: f5c65e90a3069ada3a2a2395cfec243e6d8d83e8
     resources:
       cpu: 4000
