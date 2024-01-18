@@ -11,6 +11,11 @@ variables:
     description: Custom style sheet for Streamlit.
     defaultValue: style.css
     required: false
+  - name: INFLUXDB_TOKEN
+    inputType: FreeText
+    description: ''
+    defaultValue: ''
+    required: false
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
