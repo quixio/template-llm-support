@@ -27,7 +27,7 @@ variables:
     defaultValue: ''
     required: false
   - name: INFLUXDB_DATABASE
-    inputType: InputTopic
+    inputType: FreeText
     description: ''
     defaultValue: ''
     required: false
