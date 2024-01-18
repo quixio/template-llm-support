@@ -11,11 +11,6 @@ variables:
     description: Redis server port.
     defaultValue: redis_port
     required: true
-  - name: redis_pwd
-    inputType: Secret
-    description: Redis password.
-    defaultValue: redis_pwd
-    required: true
   - name: chat_count
     inputType: FreeText
     description: Maximum number of chats to display on the dashboard.
