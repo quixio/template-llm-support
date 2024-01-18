@@ -136,6 +136,7 @@ while True:
     convo3id = top3.iloc[2]['conversation_id']
 
     # Get the full history of each of those conversations:
+    # (This is not very efficient but it works, could be refactored to 1 query)
     # Query InfluxDB 3.0 to get the entire history of the FIRST most recently updated conversation 
     convostream1 = client.query(query=
                                 f"""
