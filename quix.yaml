@@ -31,41 +31,6 @@ deployments:
         description: Input buffer configuration (timeout and timespan in milliseconds).
         required: false
         value: 0
-  - name: Redis Sink
-    application: Redis Sink
-    deploymentType: Service
-    version: 9cfbaa7812e9e28a48534c6131bc10ff521cab04
-    resources:
-      cpu: 200
-      memory: 500
-      replicas: 1
-    desiredStatus: Stopped
-    variables:
-      - name: input
-        inputType: InputTopic
-        description: This is the input topic for demo data
-        required: true
-        value: ai-chat-history-with-sentiment
-      - name: redis_host
-        inputType: Secret
-        description: Redis host.
-        required: true
-        secretKey: redis_host
-      - name: redis_port
-        inputType: Secret
-        description: Redis port.
-        required: true
-        secretKey: redis_port
-      - name: redis_pwd
-        inputType: Secret
-        description: Redis password.
-        required: true
-        secretKey: redis_pwd
-      - name: expire_after
-        inputType: FreeText
-        description: Conversation storage duration in minutes.
-        required: true
-        value: 1440
   - name: Streamlit Dashboard
     application: Streamlit Dashboard
     deploymentType: Service
