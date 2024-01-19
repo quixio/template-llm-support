@@ -87,22 +87,24 @@ average_sentiments = []
 
 
 # Function to save the sentiment dictionary to a file
-def save_to_file(data_dict, filename='./state/sentiment_data.json'):
+def save_to_file_pandas(data_dict, filename='./state/sentiment_data.json'):
+     # Create the directory if it doesn't exist
     os.makedirs(os.path.dirname(filename), exist_ok=True)
-    with open(filename, 'w') as file:
-        json.dump(data_dict, file)
+    
+    # Save the data to a JSON file
+    df = pd.DataFrame([data_dict])
+    df.to_json(filename, date_format='iso', orient='records', lines=True)
 
 # Function to load the sentiment dictionary from a file
-def load_from_file(filename='./state/sentiment_data.json'):
+def load_from_file_pandas(filename='./state/sentiment_data.json'):
     try:
-        with open(filename, 'r') as file:
-            return json.load(file)
-    except FileNotFoundError:
-        print("Sentiment dictionary does not yet exist")
+        df = pd.read_json(filename, orient='records', lines=True)
+        return df.to_dict(orient='records')[0]  # Convert first row to dict
+    except (FileNotFoundError, ValueError):
         return {'time': [],'average_sentiment': []}
 
 # Initialize the sentiment dictionary
-sentiment_data = load_from_file()
+sentiment_data = load_from_file_pandas
 
 # main loop to poll InfluxDB for conversation updates and update the dashboard
 while True:
@@ -295,7 +297,7 @@ while True:
             st.altair_chart(alt_chart, use_container_width=True)
 
     # Save sentiment dict to file   
-    save_to_file(sentiment_data)
+    save_to_file_pandas(sentiment_data)
     # Wait a second before querying InfluxDB again
     time.sleep(1)
 
