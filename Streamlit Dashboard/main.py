@@ -249,7 +249,7 @@ while True:
     # Log the overall average sentiment
     print(f"Overall average sentiment: {overall_average_sentiment}")
 
-    # Ensure that only the last "X" records of the overall average sentiment df are kept (for in the running "sentiment health check panel")
+    # Ensure that only the last "X" records of the overall average sentiment df are kept (for the running "sentiment health check panel")
     # Don't necessarily want the sentiment history since the beginning of time
     max_entries = 28800 # accumulate the stats for the last 8 hours (28,800 seconds) and trim anything older than that.
     if len(sentiment_data["time"]) > max_entries:
