@@ -88,6 +88,7 @@ average_sentiments = []
 
 # Function to save the sentiment dictionary to a file
 def save_to_file(data_dict, filename='./state/sentiment_data.json'):
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, 'w') as file:
         json.dump(data_dict, file)
 
