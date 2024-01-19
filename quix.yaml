@@ -34,7 +34,7 @@ deployments:
   - name: Streamlit Dashboard
     application: Streamlit Dashboard
     deploymentType: Service
-    version: 48c64d955a2e378e43f1177bff05368577705394
+    version: 6e4f73aa3ef9fe1b9c965b4485ee0243528061f8
     resources:
       cpu: 200
       memory: 500
@@ -74,11 +74,6 @@ deployments:
         description: ''
         required: false
         value: ConversationStore
-      - name: GRPC_DEFAULT_SSL_ROOTS_FILE_PATH
-        inputType: FreeText
-        description: ''
-        required: false
-        value: ./cacert.pem
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
