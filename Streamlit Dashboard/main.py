@@ -101,6 +101,7 @@ def load_from_file_pandas(filename='./state/sentiment_data.json'):
         df = pd.read_json(filename, orient='records', lines=True)
         return df.to_dict(orient='records')[0]  # Convert first row to dict
     except (FileNotFoundError, ValueError):
+        print("Sentiment log does not exist in state, creating it...")
         return {'time': [],'average_sentiment': []}
 
 # Initialize the sentiment dictionary
