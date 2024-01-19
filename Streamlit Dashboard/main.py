@@ -235,7 +235,7 @@ while True:
                             f"{msg['text']} <div style='text-align: right'>{get_emoji(msg['sentiment'])}</div>",
                             unsafe_allow_html=True)
 
-    # Calculate the average sentiment for ALL conversations from the 3 per-conversation averages.
+    # Calculate the average sentiment for ALL conversations from the 3 separate "per-conversation" averages.
     if average_sentiments:
         overall_average_sentiment = sum(average_sentiments) / len(average_sentiments)
         # Append the overall average sentiment and the current time to the sentiment_data
@@ -249,8 +249,9 @@ while True:
     # Log the overall average sentiment
     print(f"Overall average sentiment: {overall_average_sentiment}")
 
-    # Ensure that only the last 60 records of the overall average sentiment df are kept (for in the running "sentiment health check panel")
-    max_entries = 60
+    # Ensure that only the last "X" records of the overall average sentiment df are kept (for in the running "sentiment health check panel")
+    # Don't necessarily want the sentiment history since the beginning of time
+    max_entries = 28800 # accumulate the stats for the last 8 hours (28,800 seconds) and trim anything older than that.
     if len(sentiment_data["time"]) > max_entries:
         start_index = len(sentiment_data["time"]) - max_entries
         sentiment_data["time"] = sentiment_data["time"][start_index:]
