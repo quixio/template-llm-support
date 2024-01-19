@@ -288,6 +288,7 @@ while True:
             chart_data = pd.DataFrame(sentiment_data)
             y_min = -1
             y_max = 1
+            chart_data['time'] = pd.to_datetime(chart_data['time'])
             chart_data.sort_values("time", inplace=True)
             alt_chart = alt.Chart(chart_data) \
                 .mark_line(interpolate='step-after') \
