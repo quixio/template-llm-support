@@ -81,7 +81,7 @@ deployments:
     resources:
       cpu: 4100
       memory: 8000
-      replicas: 1
+      replicas: 3
     desiredStatus: Stopped
     variables:
       - name: input
