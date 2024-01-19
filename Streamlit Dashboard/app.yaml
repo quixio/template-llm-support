@@ -31,11 +31,6 @@ variables:
     description: ''
     defaultValue: ConversationStore
     required: false
-  - name: GRPC_DEFAULT_SSL_ROOTS_FILE_PATH
-    inputType: FreeText
-    description: ''
-    defaultValue: ./cacert.pem
-    required: false
 dockerfile: build/dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
