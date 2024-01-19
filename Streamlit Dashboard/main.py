@@ -5,6 +5,8 @@ import pandas as pd
 import time
 import altair as alt
 import datetime
+import json
+
 
 measurement_name = "conversations"
 
@@ -80,14 +82,26 @@ def get_customer_info(msg):
         return f"{msg['customer_id']:.0f} ({msg['customer_name']}"
     return ""
 
-
 # Initialize a list to store average sentiment values
 average_sentiments = []
 
-# Initialize a variable to store the start time for logging every second
-sentiment_data = {}
-sentiment_data["time"] = []
-sentiment_data["average_sentiment"] = []
+
+# Function to save the sentiment dictionary to a file
+def save_to_file(data_dict, filename='./state/sentiment_data.json'):
+    with open(filename, 'w') as file:
+        json.dump(data_dict, file)
+
+# Function to load the sentiment dictionary from a file
+def load_from_file(filename='./state/sentiment_data.json'):
+    try:
+        with open(filename, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        print("Sentiment dictionary does not yet exist")
+        return {'time': [],'average_sentiment': []}
+
+# Initialize the sentiment dictionary
+sentiment_data = load_from_file()
 
 # main loop to poll InfluxDB for conversation updates and update the dashboard
 while True:
@@ -280,5 +294,6 @@ while True:
             st.altair_chart(alt_chart, use_container_width=True)
           
     # Wait a second before querying InfluxDB again
+    save_to_file(sentiment_dict)
     time.sleep(1)
 
