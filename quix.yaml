@@ -42,7 +42,7 @@ deployments:
     publicAccess:
       enabled: true
       urlPrefix: dashboard
-    desiredStatus: Stopped
+    desiredStatus: Running
     variables:
       - name: chat_count
         inputType: FreeText
