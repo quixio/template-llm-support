@@ -6,6 +6,7 @@ import time
 import altair as alt
 import datetime
 
+os.environ["GRPC_DEFAULT_SSL_ROOTS_FILE_PATH"] = r"./cacert.pem"
 measurement_name = "conversations"
 
 # Initialize the client variable
