@@ -292,8 +292,9 @@ while True:
                     y=alt.Y("average_sentiment:Q", title="Average Sentiment",scale=alt.Scale(domain=(y_min, y_max)))
                 )
             st.altair_chart(alt_chart, use_container_width=True)
-          
+
+    # Save sentiment dict to file   
+    save_to_file()
     # Wait a second before querying InfluxDB again
-    save_to_file(sentiment_dict)
     time.sleep(1)
 
