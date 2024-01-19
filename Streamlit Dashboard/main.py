@@ -294,7 +294,7 @@ while True:
             st.altair_chart(alt_chart, use_container_width=True)
 
     # Save sentiment dict to file   
-    save_to_file()
+    save_to_file(sentiment_data)
     # Wait a second before querying InfluxDB again
     time.sleep(1)
 
