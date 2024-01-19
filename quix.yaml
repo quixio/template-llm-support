@@ -34,7 +34,7 @@ deployments:
   - name: Streamlit Dashboard
     application: Streamlit Dashboard
     deploymentType: Service
-    version: 09571d88026b947884149e12bf3290fd7f72ce8d
+    version: a50f7c890867801437f0886d5f73f624c97c13f3
     resources:
       cpu: 200
       memory: 500
@@ -42,6 +42,9 @@ deployments:
     publicAccess:
       enabled: true
       urlPrefix: dashboard
+    state:
+      enabled: true
+      size: 1
     desiredStatus: Running
     variables:
       - name: chat_count
