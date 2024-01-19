@@ -104,7 +104,7 @@ def load_from_file_pandas(filename='./state/sentiment_data.json'):
         return {'time': [],'average_sentiment': []}
 
 # Initialize the sentiment dictionary
-sentiment_data = load_from_file_pandas
+sentiment_data = load_from_file_pandas()
 
 # main loop to poll InfluxDB for conversation updates and update the dashboard
 while True:
