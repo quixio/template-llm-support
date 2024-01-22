@@ -174,13 +174,6 @@ topics:
       replicationFactor: 2
       retentionInMinutes: 1440
       retentionInBytes: 52428800
-  - name: customer-topic
-    persisted: false
-    configuration:
-      partitions: 5
-      replicationFactor: 2
-      retentionInMinutes: 1440
-      retentionInBytes: 52428800
   - name: ai-chat
     persisted: false
     configuration:
