@@ -57,26 +57,26 @@ deployments:
         description: Custom style sheet for Streamlit.
         required: false
         value: style.css
-      - name: INFLUXDB_TOKEN
-        inputType: FreeText
-        description: ''
-        required: false
-        value: iWGU-RZ-AoML0bP4kjabHrqlB3IDtyLPAs_XMDpGOldEvQrzmtwC2Y-4arrkl1BX_bQpEvtYGgh16pJyviIsvA==
       - name: INFLUXDB_HOST
-        inputType: FreeText
-        description: ''
-        required: false
-        value: https://us-east-1-1.aws.cloud2.influxdata.com
+        inputType: Secret
+        description: Host address for the InfluxDB instance.
+        required: true
+        secretKey: influxdb_host
+      - name: INFLUXDB_TOKEN
+        inputType: Secret
+        description: Authentication token to access InfluxDB.
+        required: true
+        secretKey: influxdb_token
       - name: INFLUXDB_ORG
         inputType: FreeText
-        description: ''
+        description: Organization name in InfluxDB.
         required: false
-        value: ContentSquad
+        value: {{influxdb_org}}
       - name: INFLUXDB_DATABASE
         inputType: FreeText
-        description: ''
-        required: false
-        value: ConversationStore
+        description: Database name in InfluxDB where data should be stored.
+        required: true
+        value: {{influxdb_database}}
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
