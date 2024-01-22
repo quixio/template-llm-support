@@ -57,26 +57,26 @@ deployments:
         description: Custom style sheet for Streamlit.
         required: false
         value: style.css
-      - name: INFLUXDB_TOKEN
-        inputType: FreeText
-        description: ''
-        required: false
-        value: iWGU-RZ-AoML0bP4kjabHrqlB3IDtyLPAs_XMDpGOldEvQrzmtwC2Y-4arrkl1BX_bQpEvtYGgh16pJyviIsvA==
       - name: INFLUXDB_HOST
-        inputType: FreeText
-        description: ''
-        required: false
-        value: https://us-east-1-1.aws.cloud2.influxdata.com
+        inputType: Secret
+        description: Host address for the InfluxDB instance.
+        required: true
+        secretKey: influxdb_host
+      - name: INFLUXDB_TOKEN
+        inputType: Secret
+        description: Authentication token to access InfluxDB.
+        required: true
+        secretKey: influxdb_token
       - name: INFLUXDB_ORG
         inputType: FreeText
-        description: ''
+        description: Organization name in InfluxDB.
         required: false
-        value: ContentSquad
+        value: {{influxdb_org}}
       - name: INFLUXDB_DATABASE
         inputType: FreeText
-        description: ''
-        required: false
-        value: ConversationStore
+        description: Database name in InfluxDB where data should be stored.
+        required: true
+        value: {{influxdb_database}}
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
@@ -128,25 +128,25 @@ deployments:
         required: true
         value: ai-chat-history-with-sentiment
       - name: INFLUXDB_HOST
-        inputType: FreeText
+        inputType: Secret
         description: Host address for the InfluxDB instance.
         required: true
-        value: https://us-east-1-1.aws.cloud2.influxdata.com
+        secretKey: influxdb_host
       - name: INFLUXDB_TOKEN
-        inputType: FreeText
+        inputType: Secret
         description: Authentication token to access InfluxDB.
         required: true
-        value: iWGU-RZ-AoML0bP4kjabHrqlB3IDtyLPAs_XMDpGOldEvQrzmtwC2Y-4arrkl1BX_bQpEvtYGgh16pJyviIsvA==
+        secretKey: influxdb_token
       - name: INFLUXDB_ORG
         inputType: FreeText
         description: Organization name in InfluxDB.
         required: false
-        value: ContentSquad
+        value: {{influxdb_org}}
       - name: INFLUXDB_DATABASE
         inputType: FreeText
         description: Database name in InfluxDB where data should be stored.
         required: true
-        value: ConversationStore
+        value: {{influxdb_database}}
       - name: INFLUXDB_TAG_COLUMNS
         inputType: FreeText
         description: Columns to be used as tags when writing data to InfluxDB.
@@ -156,7 +156,7 @@ deployments:
         inputType: FreeText
         description: The InfluxDB measurement to write data to. If not specified, the name of the input topic will be used
         required: false
-        value: conversations
+        value: {{influxdb_measurement}}
 
 # This section describes the Topics of the data pipeline
 topics:
