@@ -1,10 +1,10 @@
 name: AI Support Agent
 language: python
 variables:
-  - name: topic
+  - name: input
     inputType: OutputTopic
     description: This is the output topic to write data to
-    defaultValue: test-topic
+    defaultValue: agent-topic
     required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py

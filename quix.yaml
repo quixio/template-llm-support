@@ -9,7 +9,7 @@ deployments:
   - name: Sentiment Analyzer
     application: Sentiment Analyzer
     deploymentType: Service
-    version: 8f2333b811f63dbcba559ac3425a44000dd44eda
+    version: f69039cd7b8bcd03c75b176146266b33c8a5fcac
     resources:
       cpu: 2000
       memory: 4000
@@ -19,7 +19,7 @@ deployments:
       - name: input
         inputType: InputTopic
         description: Name of the input topic to listen to.
-        required: false
+        required: true
         value: ai-chat-history
       - name: output
         inputType: OutputTopic
@@ -31,45 +31,10 @@ deployments:
         description: Input buffer configuration (timeout and timespan in milliseconds).
         required: false
         value: 0
-  - name: Redis Sink
-    application: Redis Sink
-    deploymentType: Service
-    version: 15868c707883b630530728e11ce344b31b2530d5
-    resources:
-      cpu: 200
-      memory: 500
-      replicas: 1
-    desiredStatus: Running
-    variables:
-      - name: input
-        inputType: InputTopic
-        description: This is the input topic for demo data
-        required: true
-        value: ai-chat-history-with-sentiment
-      - name: redis_host
-        inputType: Secret
-        description: Redis host.
-        required: true
-        secretKey: redis_host
-      - name: redis_port
-        inputType: FreeText
-        description: Redis port.
-        required: true
-        value: 12393
-      - name: redis_pwd
-        inputType: Secret
-        description: Redis password.
-        required: true
-        secretKey: redis_pwd
-      - name: expire_after
-        inputType: FreeText
-        description: Conversation storage duration in minutes.
-        required: true
-        value: 1440
   - name: Streamlit Dashboard
     application: Streamlit Dashboard
     deploymentType: Service
-    version: d489ea438e1b80b838075ff4448629d67eee3f78
+    version: a50f7c890867801437f0886d5f73f624c97c13f3
     resources:
       cpu: 200
       memory: 500
@@ -77,47 +42,52 @@ deployments:
     publicAccess:
       enabled: true
       urlPrefix: dashboard
+    state:
+      enabled: true
+      size: 1
     desiredStatus: Running
     variables:
-      - name: redis_host
-        inputType: Secret
-        description: Redis server.
-        required: true
-        secretKey: redis_host
-      - name: redis_port
-        inputType: Secret
-        description: Redis server port.
-        required: true
-        secretKey: redis_port
-      - name: redis_pwd
-        inputType: Secret
-        description: Redis password.
-        required: true
-        secretKey: redis_pwd
       - name: chat_count
         inputType: FreeText
         description: Maximum number of chats to display on the dashboard.
         required: true
-        value: 12
+        value: 3
       - name: style_sheet
         inputType: FreeText
         description: Custom style sheet for Streamlit.
         required: false
         value: style.css
+      - name: INFLUXDB_TOKEN
+        inputType: FreeText
+        description: ''
+        required: false
+        value: iWGU-RZ-AoML0bP4kjabHrqlB3IDtyLPAs_XMDpGOldEvQrzmtwC2Y-4arrkl1BX_bQpEvtYGgh16pJyviIsvA==
+      - name: INFLUXDB_HOST
+        inputType: FreeText
+        description: ''
+        required: false
+        value: https://us-east-1-1.aws.cloud2.influxdata.com
+      - name: INFLUXDB_ORG
+        inputType: FreeText
+        description: ''
+        required: false
+        value: ContentSquad
+      - name: INFLUXDB_DATABASE
+        inputType: FreeText
+        description: ''
+        required: false
+        value: ConversationStore
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
-    version: 0c2316d9d552892fbd7537b55d9eced8e892d12d
+    version: b7bdf2c3534cddef9920fda911b23df89a249e39
     resources:
-      cpu: 5000
-      memory: 15000
-      replicas: 5
-    state:
-      enabled: true
-      size: 6
-    desiredStatus: Stopped
+      cpu: 4100
+      memory: 8000
+      replicas: 3
+    desiredStatus: Running
     variables:
-      - name: topic
+      - name: input
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
@@ -125,17 +95,14 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: 60e2da2593266bdce73e09f1aafe2a7f6e863fad
+    version: f5c65e90a3069ada3a2a2395cfec243e6d8d83e8
     resources:
-      cpu: 8000
-      memory: 15000
-      replicas: 5
-    state:
-      enabled: true
-      size: 6
-    desiredStatus: Stopped
+      cpu: 4000
+      memory: 8000
+      replicas: 3
+    desiredStatus: Running
     variables:
-      - name: topic
+      - name: input
         inputType: OutputTopic
         description: This is the output topic to write data to
         required: true
@@ -145,6 +112,51 @@ deployments:
         description: Maximum conversation length, after which the conversation resets.
         required: true
         value: 15
+  - name: InfluxDB 3.0 Sink
+    application: InfluxDB 3.0 Sink
+    deploymentType: Service
+    version: 2133a5ca945c76caa738727580b65d74c717c582
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    desiredStatus: Running
+    variables:
+      - name: input
+        inputType: InputTopic
+        description: This is the input topic
+        required: true
+        value: ai-chat-history-with-sentiment
+      - name: INFLUXDB_HOST
+        inputType: FreeText
+        description: Host address for the InfluxDB instance.
+        required: true
+        value: https://us-east-1-1.aws.cloud2.influxdata.com
+      - name: INFLUXDB_TOKEN
+        inputType: FreeText
+        description: Authentication token to access InfluxDB.
+        required: true
+        value: iWGU-RZ-AoML0bP4kjabHrqlB3IDtyLPAs_XMDpGOldEvQrzmtwC2Y-4arrkl1BX_bQpEvtYGgh16pJyviIsvA==
+      - name: INFLUXDB_ORG
+        inputType: FreeText
+        description: Organization name in InfluxDB.
+        required: false
+        value: ContentSquad
+      - name: INFLUXDB_DATABASE
+        inputType: FreeText
+        description: Database name in InfluxDB where data should be stored.
+        required: true
+        value: ConversationStore
+      - name: INFLUXDB_TAG_COLUMNS
+        inputType: FreeText
+        description: Columns to be used as tags when writing data to InfluxDB.
+        required: false
+        value: '[]'
+      - name: INFLUXDB_MEASUREMENT_NAME
+        inputType: FreeText
+        description: The InfluxDB measurement to write data to. If not specified, the name of the input topic will be used
+        required: false
+        value: conversations
 
 # This section describes the Topics of the data pipeline
 topics:
@@ -162,17 +174,31 @@ topics:
       replicationFactor: 2
       retentionInMinutes: 1440
       retentionInBytes: 52428800
-  - name: test-topic
-    persisted: true
+  - name: agent-topic
+    persisted: false
     configuration:
-      partitions: 16
+      partitions: 5
+      replicationFactor: 2
+      retentionInMinutes: 1440
+      retentionInBytes: 52428800
+  - name: customer-topic
+    persisted: false
+    configuration:
+      partitions: 5
+      replicationFactor: 2
+      retentionInMinutes: 1440
+      retentionInBytes: 52428800
+  - name: ai-chat-history-7
+    persisted: false
+    configuration:
+      partitions: 1
       replicationFactor: 2
       retentionInMinutes: 1440
       retentionInBytes: 52428800
   - name: ai-chat-history
     persisted: false
     configuration:
-      partitions: 16
+      partitions: 3
       replicationFactor: 2
       retentionInMinutes: 1440
       retentionInBytes: 52428800

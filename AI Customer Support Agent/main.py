@@ -4,6 +4,8 @@ import uuid
 import random
 import re
 from pathlib import Path
+import pickle
+
 
 # Import the main Quix Streams module for data processing and transformation:
 from quixstreams import Application, State
@@ -24,14 +26,8 @@ from langchain.chains import ConversationChain
 from langchain_experimental.chat_models import Llama2Chat
 from langchain.memory import ConversationTokenBufferMemory
 from langchain.schema import SystemMessage
-
-# REPLICA STATE HERE
-# generate a random ID for this replica (this deployment of the code)
-replica_id = str(uuid.uuid4())
-print("==========================")
-print(f"replica_id = {replica_id}")
-print("==========================")
-
+from llama_cpp import llama_log_set
+import ctypes
 
 # Create a constant that defines the role of the bot:
 AGENT_ROLE = "agent"
@@ -62,49 +58,27 @@ llm = LlamaCpp(
     streaming=False
 )
 
+# create the Llama model and initialise it with the default message
 model = Llama2Chat(
     llm=llm,
     system_message=SystemMessage(content="You are a customer support agent for a large electronics retailer called 'ACME electronics'."))
 
-# Defines how much of the conversation history to give to the model
-# during each exchange (300 tokens, or a little over 300 words)
-# Function automatically prunes the oldest messages from conversation history that fall outside the token range.
-memory = ConversationTokenBufferMemory(
-    llm=llm,
-    max_token_limit=300,
-    ai_prefix= "AGENT",
-    human_prefix= "CUSTOMER",
-    return_messages=True
-)
-
-# Initializes a conversation chain and loads the prompt template from a YAML file 
-# i.e "You are a support agent and need to answer the customer...".
-chain = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
-
-print("--------------------------------------------")
-print(f"Prompt={chain.prompt}")
-print("--------------------------------------------")
-
+# disable the verbose logging with a do nothing override
+def my_log_callback(level, message, user_data):
+    pass
+log_callback = ctypes.CFUNCTYPE(None, ctypes.c_int, ctypes.c_char_p, ctypes.c_void_p)(my_log_callback)
+llama_log_set(log_callback, ctypes.c_void_p())
 
 # Initializes a Quix Kafka consumer with a consumer group based on the role
 # and configured to read the latest message if no offset was previously registered for the consumer group
-app = Application.Quix("transformation-v15-"+role, auto_offset_reset="latest")
-# foo_val = app._state_manager.stores.get("foo")
-# print("_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-")
-# print(foo_val)
-# app._state_manager.stores.setdefault("foo", "bar")
-# foo_val2 = app._state_manager.stores.get("foo")
-# print(foo_val2)
-# print("_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-")
+app = Application.Quix("transformation-v17-"+role, auto_offset_reset="latest")
 
 # Defines the input and output topics with the relevant deserialization and serialization methods (and get the topic names from enviroiment variables)
-
-input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
-output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
+input_topic = app.topic(os.environ["input"], value_deserializer=QuixDeserializer())
+output_topic = app.topic(os.environ["input"], value_serializer=QuixTimeseriesSerializer())
 
 # Initialize a streaming dataframe based on the stream of messages from the input topic:
 sdf = app.dataframe(topic=input_topic)
-
 
 # Load a list of possible agent names from a text file:
 def agents_init():
@@ -122,9 +96,8 @@ agents = agents_init()
 def chat_init():
     chat_id = str(uuid.uuid4()) # Give the conversation an ID for effective message keying
     print("======================================")
-    print(f"Generated CHAT_ID = {chat_id}")
+    print(f"STARTED A NEW CHAT WITH CHAT_ID = {chat_id}")
     print("======================================")
-
 
     agent_id = random.getrandbits(16) # Give the agent a random ID to display in the dashboard
     agent_name = random.choice(agents) # Randomly select a name from the list of agent names
@@ -135,13 +108,13 @@ def chat_init():
                How can I help you today?"""
 
     # Load the relevant configurations from environment variables
-    ### In Quix Cloud, These variables are already preconfigured with defaults
-    ### When running locally, you need to define 'Quix__Sdk__Token' as an environment variable
-    ### Defining 'Quix__Workspace__Id' is also preferable, but often the workspace ID can be inferred.
+    # In Quix Cloud, These variables are already preconfigured with defaults
+    # When running locally, you need to define 'Quix__Sdk__Token' as an environment variable
+    # Defining 'Quix__Workspace__Id' is also preferable, but often the workspace ID can be inferred.
     cfg_builder = QuixKafkaConfigsBuilder()
 
     # Get the input topic name from an environment variable
-    cfgs, topics, _ = cfg_builder.get_confluent_client_configs([os.environ["topic"]])
+    cfgs, topics, _ = cfg_builder.get_confluent_client_configs([os.environ["input"]])
 
     # Create the topic if it doesn't yet exist
     cfg_builder.create_topics([TopicCreationConfigs(name=topics[0])])
@@ -160,6 +133,7 @@ def chat_init():
         "agent_name": agent_name,
         "conversation_id": chat_id,
         "Timestamp": time.time_ns(),
+        "is_new_conversation": 'True'
     }
 
     # Initialize a Kafka Producer using the chat ID as the message key
@@ -171,79 +145,100 @@ def chat_init():
             value=serializer(value=value, ctx=SerializationContext(topic=topics[0], headers=headers)),
         )
 
-    print("Started chat")
-    print("--------------------------------------------")
-    print(value)
-    print("--------------------------------------------")
-
 chat_init()
 
 
 # Detect and remove any common text issues from the models response
 def clean_text(msg):
-    print("Cleaning message...")
-    print(f"BEFORE:\n{msg}")
-    msg = re.sub(r'^.*?: ', '', msg, 1)  # Removing any extra "meta commentary" that the LLM sometime adds, followed by a colon.
+    msg = re.sub('^[^:]*:\n?', '', msg, 1)  # Removing any extra "meta commentary" that the LLM sometime adds, followed by a colon.
     msg = re.sub(r'"', '', msg)  # Strip out any speech marks that the LLM tends to add.
-    print(f"AFTER:\n{msg}")
     return msg
 
 # Define a function to reply to the customer's messages
 def reply(row: dict, state: State):
-    print("-------------------------------")
-    print("Received:")
-    print(row)
-    print("-------------------------------")
-    print("Thinking about the reply...")
+
+    try:
+    
+        pickled_conversation_key = "pickled_conversation-v2"
+        print(f"Getting pickled convo from shared state with key = {pickled_conversation_key}...")
+        
+        # get the conversation token buffer from state
+        pickled_convo_state = state.get(pickled_conversation_key, None)
+        if pickled_convo_state != None:
+            print("Convo found in shared state. Loading...")
+            # Convert the string back to pickled bytes
+            pickled_bytes = pickled_convo_state.encode('latin1')
+            # Unpickle the bytes object
+            unpickled_convo_state = pickle.loads(pickled_bytes)
+            
+            memory = unpickled_convo_state
+            print("Done loading")
+        else:
+            print("No convo found in shared state")
+            # init a new conversation token buffer
+            memory = ConversationTokenBufferMemory(
+                llm=llm,
+                max_token_limit=300,
+                ai_prefix= "AGENT",
+                human_prefix= "CUSTOMER",
+                return_messages=True
+            )
+
+                
+        # Initializes a conversation chain and loads the prompt template from a YAML file 
+        # i.e "You are a support agent and need to answer the customer...".
+        conversation = ConversationChain(llm=model, prompt=load_prompt("prompt.yaml"), memory=memory)
+
+        # The customer bot is primed to say "good bye" if the conversation has lasted too long
+        # message limit defined in "conversation_length" environment variable
+        # The agent looks for this "good bye" so it knows to restart too.
+        if "good bye" in row["text"].lower():
+            print("Initializing a new conversation...")
+
+            # that was then end of the chat
+            # start a new chat with a new customer
+            chat_init()
+
+            # set these to ensure the conversation doesn't continue
+            row["role"] = "none"
+            row["text"] = ""
+            return row
 
 
-    # print("==========================")
-    # REPLICA STATE HERE
-    # this is the first place we can access state.
-    # in v0.5.x we could use state almost anywhere
+        # Send the customers response to the conversation chain so that the agent LLM can generate a reply
+        # and store that reply in the msg variable
+        msg = conversation.run(row["text"])
+        msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
 
-    # get the value from state for this replica_id (if its there, if not default to "")
-    # print(f"Getting {replica_id} from state")
+        print(f"Pickling convo to shared state with key = {pickled_conversation_key}...")
+        # pickle the convo memory object
+        pickled_convo = pickle.dumps(conversation.memory)
+        # convert pickled bytes to a string
+        pickled_string = pickled_convo.decode('latin1')
+        # save the pickled and stringified conversation memory to state
+        state.set(pickled_conversation_key, pickled_string)
 
-    # state_rc_data = state.get(replica_id, "")
-    # print(f"state is {state_rc_data}")
+        # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
+        # containing the agents role and reply 
+        row["role"] = role
+        row["text"] = msg
 
-    # if state_rc_data == "":
-    #     print(f"Setting replica_id {replica_id} to {chat_id}")
-    #     state.set(replica_id, chat_id)
-    # else:
-    #     # if the state for this replica does not hold the chat ID were currently handling:
-    #     if state_rc_data != chat_id:
-    #         print(f"{state_rc_data} IS NOT {chat_id}. Returning recieved row.")
-
-    #         # return without trying to add anything to the row
-    #         return {}
-    #     # else, handle the convo and reply with a message
-
-    # print("==========================")
-
-    # The customer bot is primed to say "good bye" if the conversation has lasted too long
-    # message limit defined in "conversation_length" environment variable
-    # The agent looks for this "good bye" so it knows to restart too.
-
-    # Send the customers response to the conversation chain so that the agent LLM can generate a reply
-    # and store that reply in the msg variable
-    msg = chain.run(row["text"])
-    msg = clean_text(msg)  # Clean any unnecessary text that the LLM tends to add
-    print(f"{role.upper()} replying with: {msg}\n")
-
-    row["role"] = role
-    row["text"] = msg
-
-    # Replace previous role and text values of the row so that it can be sent back to Kafka as a new message
-    # containing the agents role and reply 
-    return row
-
-# sdf = sdf.apply(lambda row: print(row))
+        return row
+    except Exception as e:
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print(e)
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 # Filter the SDF to include only incoming rows where the roles that dont match the bot's current role
 # So that it doesn't reply to its own messages
 sdf = sdf[sdf["role"] != role]
+
+# exclude rows with none as the role. these are conversations that have ended.
+sdf = sdf[sdf["role"] != "none"]
+
+sdf = sdf.update(lambda row: print("-----------------------------------\n GOT THIS NEW ROW! \n------------------------------------------"))
+sdf = sdf.update(lambda row: print(row))
+sdf = sdf.update(lambda row: print("-----------------------------------"))
 
 # Trigger the reply function for any new messages(rows) detected in the filtered SDF
 sdf = sdf.apply(reply, stateful=True)
@@ -253,6 +248,8 @@ sdf = sdf[sdf.apply(lambda row: row is not None)]
 
 # Update the timestamp column to the current time in nanoseconds
 sdf["Timestamp"] = sdf["Timestamp"].apply(lambda row: time.time_ns())
+
+sdf = sdf.update(lambda row: print(f'Replying with: {row["text"]}'))
 
 # Publish the processed SDF to a Kafka topic specified by the output_topic object. 
 sdf = sdf.to_topic(output_topic)

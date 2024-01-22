@@ -1,30 +1,35 @@
 name: Streamlit Dashboard
 language: python
 variables:
-  - name: redis_host
-    inputType: Secret
-    description: Redis server.
-    defaultValue: redis_host
-    required: true
-  - name: redis_port
-    inputType: Secret
-    description: Redis server port.
-    defaultValue: redis_port
-    required: true
-  - name: redis_pwd
-    inputType: Secret
-    description: Redis password.
-    defaultValue: redis_pwd
-    required: true
   - name: chat_count
     inputType: FreeText
     description: Maximum number of chats to display on the dashboard.
-    defaultValue: 12
+    defaultValue: 3
     required: true
   - name: style_sheet
     inputType: FreeText
     description: Custom style sheet for Streamlit.
     defaultValue: style.css
+    required: false
+  - name: INFLUXDB_TOKEN
+    inputType: FreeText
+    description: ''
+    defaultValue: iWGU-RZ-AoML0bP4kjabHrqlB3IDtyLPAs_XMDpGOldEvQrzmtwC2Y-4arrkl1BX_bQpEvtYGgh16pJyviIsvA==
+    required: false
+  - name: INFLUXDB_HOST
+    inputType: FreeText
+    description: ''
+    defaultValue: https://us-east-1-1.aws.cloud2.influxdata.com
+    required: false
+  - name: INFLUXDB_ORG
+    inputType: FreeText
+    description: ''
+    defaultValue: ContentSquad
+    required: false
+  - name: INFLUXDB_DATABASE
+    inputType: FreeText
+    description: ''
+    defaultValue: ConversationStore
     required: false
 dockerfile: build/dockerfile
 runEntryPoint: main.py
