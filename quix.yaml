@@ -128,15 +128,15 @@ deployments:
         required: true
         value: ai-chat-history-with-sentiment
       - name: INFLUXDB_HOST
-        inputType: FreeText
+        inputType: Secret
         description: Host address for the InfluxDB instance.
         required: true
-        secret: influxdb_host
+        value: influxdb_host
       - name: INFLUXDB_TOKEN
-        inputType: FreeText
+        inputType: Secret
         description: Authentication token to access InfluxDB.
         required: true
-        secret: influxdb_token
+        value: influxdb_token
       - name: INFLUXDB_ORG
         inputType: FreeText
         description: Organization name in InfluxDB.
