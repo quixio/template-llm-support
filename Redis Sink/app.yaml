@@ -1,11 +1,6 @@
 name: Redis Sink
 language: python
 variables:
-  - name: input
-    inputType: InputTopic
-    description: This is the input topic for demo data
-    defaultValue: ai-chat-history-with-sentiment
-    required: true
   - name: redis_host
     inputType: Secret
     description: Redis host.
