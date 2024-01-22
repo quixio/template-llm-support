@@ -1,6 +1,6 @@
-# AI Customer Support Agent
+# Redis Sink
 
-This service converses with a customer using LLMs, providing support regarding a defect of an appliance they purchased.
+Stores conversation history and the result of sentiment analysis in Redis.
 
 ## How to run
 
@@ -10,9 +10,13 @@ Clicking `Edit code` on the Sample, forks the project to your own Git repo so yo
 
 ## Environment variables
 
-This code sample uses the following environment variables:
+The code sample uses the following environment variables:
 
-- **topic**: Kafka topic to publish messages to.
+- **input**: This is the input topic for demo data.
+- **redis_host**: Redis host information.
+- **redis_port**: Redis server port.
+- **redis_pwd**: Redis password.
+- **expire_after**: Conversation cache TTL.
 
 ## Contribute
 

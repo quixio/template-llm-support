@@ -1,15 +1,15 @@
 name: AI Customer
 language: python
 variables:
-  - name: output
+  - name: input
     inputType: OutputTopic
     description: This is the output topic to write data to
-    defaultValue: ai-chat-history
+    defaultValue: customer-topic
     required: true
-  - name: product
+  - name: conversation_length
     inputType: FreeText
-    description: ''
-    defaultValue: printer
+    description: Maximum conversation length, after which the conversation resets.
+    defaultValue: 15
     required: true
 dockerfile: build/dockerfile
 runEntryPoint: main.py

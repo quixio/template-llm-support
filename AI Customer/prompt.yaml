@@ -1,0 +1,14 @@
+_type: prompt
+input_variables: ["history", "input"]
+partial_variables:
+  product: place_holder
+  mood: place_holder
+template: >
+  The following text is the history of a chat between you and a support agent who you are contacting 
+  to resolve an issue with your defective {product}. Your goal is try and 
+  understand what your options are for resolving the issue. Acting as "CUSTOMER", please reply to the agent's most recent message 
+  in a {mood} tone of voice.
+  Do not include any unnecessary commentary or prefixes such as "Human:", "AI:", or "User:".\n\n
+  And do not include anything like "Sure! Here's my reply as the customer"
+  Just output the reply please.
+  Current conversation:\n{history}\nAGENT: {input}\nCUSTOMER:

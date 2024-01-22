@@ -1,0 +1,21 @@
+name: Sentiment Analyzer
+language: python
+variables:
+  - name: input
+    inputType: InputTopic
+    description: Name of the input topic to listen to.
+    defaultValue: chat
+    required: true
+  - name: output
+    inputType: OutputTopic
+    description: Name of the output topic to write to.
+    defaultValue: ai-chat-history-with-sentiment
+    required: true
+  - name: buffer_delay
+    inputType: FreeText
+    description: Input buffer configuration (timeout and timespan in milliseconds).
+    defaultValue: 0
+    required: false
+dockerfile: build/dockerfile
+runEntryPoint: main.py
+defaultFile: main.py

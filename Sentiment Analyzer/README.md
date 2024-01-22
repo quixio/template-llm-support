@@ -1,6 +1,6 @@
-# AI Customer Support Agent
+# Sentiment Analyzer
 
-This service converses with a customer using LLMs, providing support regarding a defect of an appliance they purchased.
+Performs sentiment analysis on messages between the customer and the customer support agent.
 
 ## How to run
 
@@ -10,9 +10,11 @@ Clicking `Edit code` on the Sample, forks the project to your own Git repo so yo
 
 ## Environment variables
 
-This code sample uses the following environment variables:
+The code sample uses the following environment variables:
 
-- **topic**: Kafka topic to publish messages to.
+- **input**: Name of the input topic to listen to.
+- **output**: Name of the output topic to write to.
+- **buffer_delay**: Input buffer configuration (timeout and timespan in milliseconds).
 
 ## Contribute
 
