@@ -163,14 +163,14 @@ topics:
   - name: ai-chat-history-with-sentiment
     persisted: true
     configuration:
-      partitions: 3
-      replicationFactor: 3
+      partitions: {{topic-ai-chat-history-with-sentiment-partitions}}
+      replicationFactor: {{topic-ai-chat-history-with-sentiment-replication-factor}}
       retentionInMinutes: 1440
       retentionInBytes: 52428800
   - name: ai-chat
-    persisted: false
+    persisted: true
     configuration:
-      partitions: 3
-      replicationFactor: 3
+      partitions: {{topic-ai-chat-partitions}}
+      replicationFactor: {{topic-ai-chat-factor}}
       retentionInMinutes: 1440
       retentionInBytes: 52428800
