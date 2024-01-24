@@ -82,12 +82,9 @@ deployments:
     deploymentType: Service
     version: 227edb278029af6b21e7758f2a1a72c3814f49a4
     resources:
-      cpu: 4100
+      cpu: 4000
       memory: 8000
-      replicas: 3
-    state:
-      enabled: true
-      size: 8
+      replicas: 1
     desiredStatus: Running
     variables:
       - name: input
@@ -102,10 +99,7 @@ deployments:
     resources:
       cpu: 4000
       memory: 8000
-      replicas: 3
-    state:
-      enabled: true
-      size: 8
+      replicas: 1
     desiredStatus: Running
     variables:
       - name: input
@@ -169,14 +163,14 @@ topics:
   - name: ai-chat-history-with-sentiment
     persisted: true
     configuration:
-      partitions: {{topic-ai-chat-history-with-sentiment-partitions}}
-      replicationFactor: {{topic-ai-chat-history-with-sentiment-replication-factor}}
+      partitions: 1
+      replicationFactor: 1
       retentionInMinutes: 1440
       retentionInBytes: 52428800
   - name: ai-chat
     persisted: true
     configuration:
-      partitions: {{topic-ai-chat-partitions}}
-      replicationFactor: {{topic-ai-chat-factor}}
+      partitions: 1
+      replicationFactor: 1
       retentionInMinutes: 1440
       retentionInBytes: 52428800
