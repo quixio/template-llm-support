@@ -99,11 +99,13 @@ def save_to_file_pandas(data_dict, filename='./state/sentiment_data.json'):
 def load_from_file_pandas(filename='./state/sentiment_data.json'):
     try:
         df = pd.read_json(filename, orient='records', lines=True)
-        if not df.empty:
-            return df.to_dict(orient='records')[0]  # Convert first row to dict
+        # Check if the DataFrame is empty
+        if df.empty:
+            print("The DataFrame is empty.")
+            return None
         else:
-            print("Sentiment log exists but empty, initializing it...")
-            return {'time': [], 'average_sentiment': []}
+            return df.to_dict(orient='records')[0]  # Convert first row to dict
+            
     except (FileNotFoundError, ValueError):
         print("Sentiment log does not exist in state, creating it...")
         return {'time': [],'average_sentiment': []}
