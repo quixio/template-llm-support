@@ -99,8 +99,7 @@ def save_to_file_pandas(data_dict, filename='./state/sentiment_data.json'):
 def load_from_file_pandas(filename='./state/sentiment_data.json'):
     try:
         df = pd.read_json(filename, orient='records', lines=True)
-            # Check if the DataFrame is empty
-    
+        # Check if the DataFrame is empty
         if df.empty:
             print("The DataFrame is empty.")
             return None
