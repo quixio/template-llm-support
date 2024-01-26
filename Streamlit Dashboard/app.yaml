@@ -19,7 +19,7 @@ variables:
   - name: INFLUXDB_HOST
     inputType: FreeText
     description: ''
-    defaultValue: https://us-east-1-1.aws.cloud2.influxdata.com
+    defaultValue: influxdb_host
     required: false
   - name: INFLUXDB_ORG
     inputType: FreeText
