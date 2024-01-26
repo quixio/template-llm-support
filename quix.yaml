@@ -60,22 +60,22 @@ deployments:
       - name: INFLUXDB_TOKEN
         inputType: FreeText
         description: ''
-        required: false
+        required: true
         value: 3QRVfI3aVYklMo5PjX9DRJ0Igf110DJOkIHEAsQk-1wdlz4i4tANrNBYm_sMMWYdHh1CRmbVsLEuiIg1-2_nkw==
       - name: INFLUXDB_HOST
         inputType: FreeText
         description: ''
-        required: false
-        value: https://us-east-1-1.aws.cloud2.influxdata.com
+        required: true
+        value: {{influxdb_host}}
       - name: INFLUXDB_ORG
         inputType: FreeText
         description: ''
-        required: false
+        required: true
         value: {{influxdb_org}}
       - name: INFLUXDB_DATABASE
         inputType: FreeText
         description: ''
-        required: false
+        required: true
         value: {{influxdb_database}}
   - name: AI Support Agent
     application: AI Customer Support Agent
@@ -128,10 +128,10 @@ deployments:
         required: true
         value: ai-chat-history-with-sentiment
       - name: INFLUXDB_HOST
-        inputType: Secret
+        inputType: FreeText
         description: Host address for the InfluxDB instance.
         required: true
-        secretKey: influxdb_host
+        value: {{influxdb_host}}
       - name: INFLUXDB_TOKEN
         inputType: Secret
         description: Authentication token to access InfluxDB.
