@@ -12,9 +12,9 @@ variables:
     defaultValue: style.css
     required: false
   - name: INFLUXDB_TOKEN
-    inputType: FreeText
+    inputType: Secret
     description: ''
-    defaultValue: ''
+    defaultValue: influxdb_token
     required: false
   - name: INFLUXDB_HOST
     inputType: FreeText
