@@ -102,13 +102,13 @@ def load_from_file_pandas(filename='./state/sentiment_data.json'):
         # Check if the DataFrame is empty
         if df.empty:
             print("The DataFrame is empty.")
-            return None
+            return {'time': [], 'average_sentiment': []}
         else:
             return df.to_dict(orient='records')[0]  # Convert first row to dict
             
-    except (FileNotFoundError, ValueError):
-        print("Sentiment log does not exist in state, creating it...")
-        return {'time': [],'average_sentiment': []}
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error loading sentiment data: {e}")
+        return {'time': [], 'average_sentiment': []}
 
 # Initialize the sentiment dictionary
 sentiment_data = load_from_file_pandas()
