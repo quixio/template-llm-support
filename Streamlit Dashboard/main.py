@@ -8,10 +8,10 @@ import datetime
 import json
 
 
-print(f'INFLUXDB_TOKEN={os.environ["INFLUXDB_TOKEN"]}')
-print(f'INFLUXDB_HOST={os.environ["INFLUXDB_HOST"]}')
-print(f'INFLUXDB_ORG={os.environ["INFLUXDB_ORG"]}')
-print(f'INFLUXDB_DATABASE={os.environ["INFLUXDB_DATABASE"]}')
+print(f'INFLUXDB_TOKEN=[{os.environ["INFLUXDB_TOKEN"]}]')
+print(f'INFLUXDB_HOST=[{os.environ["INFLUXDB_HOST"]}]')
+print(f'INFLUXDB_ORG=[{os.environ["INFLUXDB_ORG"]}]')
+print(f'INFLUXDB_DATABASE=[{os.environ["INFLUXDB_DATABASE"]}]')
 
 measurement_name = "conversations"
 
