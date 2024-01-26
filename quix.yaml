@@ -34,7 +34,7 @@ deployments:
   - name: Streamlit Dashboard
     application: Streamlit Dashboard
     deploymentType: Service
-    version: 6835fe4662b2c1b8aea03f8d4b9d8a3fd43d34b1
+    version: 8a577f5c7ca0ecf45a1a99acf4580025382ebef1
     resources:
       cpu: 200
       memory: 500
@@ -58,24 +58,24 @@ deployments:
         required: false
         value: style.css
       - name: INFLUXDB_TOKEN
-        inputType: FreeText
+        inputType: Secret
         description: ''
-        required: true
-        value: 3QRVfI3aVYklMo5PjX9DRJ0Igf110DJOkIHEAsQk-1wdlz4i4tANrNBYm_sMMWYdHh1CRmbVsLEuiIg1-2_nkw==
+        required: false
+        secretKey: influxdb_token
       - name: INFLUXDB_HOST
         inputType: FreeText
         description: ''
-        required: true
+        required: false
         value: {{influxdb_host}}
       - name: INFLUXDB_ORG
         inputType: FreeText
         description: ''
-        required: true
+        required: false
         value: {{influxdb_org}}
       - name: INFLUXDB_DATABASE
         inputType: FreeText
         description: ''
-        required: true
+        required: false
         value: {{influxdb_database}}
   - name: AI Support Agent
     application: AI Customer Support Agent
