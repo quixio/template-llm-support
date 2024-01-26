@@ -45,7 +45,7 @@ deployments:
     state:
       enabled: true
       size: 1
-    desiredStatus: Running
+    desiredStatus: Stopped
     variables:
       - name: chat_count
         inputType: FreeText
@@ -61,12 +61,12 @@ deployments:
         inputType: FreeText
         description: ''
         required: false
-        value: influxdb_token
+        value: iWGU-RZ-AoML0bP4kjabHrqlB3IDtyLPAs_XMDpGOldEvQrzmtwC2Y-4arrkl1BX_bQpEvtYGgh16pJyviIsvA==
       - name: INFLUXDB_HOST
         inputType: FreeText
         description: ''
         required: false
-        value: influxdb_host
+        value: https://us-east-1-1.aws.cloud2.influxdata.com
       - name: INFLUXDB_ORG
         inputType: FreeText
         description: ''
