@@ -63,10 +63,10 @@ deployments:
         required: false
         secretKey: influxdb_token
       - name: INFLUXDB_HOST
-        inputType: FreeText
+        inputType: Secret
         description: ''
         required: false
-        value: {{influxdb_host}}
+        secretKey: influxdb_host
       - name: INFLUXDB_ORG
         inputType: FreeText
         description: ''
