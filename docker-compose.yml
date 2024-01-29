@@ -1,9 +1,7 @@
 version: '3.7'
-name: llm-support-agent-data-pipeline
 services:
 
   redpanda:
-    container_name: redpanda
     image: docker.redpanda.com/redpandadata/redpanda:v23.2.19
     command:
       - redpanda start
@@ -34,7 +32,6 @@ services:
       start_period: 5s
 
   console:
-    container_name: redpanda-console
     image: docker.redpanda.com/redpandadata/console:v2.3.8
     entrypoint: /bin/sh
     command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
@@ -61,10 +58,10 @@ services:
       - redpanda
 
   ai-support-agent:
-    container_name: ai-support-agent
     restart: always
     build:
       context: "./AI Customer Support Agent"
+    image: ai-support-agent:latest
     environment:
       - KAFKA_BROKER_ADDRESS=redpanda:9092
       - output=ai-chat
@@ -73,12 +70,14 @@ services:
       - use_local_kafka=true
     depends_on:
       - redpanda
+    deploy:
+      replicas: 3
 
   ai-customer:
-    container_name: ai-customer
     restart: always
     build:
       context: "./AI Customer"
+    image: ai-customer:latest
     environment:
       - KAFKA_BROKER_ADDRESS=redpanda:9092
       - output=ai-chat
@@ -88,12 +87,14 @@ services:
       - use_local_kafka=true
     depends_on:
       - redpanda
+    deploy:
+      replicas: 3
       
   sentiment-analyzer:
-    container_name: sentiment-analyzer
     restart: always
     build:
       context: "./Sentiment Analyzer"
+    image: sentiment-analyzer:latest
     environment:
       - KAFKA_BROKER_ADDRESS=redpanda:9092
       - input=ai-chat
@@ -106,10 +107,10 @@ services:
       - redpanda
       
   influx-sink:
-    container_name: influx-sink
     restart: always
     build:
       context: "./InfluxDB 3.0 Sink"
+    image: influx-sink:latest
     environment:
       - KAFKA_BROKER_ADDRESS=redpanda:9092
       - input=ai-chat-history-with-sentiment
