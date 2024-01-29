@@ -1,3 +1,4 @@
 .vscode/
 state/
 certificates/
+.env
