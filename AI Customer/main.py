@@ -8,7 +8,7 @@ from pathlib import Path
 from quixstreams import Application, State
 
 # Import the supplimentary Quix Streams modules for interacting with Kafka: 
-from quixstreams.models.serializers.quix import QuixDeserializer, QuixTimeseriesSerializer
+from quixstreams.models.serializers.quix import JSONDeserializer, JSONSerializer, SerializationContext
 # (see https://quix.io/docs/quix-streams/v2-0-latest/api-reference/quixstreams.html for more details)
 
 # Import a Hugging Face utility to download models directly from Hugging Face hub:
@@ -115,11 +115,19 @@ chains = {}
 
 # Initialize a Quix Kafka consumer with a consumer group based on the role
 # and configured to read the latest message if no offset was previously registered for the consumer group
-app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
+# app = Application.Quix("transformation-v10-"+role, auto_offset_reset="latest")
 
-# Define the input and output topics with the relevant deserialization and serialization methods
-input_topic = app.topic(os.environ["topic"], value_deserializer=QuixDeserializer())
-output_topic = app.topic(os.environ["topic"], value_serializer=QuixTimeseriesSerializer())
+# Define your application and settings
+app = Application(
+    broker_address=os.environ["broker_address"],
+    consumer_group="transformation-v10-"+role,
+    auto_offset_reset="latest",
+    consumer_extra_config={"allow.auto.create.topics": "true"},
+    producer_extra_config={"allow.auto.create.topics": "true"},
+)
+# Defines the input and output topics with the relevant deserialization and serialization methods (and get the topic names from enviroiment variables)
+input_topic = app.topic(os.environ["topic"], value_deserializer=JSONDeserializer())
+output_topic = app.topic(os.environ["topic"], value_serializer=JSONSerializer())
 
 # Initialize a streaming dataframe based on the stream of messages from the input topic:
 sdf = app.dataframe(input_topic)

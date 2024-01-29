@@ -12,8 +12,8 @@ r = redis.Redis(
   password=os.environ["redis_pwd"]
 )
 
-client = qx.QuixStreamingClient()
-topic_consumer = client.get_topic_consumer(topic_id_or_name = os.environ["input"])
+client = qx.KafkaStreamingClient(os.environ["broker_address"])
+topic_consumer = client.get_topic_consumer(os.environ["input"])
 
 def on_stream_recv_handler(sc: qx.StreamConsumer):
     # prefix key with project id to avoid collisions between projects.

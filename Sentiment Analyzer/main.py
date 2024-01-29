@@ -9,7 +9,7 @@ buffer_delay = int(os.environ["buffer_delay"])
 
 # Quix injects credentials automatically to the client.
 # Alternatively, you can always pass an SDK token manually as an argument.
-client = qx.QuixStreamingClient()
+client = qx.KafkaStreamingClient(os.environ["broker_address"])
 
 # Change consumer group to a different constant if you want to run model locally.
 print("Opening input and output topics")
