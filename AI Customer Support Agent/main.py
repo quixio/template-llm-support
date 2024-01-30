@@ -40,6 +40,7 @@ chat_id = ""
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = f"/state/{model_name}"
 
+# support running in Quix as well as docker 
 if not Path(model_path).exists() and not Path(f".{model_path}").exists():
     print("The model path does not exist in state. Downloading model...")
     hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
