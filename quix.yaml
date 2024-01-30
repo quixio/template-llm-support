@@ -95,11 +95,14 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: 362043636accafd9b7c1c7833b8b40f0c27bd9ac
+    version: caf22ef1773688a2f8dc9c1e2340485f851186e5
     resources:
       cpu: 4000
       memory: 8000
       replicas: 3
+    state:
+      enabled: true
+      size: 8
     desiredStatus: Running
     variables:
       - name: input
