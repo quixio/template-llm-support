@@ -44,7 +44,6 @@ chat_maxlen = int(os.environ["conversation_length"]) // 2
 # load the model from state or download it from hugging face
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "/state/{}".format(model_name)
-path_prefix = ""
 
 if not Path(model_path).exists() and not Path(f".{model_path}").exists():
     print("The model path does not exist in state. Downloading model...")
@@ -54,7 +53,8 @@ else:
 
 if Path(f".{model_path}").exists():
     print("model was in ./state")
-    path_prefix = "."
+    model_path = f".{model_path}"
+
 
 # Function to load a list of values from a text file
 def get_list(file: str):
