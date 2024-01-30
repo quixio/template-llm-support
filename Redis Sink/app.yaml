@@ -19,7 +19,7 @@ variables:
   - name: expire_after
     inputType: FreeText
     description: Conversation storage duration in minutes.
-    defaultValue: 1440
+    defaultValue: 8000
     required: true
   - name: mysecret
     inputType: Secret
