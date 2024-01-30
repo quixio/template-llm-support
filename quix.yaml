@@ -9,7 +9,7 @@ deployments:
   - name: Sentiment Analyzer
     application: Sentiment Analyzer
     deploymentType: Service
-    version: f69039cd7b8bcd03c75b176146266b33c8a5fcac
+    version: 362043636accafd9b7c1c7833b8b40f0c27bd9ac
     resources:
       cpu: 2000
       memory: 4000
@@ -34,7 +34,7 @@ deployments:
   - name: Streamlit Dashboard
     application: Streamlit Dashboard
     deploymentType: Service
-    version: 6835fe4662b2c1b8aea03f8d4b9d8a3fd43d34b1
+    version: 362043636accafd9b7c1c7833b8b40f0c27bd9ac
     resources:
       cpu: 200
       memory: 500
@@ -58,15 +58,15 @@ deployments:
         required: false
         value: style.css
       - name: INFLUXDB_TOKEN
-        inputType: FreeText
+        inputType: Secret
         description: ''
         required: false
-        value: influxdb_token
+        secretKey: influxdb_token
       - name: INFLUXDB_HOST
         inputType: FreeText
         description: ''
         required: false
-        value: influxdb_host
+        value: {{influxdb_host}}
       - name: INFLUXDB_ORG
         inputType: FreeText
         description: ''
@@ -80,11 +80,14 @@ deployments:
   - name: AI Support Agent
     application: AI Customer Support Agent
     deploymentType: Service
-    version: b7bdf2c3534cddef9920fda911b23df89a249e39
+    version: 227edb278029af6b21e7758f2a1a72c3814f49a4
     resources:
       cpu: 4100
       memory: 8000
       replicas: 3
+    state:
+      enabled: true
+      size: 8
     desiredStatus: Running
     variables:
       - name: input
@@ -95,11 +98,14 @@ deployments:
   - name: AI Customer
     application: AI Customer
     deploymentType: Service
-    version: f5c65e90a3069ada3a2a2395cfec243e6d8d83e8
+    version: 810b1b4e7bfcea929c74c9394e7ee60f9fd1b498
     resources:
       cpu: 4000
       memory: 8000
       replicas: 3
+    state:
+      enabled: true
+      size: 8
     desiredStatus: Running
     variables:
       - name: input
@@ -115,7 +121,7 @@ deployments:
   - name: InfluxDB 3.0 Sink
     application: InfluxDB 3.0 Sink
     deploymentType: Service
-    version: 2133a5ca945c76caa738727580b65d74c717c582
+    version: 362043636accafd9b7c1c7833b8b40f0c27bd9ac
     resources:
       cpu: 200
       memory: 500
@@ -128,14 +134,14 @@ deployments:
         required: true
         value: ai-chat-history-with-sentiment
       - name: INFLUXDB_HOST
-        inputType: Secret
+        inputType: FreeText
         description: Host address for the InfluxDB instance.
         required: true
-        secretKey: influxdb_host
+        value: {{influxdb_host}}
       - name: INFLUXDB_TOKEN
         inputType: Secret
-        description: Authentication token to access InfluxDB.
-        required: true
+        description: ''
+        required: false
         secretKey: influxdb_token
       - name: INFLUXDB_ORG
         inputType: FreeText

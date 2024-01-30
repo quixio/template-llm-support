@@ -21,6 +21,6 @@ variables:
     description: Conversation storage duration in minutes.
     defaultValue: 1440
     required: true
-dockerfile: build/dockerfile
+dockerfile: dockerfile
 runEntryPoint: main.py
 defaultFile: main.py

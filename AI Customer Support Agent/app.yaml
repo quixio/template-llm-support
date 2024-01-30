@@ -6,6 +6,6 @@ variables:
     description: This is the output topic to write data to
     defaultValue: agent-topic
     required: true
-dockerfile: build/dockerfile
+dockerfile: dockerfile
 runEntryPoint: main.py
 defaultFile: main.py

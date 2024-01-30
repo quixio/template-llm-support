@@ -11,6 +11,6 @@ variables:
     description: Maximum conversation length, after which the conversation resets.
     defaultValue: 15
     required: true
-dockerfile: build/dockerfile
+dockerfile: dockerfile
 runEntryPoint: main.py
 defaultFile: main.py

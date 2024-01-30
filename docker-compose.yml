@@ -1,0 +1,148 @@
+version: '3.7'
+name: llm-support-agent-data-pipeline
+services:
+
+  redpanda:
+    container_name: redpanda
+    image: docker.redpanda.com/redpandadata/redpanda:v23.2.19
+    command:
+      - redpanda start
+      - --smp 1
+      - --overprovisioned
+      - --node-id 0
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      # Address the broker advertises to clients that connect to the Kafka API.
+      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
+      - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
+      # Address the broker advertises to clients that connect to the HTTP Proxy.
+      - --advertise-pandaproxy-addr internal://redpanda:8082,external://localhost:18082
+      - --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:18081
+      # Redpanda brokers use the RPC API to communicate with each other internally.
+      - --rpc-addr redpanda:33145
+      - --advertise-rpc-addr redpanda:33145
+      - --mode dev-container
+    ports:
+      - 18081:8081
+      - 18082:8082
+      - 19092:9092
+      - 19644:9644
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -E 'Healthy:.+true' || exit 1"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  console:
+    container_name: redpanda-console
+    image: docker.redpanda.com/redpandadata/console:v2.3.8
+    entrypoint: /bin/sh
+    command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["redpanda:9092"]
+          schemaRegistry:
+            enabled: true
+            urls: ["http://redpanda:8081"]
+        redpanda:
+          adminApi:
+            enabled: true
+            urls: ["http://redpanda:9644"]
+        connect:
+          enabled: true
+          clusters:
+            - name: local-connect-cluster
+              url: http://connect:8083
+    ports:
+      - 8080:8080
+    depends_on:
+      - redpanda
+
+  ai-support-agent-1:
+    container_name: ai-support-agent-1
+    restart: always
+    build:
+      context: "./AI Customer Support Agent"
+    volumes:
+      - ./llama-2-7b-chat.Q4_K_M.gguf:/state/llama-2-7b-chat.Q4_K_M.gguf
+    environment:
+      - KAFKA_BROKER_ADDRESS=redpanda:9092
+      - input=ai-chat
+      - Quix__Portal__Api=https://portal-api.platform.quix.io
+      - Quix__Sdk__Token=${QUIX_SDK_TOKEN}
+      - use_local_kafka=true
+    depends_on:
+      - redpanda
+
+  ai-customer-1:
+    container_name: ai-customer-1
+    restart: always
+    build:
+      context: "./AI Customer"
+    volumes:
+      - ./llama-2-7b-chat.Q4_K_M.gguf:/state/llama-2-7b-chat.Q4_K_M.gguf
+    environment:
+      - KAFKA_BROKER_ADDRESS=redpanda:9092
+      - input=ai-chat
+      - conversation_length=5
+      - Quix__Portal__Api=https://portal-api.platform.quix.io
+      - Quix__Sdk__Token=${QUIX_SDK_TOKEN}
+      - use_local_kafka=true
+    depends_on:
+      - redpanda
+      
+  sentiment-analyzer:
+    container_name: sentiment-analyzer
+    restart: always
+    build:
+      context: "./Sentiment Analyzer"
+    environment:
+      - KAFKA_BROKER_ADDRESS=redpanda:9092
+      - input=ai-chat
+      - output=ai-chat-history-with-sentiment
+      - buffer_delay=0
+      - Quix__Portal__Api=https://portal-api.platform.quix.io
+      - Quix__Sdk__Token=${QUIX_SDK_TOKEN}
+      - use_local_kafka=true
+    depends_on:
+      - redpanda
+      
+  influx-sink:
+    container_name: influx-sink
+    restart: always
+    build:
+      context: "./InfluxDB 3.0 Sink"
+    environment:
+      - KAFKA_BROKER_ADDRESS=redpanda:9092
+      - input=ai-chat-history-with-sentiment
+      - INFLUXDB_HOST=https://eu-central-1-1.aws.cloud2.influxdata.com
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+      - INFLUXDB_ORG=${INFLUX_ORG}
+      - INFLUXDB_DATABASE=${INFLUX_BUCKET}
+      - INFLUXDB_TAG_COLUMNS=[]
+      - INFLUXDB_MEASUREMENT_NAME=${INFLUX_MEASUREMENT}
+      - Quix__Portal__Api=https://portal-api.platform.quix.io
+      - Quix__Sdk__Token=${QUIX_SDK_TOKEN}
+      - use_local_kafka=true
+    depends_on:
+      - redpanda
+      
+  dashboard:
+    container_name: dashboard
+    restart: always
+    build:
+      context: "./Streamlit Dashboard"
+    environment:
+      - chat_count=3
+      - style_sheet=style.css
+      - INFLUXDB_HOST=https://eu-central-1-1.aws.cloud2.influxdata.com
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+      - INFLUXDB_ORG=${INFLUX_ORG}
+      - INFLUXDB_DATABASE=${INFLUX_BUCKET}
+      - INFLUXDB_MEASUREMENT_NAME=${INFLUX_MEASUREMENT}
+    ports:
+      - 8091:80
+    depends_on:
+      - redpanda
