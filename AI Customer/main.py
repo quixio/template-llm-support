@@ -53,6 +53,7 @@ else:
     print("Loading model from state...")
 
 if Path(f".{model_path}").exists():
+    print("model was in ./state")
     path_prefix = "."
 
 # Function to load a list of values from a text file
