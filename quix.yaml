@@ -9,7 +9,7 @@ deployments:
   - name: Sentiment Analyzer
     application: Sentiment Analyzer
     deploymentType: Service
-    version: f69039cd7b8bcd03c75b176146266b33c8a5fcac
+    version: 362043636accafd9b7c1c7833b8b40f0c27bd9ac
     resources:
       cpu: 2000
       memory: 4000
