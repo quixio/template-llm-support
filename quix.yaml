@@ -85,6 +85,9 @@ deployments:
       cpu: 4100
       memory: 8000
       replicas: 3
+    state:
+      enabled: true
+      size: 8
     desiredStatus: Running
     variables:
       - name: input
