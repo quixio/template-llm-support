@@ -40,11 +40,15 @@ chat_id = ""
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = f"/state/{model_name}"
 
-if not Path(model_path).exists():
+if not Path(model_path).exists() and not Path(f".{model_path}").exists():
     print("The model path does not exist in state. Downloading model...")
     hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
 else:
     print("Loading model from state...")
+
+if Path(f".{model_path}").exists():
+    print("model was in ./state")
+    model_path = f".{model_path}"
 
 # Load the model with the apporiate parameters:
 llm = LlamaCpp(
