@@ -115,7 +115,7 @@ deployments:
   - name: InfluxDB 3.0 Sink
     application: InfluxDB 3.0 Sink
     deploymentType: Service
-    version: 2133a5ca945c76caa738727580b65d74c717c582
+    version: 362043636accafd9b7c1c7833b8b40f0c27bd9ac
     resources:
       cpu: 200
       memory: 500
@@ -133,10 +133,10 @@ deployments:
         required: true
         value: {{influxdb_host}}
       - name: INFLUXDB_TOKEN
-        inputType: Secret
+        inputType: FreeText
         description: Authentication token to access InfluxDB.
         required: true
-        secretKey: influxdb_token
+        value: influxdb_token
       - name: INFLUXDB_ORG
         inputType: FreeText
         description: Organization name in InfluxDB.
