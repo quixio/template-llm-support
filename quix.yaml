@@ -103,7 +103,7 @@ deployments:
     state:
       enabled: true
       size: 8
-    desiredStatus: Stopped
+    desiredStatus: Running
     variables:
       - name: input
         inputType: OutputTopic
