@@ -36,6 +36,6 @@ variables:
     description: The InfluxDB measurement to write data to. If not specified, the name of the input topic will be used
     defaultValue: conversations
     required: false
-dockerfile: build/dockerfile
+dockerfile: dockerfile
 runEntryPoint: main.py
 defaultFile: main.py

@@ -21,11 +21,6 @@ variables:
     description: Conversation storage duration in minutes.
     defaultValue: 8000
     required: true
-  - name: mysecret
-    inputType: Secret
-    description: ''
-    defaultValue: influxdb_token
-    required: false
-dockerfile: build/dockerfile
+dockerfile: dockerfile
 runEntryPoint: main.py
 defaultFile: main.py

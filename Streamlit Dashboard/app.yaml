@@ -31,6 +31,6 @@ variables:
     description: ''
     defaultValue: ConversationStore
     required: false
-dockerfile: build/dockerfile
+dockerfile: dockerfile
 runEntryPoint: main.py
 defaultFile: main.py

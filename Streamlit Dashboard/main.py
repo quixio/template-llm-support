@@ -5,10 +5,8 @@ import pandas as pd
 import time
 import altair as alt
 import datetime
-import json
 
-
-measurement_name = "conversations"
+measurement_name = os.environ.get("INFLUXDB_MEASUREMENT_NAME", "conversations")
 
 # Initialize the client variable
 client = None
@@ -137,7 +135,7 @@ while True:
             print(f"Failed to complete query: {e}")
             print("Retrying in 1 second...")
             time.sleep(1)  # Wait for 1 second before retrying
-    print("Finished running main query...")
+    # print("Finished running main query...")
 
     # Convert the result to a pandas dataframe. Required to be processed through Quix.
     df = table.to_pandas()
