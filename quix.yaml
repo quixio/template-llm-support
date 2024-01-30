@@ -136,10 +136,10 @@ deployments:
         required: true
         value: {{influxdb_host}}
       - name: INFLUXDB_TOKEN
-        inputType: FreeText
-        description: Authentication token to access InfluxDB.
-        required: true
-        value: influxdb_token
+        inputType: Secret
+        description: ''
+        required: false
+        secretKey: influxdb_token
       - name: INFLUXDB_ORG
         inputType: FreeText
         description: Organization name in InfluxDB.
