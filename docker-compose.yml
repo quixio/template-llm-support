@@ -65,37 +65,11 @@ services:
     restart: always
     build:
       context: "./AI Customer Support Agent"
+    volumes:
+      - ./llama-2-7b-chat.Q4_K_M.gguf:/state/llama-2-7b-chat.Q4_K_M.gguf
     environment:
       - KAFKA_BROKER_ADDRESS=redpanda:9092
-      - output=ai-chat
-      - Quix__Portal__Api=https://portal-api.platform.quix.io
-      - Quix__Sdk__Token=${QUIX_SDK_TOKEN}
-      - use_local_kafka=true
-    depends_on:
-      - redpanda
-
-  ai-support-agent-2:
-    container_name: ai-support-agent-2
-    restart: always
-    build:
-      context: "./AI Customer Support Agent"
-    environment:
-      - KAFKA_BROKER_ADDRESS=redpanda:9092
-      - output=ai-chat
-      - Quix__Portal__Api=https://portal-api.platform.quix.io
-      - Quix__Sdk__Token=${QUIX_SDK_TOKEN}
-      - use_local_kafka=true
-    depends_on:
-      - redpanda
-
-  ai-support-agent-3:
-    container_name: ai-support-agent-3
-    restart: always
-    build:
-      context: "./AI Customer Support Agent"
-    environment:
-      - KAFKA_BROKER_ADDRESS=redpanda:9092
-      - output=ai-chat
+      - input=ai-chat
       - Quix__Portal__Api=https://portal-api.platform.quix.io
       - Quix__Sdk__Token=${QUIX_SDK_TOKEN}
       - use_local_kafka=true
@@ -107,39 +81,11 @@ services:
     restart: always
     build:
       context: "./AI Customer"
+    volumes:
+      - ./llama-2-7b-chat.Q4_K_M.gguf:/state/llama-2-7b-chat.Q4_K_M.gguf
     environment:
       - KAFKA_BROKER_ADDRESS=redpanda:9092
-      - output=ai-chat
-      - conversation_length=5
-      - Quix__Portal__Api=https://portal-api.platform.quix.io
-      - Quix__Sdk__Token=${QUIX_SDK_TOKEN}
-      - use_local_kafka=true
-    depends_on:
-      - redpanda
-
-  ai-customer-2:
-    container_name: ai-customer-2
-    restart: always
-    build:
-      context: "./AI Customer"
-    environment:
-      - KAFKA_BROKER_ADDRESS=redpanda:9092
-      - output=ai-chat
-      - conversation_length=5
-      - Quix__Portal__Api=https://portal-api.platform.quix.io
-      - Quix__Sdk__Token=${QUIX_SDK_TOKEN}
-      - use_local_kafka=true
-    depends_on:
-      - redpanda
-
-  ai-customer-3:
-    container_name: ai-customer-3
-    restart: always
-    build:
-      context: "./AI Customer"
-    environment:
-      - KAFKA_BROKER_ADDRESS=redpanda:9092
-      - output=ai-chat
+      - input=ai-chat
       - conversation_length=5
       - Quix__Portal__Api=https://portal-api.platform.quix.io
       - Quix__Sdk__Token=${QUIX_SDK_TOKEN}
@@ -195,7 +141,8 @@ services:
       - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
       - INFLUXDB_ORG=${INFLUX_ORG}
       - INFLUXDB_DATABASE=${INFLUX_BUCKET}
+      - INFLUXDB_MEASUREMENT_NAME=${INFLUX_MEASUREMENT}
     ports:
-      - 8081:80
+      - 8091:80
     depends_on:
       - redpanda

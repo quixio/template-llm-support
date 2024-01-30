@@ -38,7 +38,7 @@ chat_id = ""
 
 # Download the model and save it to the service's state directory if it is not already there:
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
-model_path = f"./state/{model_name}"
+model_path = f"/state/{model_name}"
 
 if not Path(model_path).exists():
     print("The model path does not exist in state. Downloading model...")

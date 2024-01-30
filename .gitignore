@@ -2,3 +2,5 @@
 state/
 certificates/
 .env
+
+*.gguf

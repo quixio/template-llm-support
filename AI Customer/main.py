@@ -43,7 +43,7 @@ chat_maxlen = int(os.environ["conversation_length"]) // 2
 
 # load the model from state or download it from hugging face
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
-model_path = "./state/{}".format(model_name)
+model_path = "/state/{}".format(model_name)
 
 if not Path(model_path).exists():
     print("The model path does not exist in state. Downloading model...")
