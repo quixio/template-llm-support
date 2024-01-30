@@ -44,12 +44,16 @@ chat_maxlen = int(os.environ["conversation_length"]) // 2
 # load the model from state or download it from hugging face
 model_name = "llama-2-7b-chat.Q4_K_M.gguf"
 model_path = "/state/{}".format(model_name)
+path_prefix = ""
 
-if not Path(model_path).exists():
+if not Path(model_path).exists() and not Path(f".{model_path}").exists():
     print("The model path does not exist in state. Downloading model...")
     hf_hub_download("TheBloke/Llama-2-7b-Chat-GGUF", model_name, local_dir="state")
 else:
     print("Loading model from state...")
+
+if Path(f".{model_path}").exists():
+    path_prefix = "."
 
 # Function to load a list of values from a text file
 def get_list(file: str):
