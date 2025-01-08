@@ -1,5 +1,7 @@
 # LLM-powered customer success dashboard
 
+Companion repo to the article [AI Bots as difficult customers—generating synthetic customer conversations using Llama-2, Kafka and LangChain](https://quix.io/blog/ai-bots-as-difficult-customers--generating-synthetic-customer-conversations-using-llama-2-kafka-and-langchain).
+
 This template uses Quix and Llama 2 to create a Customer Success Dashboard with Sentiment Analysis.
 
 ## Technologies used
