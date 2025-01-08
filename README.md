@@ -34,7 +34,7 @@ This project consists of following applications:
 1. _AI Customer_: an LLM-powered chatbot simulating a customer requesting support regarding a defect of an appliance they bought from an electronics company.
 2. _AI Customer Support Agent_: an LLM-powered customer support agent trying to assist the AI Customer with a support request.
 3. _Sentiment Analyzer_: an application performing sentiment analysis on the conversation between the customer and the customer support agent.
-4. _Redis Sink_: an application that saves conversation history and the results of sentiment analysis to Redis.
+4. _InfluxDB Sink_: an application that saves conversation history and the results of sentiment analysis to InfluxDB.
 5. _Streamlit Dashboard_: a customer success dashboard displaying active conversations between customers and support agents and the results of sentiment analysis to gain insights into customer satisfaction and improve customer success and support efforts.
 
 ## Prerequisites
